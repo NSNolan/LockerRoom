@@ -167,7 +167,7 @@ struct LockerRoomUnencryptedLockboxEncryptView: View {
         }
         
         let name = unencryptedLockbox.name
-        let symmetricKeyData = LockboxCryptor.generateSymmetricKeyData()
+        let symmetricKeyData = LockboxKeyGenerator.generateSymmetricKeyData()
         
         guard let encryptedSymmetricKeyData = await LockboxKeyCryptor.encrypt(symmetricKey: symmetricKeyData) else {
             print("[Error] LockerRoom failed to encrypt an unencrypted symmetric key")

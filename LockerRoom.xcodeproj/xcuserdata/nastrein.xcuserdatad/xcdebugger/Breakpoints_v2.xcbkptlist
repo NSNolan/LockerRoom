@@ -36,21 +36,5 @@
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8A176D0D-B571-4A59-BFF8-50763461E3DD"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../../../Users/nastrein/Library/Developer/Xcode/DerivedData/LockerRoom-eyzvsjkjmatcbndmhghzrtcwfqqf/SourcePackages/checkouts/yubikit-swift/YubiKit/YubiKit/PIV/PIVSession.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
-            landmarkName = "generateKeyInSlot(slot:type:pinPolicy:touchPolicy:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

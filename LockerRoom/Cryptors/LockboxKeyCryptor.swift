@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 import YubiKit
 
 struct LockboxKeyCryptor {
@@ -17,7 +18,7 @@ struct LockboxKeyCryptor {
             do {
                 let session = try await PIVSession.session(withConnection: connection)
                 do {
-                    let certificate = try await session.getCertificateInSlot(.cardAuth)
+                    let certificate = try await session.getCertificateInSlot(.cardAuth) // TODO: Only using cardAuth slot to encrypt
                     guard let publicKey = SecCertificateCopyKey(certificate) else {
                         print("[Error] Lockbox key cryptor failed to copy public key from certificate \(certificate)")
                         return nil
@@ -55,7 +56,7 @@ struct LockboxKeyCryptor {
             do {
                 let session = try await PIVSession.session(withConnection: connection)
                 do {
-                    let decryptedSymmetricKey = try await session.decryptWithKeyInSlot(slot: .cardAuth, algorithm: .rsaEncryptionOAEPSHA256, encrypted: encryptedSymmetricKey)
+                    let decryptedSymmetricKey = try await session.decryptWithKeyInSlot(slot: .cardAuth, algorithm: .rsaEncryptionOAEPSHA256, encrypted: encryptedSymmetricKey) // TODO: Only using cardAuth slot to decrypt
                     print("[Default] Lockbox key cryptor decrypted symmetric key \(decryptedSymmetricKey)")
                     return decryptedSymmetricKey
                 } catch {

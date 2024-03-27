@@ -10,13 +10,6 @@ import Foundation
 import CryptoKit
 
 struct LockboxCryptor {
-    static let fileManager = FileManager.default
-    
-    static func generateSymmetricKeyData() -> Data {
-        let symmetricKey = SymmetricKey(size: .bits256)
-        return symmetricKey.withUnsafeBytes { Data($0) }
-    }
-    
     static func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
         guard let unencryptedContent = lockbox.unecryptedContent else {
