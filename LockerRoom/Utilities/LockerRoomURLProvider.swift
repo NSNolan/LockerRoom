@@ -39,7 +39,7 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
         }
         self.rootURL = resolvedRootURL
         
-        print("[Default] Lockbox URL provider is using root directory \(resolvedRootURL)")
+        print("[Default] Locker room URL provider is using root directory \(resolvedRootURL)")
     }
     
     var urlForLockboxes: URL {

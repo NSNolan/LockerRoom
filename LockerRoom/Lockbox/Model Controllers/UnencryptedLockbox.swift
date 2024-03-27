@@ -27,44 +27,16 @@ class UnencryptedLockbox {
                 return false
             }
             
-            return attachDiskImage()
+            return LockerRoomDiskImage().attach(name: name)
         }
         
         guard lockboxStore.addLockbox(name: name) else {
             print("[Error] Unencrypted lockbox failed to add \(name)")
             return false
         }
-        
-        let lockboxUnencryptedContentURL = lockboxStore.lockerRoomURLProvider.urlForLockboxFile(name: name, type: .unencryptedContentFileType)
-        let lockboxUnencryptedContentPath = lockboxUnencryptedContentURL.path()
-        
-        let process = Process()
-        process.launchPath = "/usr/bin/hdiutil"
-        process.arguments = [
-            "create",
-            "-verbose",
-            "-size", "\(size)M",
-            "-volname", "\(name)",
-            "-fs", "APFS",
-            lockboxUnencryptedContentPath
-        ]
-        
-        do {
-            try process.run()
-            process.waitUntilExit()
-            
-            let status = process.terminationStatus
-            if status != 0 {
-                print("[Error] Unencrypted lockbox \(name) failed to create disk image of size \(size)MB at path \(lockboxUnencryptedContentPath) with status \(status)")
-                _ = destroy()
-                return false
-            }
-        } catch {
-            print("[Error] Unencrypted lockbox \(name) failed to create disk image of size \(size)MB at path \(lockboxUnencryptedContentPath) with error \(error)")
-            _ = destroy()
-            return false
-        }
-        return attachDiskImage()
+
+        let diskImage = LockerRoomDiskImage()
+        return diskImage.create(name: name, size: size) && diskImage.attach(name: name)
     }
     
     func destroy() -> Bool {
@@ -73,7 +45,7 @@ class UnencryptedLockbox {
             return false
         }
         
-        _ = detachDiskImage() // Not fatal
+        _ = LockerRoomDiskImage().detach(name: name) // Not fatal
         
         self.unecryptedContent = nil
         if self.lockboxStore.removeLockbox(name: name) {
@@ -98,61 +70,5 @@ class UnencryptedLockbox {
                 print("[Error] Encrypted lockbox failed to write unencrypted content for \(name)")
             }
         }
-    }
-    
-    func attachDiskImage() -> Bool {
-        let lockboxUnencryptedContentURL = lockboxStore.lockerRoomURLProvider.urlForLockboxFile(name: name, type: .unencryptedContentFileType)
-        let lockboxUnencryptedContentPath = lockboxUnencryptedContentURL.path()
-        
-        let process = Process()
-        process.launchPath = "/usr/bin/hdiutil"
-        process.arguments = [
-            "attach", lockboxUnencryptedContentPath,
-            "-autoopen"
-        ]
-        
-        let pipe = Pipe()
-        process.standardOutput = pipe
-
-        do {
-            try process.run()
-            process.waitUntilExit()
-
-            let status = process.terminationStatus
-            if status != 0 {
-                print("[Error] Unencrypted lockbox \(name) failed to mount disk image at path \(lockboxUnencryptedContentPath) with status \(status)")
-                return false
-            }
-        } catch {
-            print("[Error] Unencrypted lockbox \(name) failed to mount disk image at path \(lockboxUnencryptedContentPath) with error \(error)")
-            return false
-        }
-        return true
-    }
-    
-    func detachDiskImage() -> Bool {
-        let mountedVolumeURL = lockboxStore.lockerRoomURLProvider.urlForMountedVolume(name: name)
-        let mountedVolumePath = mountedVolumeURL.path()
-        
-        let process = Process()
-        process.launchPath = "/usr/bin/hdiutil"
-        process.arguments = [
-            "detach", mountedVolumePath
-        ]
-
-        do {
-            try process.run()
-            process.waitUntilExit()
-
-            let status = process.terminationStatus
-            if status != 0 {
-                print("[Warning] Unencrypted lockbox \(name) failed to unmount volume at path \(mountedVolumePath) with status \(status)")
-                return false
-            }
-        } catch {
-            print("[Error] Unencrypted lockbox \(name) failed to unmount volume at path \(mountedVolumePath) with error \(error)")
-            return false
-        }
-        return true
     }
 }

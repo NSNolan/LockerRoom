@@ -155,7 +155,7 @@ struct LockerRoomUnencryptedLockboxEncryptView: View {
         }
         .onAppear() {
             if let unencryptedLockbox {
-                _ = unencryptedLockbox.attachDiskImage()
+                _ = LockerRoomDiskImage().attach(name: unencryptedLockbox.name) // Not fatal
             }
         }
     }

@@ -60,7 +60,7 @@ struct LockboxKeyCryptor {
                     print("[Default] Lockbox key cryptor decrypted symmetric key \(decryptedSymmetricKey)")
                     return decryptedSymmetricKey
                 } catch {
-                    print("[Error] Lockbox key cryptor failed to decrypt using slot \(PIVSlot.keyManagement) with error \(error)")
+                    print("[Error] Lockbox key cryptor failed to decrypt using slot \(PIVSlot.cardAuth) with error \(error)") // TODO: Update this log line from cardAuth being hardcoded
                     return nil
                 }
                 
