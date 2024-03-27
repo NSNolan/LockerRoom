@@ -28,7 +28,7 @@ class LockboxManager: ObservableObject {
         } 
         
         let unencryptedLockbox = UnencryptedLockbox(name: name, lockboxStore: lockboxStore)
-        guard unencryptedLockbox.create(withSize: size) else {
+        guard unencryptedLockbox.create(size: size) else {
             print("[Error] Lockbox manager failed to add unencrypted lockbox \(name) to path")
             return nil
         }
@@ -43,8 +43,8 @@ class LockboxManager: ObservableObject {
             return nil
         }
         
-        let unencryptedLockbox = UnencryptedLockbox(name: name, exists: true, lockboxStore: lockboxStore)
-        guard unencryptedLockbox.create(withSize: 0, orExistingData: unencryptedContent) else {
+        let unencryptedLockbox = UnencryptedLockbox(name: name, existingData: unencryptedContent, lockboxStore: lockboxStore)
+        guard unencryptedLockbox.create(size: 0) else {
             print("[Error] Lockbox manager failed to add unencrypted lockbox \(name) to path with existing data \(unencryptedContent)")
             return nil
         }
@@ -75,7 +75,7 @@ class LockboxManager: ObservableObject {
             return false
         }
         
-        let existingUnencryptedLockbox = UnencryptedLockbox(name: name, exists: true, lockboxStore: lockboxStore)
+        let existingUnencryptedLockbox = UnencryptedLockbox(name: name, lockboxStore: lockboxStore) // TODO: Consider how to indicate this unecrypted lockbox already exists
         guard existingUnencryptedLockbox.destroy() else {
             print("[Error] Lockbox manager failed to remove unencrypted lockbox \(name)")
             return false

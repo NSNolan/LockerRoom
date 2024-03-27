@@ -1,5 +1,5 @@
 //
-//  LockRoomListView.swift
+//  LockerRoomLockboxesView.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 3/23/24.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct LockerRoomListView: View {
+struct LockerRoomLockboxesView: View {
     @ObservedObject var lockboxManager = LockboxManager.shared
     
     @State private var lockboxMetadatas = [LockerRoomLockboxMetadata]()
@@ -15,6 +15,7 @@ struct LockerRoomListView: View {
     @State private var showUnencryptedLockboxAddView = false
     @State private var showUnencryptedLockboxView = false
     @State private var showEncryptedLockboxView = false
+    @State private var showKeysView = false
     
     @State private var selection: LockerRoomLockboxMetadata.ID? = nil
     @State private var sortOrder = [KeyPathComparator(\LockerRoomLockboxMetadata.name)]
@@ -42,28 +43,32 @@ struct LockerRoomListView: View {
             .contextMenu(forSelectionType: LockerRoomLockboxMetadata.ID.self) { metadataIDs in
                 // None
             } primaryAction: { metadataIDs in
-                // TODO: Is this really the best way to get the thing I just selected...
-                if let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) {
+                if let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) { // TODO: Is this really the best way to get the row I just selected in this callback...
                     let lockboxStore = lockboxManager.lockboxStore
                     if metadata.isEncrypted {
                         selectedEncryptedLockbox = EncryptedLockbox(name: metadata.name, lockboxStore: lockboxStore)
                         showEncryptedLockboxView = true
                     } else {
-                        selectedUnencryptedLockbox = UnencryptedLockbox(name: metadata.name, exists: true, lockboxStore: lockboxStore)
+                        selectedUnencryptedLockbox = UnencryptedLockbox(name: metadata.name, lockboxStore: lockboxStore) // TODO: Consider how to indicate this unecrypted lockbox already exists
                         showUnencryptedLockboxView = true
                     }
                 }
             }
             
-            Spacer()
-            
             HStack {
                 Spacer()
-                Button("New Lockbox...") {
-                    showUnencryptedLockboxAddView = true
+                
+                Button("Keys...") {
+                    showKeysView = true
                 }
-                .padding()
+                
+                Button(action: {
+                    showUnencryptedLockboxAddView = true
+                }) {
+                    Image(systemName: "plus")
+                }
             }
+            .padding()
         }
         .onAppear() {
             lockboxMetadatas = lockboxManager.lockboxMetadatas
@@ -85,9 +90,12 @@ struct LockerRoomListView: View {
         .sheet(isPresented: $showEncryptedLockboxView) {
             LockerRoomEncryptedLockboxView(showView: $showEncryptedLockboxView, encryptedLockbox: $selectedEncryptedLockbox, viewStyle: .decrypt)
         }
+        .sheet(isPresented: $showKeysView) {
+            LockerRoomKeysView(showView: $showKeysView, viewStyle: .main)
+        }
     }
 }
 
 #Preview {
-    LockerRoomListView()
+    LockerRoomLockboxesView()
 }

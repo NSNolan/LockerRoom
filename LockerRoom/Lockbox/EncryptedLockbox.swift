@@ -19,7 +19,7 @@ class EncryptedLockbox {
     
     func create(encryptedContent: Data, encryptedSymmetricKey: Data) -> Bool {
         self.encryptedContent = encryptedContent
-        if self.encryptedContent == encryptedContent { // TODO: this seems a wee bit inefficient
+        if self.encryptedContent == encryptedContent { // TODO: This is a wee bit inefficient
             self.encryptedSymmetricKey = encryptedSymmetricKey
             if self.encryptedSymmetricKey == encryptedSymmetricKey {
                 return true

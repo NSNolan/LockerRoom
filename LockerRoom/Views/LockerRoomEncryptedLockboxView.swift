@@ -21,11 +21,12 @@ struct LockerRoomEncryptedLockboxView: View {
             
     var body: some View {
         VStack {
-            if viewStyle == .decrypt {
+            switch viewStyle {
+            case .decrypt:
                 LockerRoomEncryptedLockboxDecryptView(showView: $showView, encryptedLockbox: $encryptedLockbox, viewStyle: $viewStyle)
-            } else if viewStyle == .waitingForKey {
+            case .waitingForKey:
                 LockerRoomEncryptedLockboxWaitingForKeyView(showView: $showView, encryptedLockbox: $encryptedLockbox, viewStyle: $viewStyle)
-            } else if viewStyle == .decrypting {
+            case .decrypting:
                 LockerRoomEncryptedLockboxDecryptingView(showView: $showView, encryptedLockbox: $encryptedLockbox)
             }
         }
@@ -103,8 +104,7 @@ struct LockerRoomEncryptedLockboxDecryptView: View {
             }
             print("[Default] LockerRoom decrypted an encrypted lockbox \(name)")
             
-            // TODO: Encrypted lockbox is removed before unencrypted lockbox is added. Could lead to data loss.
-            guard lockboxManager.removeEncryptedLockbox(name: name) else {
+            guard lockboxManager.removeEncryptedLockbox(name: name) else { // TODO: Encrypted lockbox is removed before unencrypted lockbox is added. May cause data loss.
                 print("[Error] LockerRoom failed to remove an encrypted lockbox \(name)")
                 return
             }

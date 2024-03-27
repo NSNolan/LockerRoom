@@ -10,8 +10,8 @@ import SwiftUI
 enum LockerRoomUnencryptedLockboxViewStyle {
     case add
     case encrypt
-    case encrypting
     case waitingForKey
+    case encrypting
 }
 
 class LockerRoomUnencryptedLockboxConfiguration: ObservableObject {
@@ -27,13 +27,14 @@ struct LockerRoomUnencryptedLockboxView: View {
     
     var body: some View {
         VStack {
-            if viewStyle == .add {
+            switch viewStyle {
+            case .add:
                 LockerRoomUnencryptedLockboxAddView(showView: $showView, unencryptedLockbox: $unencryptedLockbox, viewStyle: $viewStyle)
-            } else if viewStyle == .encrypt {
+            case .encrypt:
                 LockerRoomUnencryptedLockboxEncryptView(showView: $showView, unencryptedLockbox: $unencryptedLockbox, viewStyle: $viewStyle)
-            } else if viewStyle == .waitingForKey {
+            case .waitingForKey:
                 LockerRoomUnencryptedLockboxWaitingForKeyView(showView: $showView, unencryptedLockbox: $unencryptedLockbox, viewStyle: $viewStyle)
-            } else if viewStyle == .encrypting {
+            case .encrypting:
                 LockerRoomUnencryptedLockboxEncryptingView(showView: $showView, unencryptedLockbox: $unencryptedLockbox)
             }
         }
@@ -47,12 +48,12 @@ struct LockerRoomUnencryptedLockboxAddView: View {
     @Binding var unencryptedLockbox: UnencryptedLockbox?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     
-    @ObservedObject var unencryptedLockboxConfiguration: LockerRoomUnencryptedLockboxConfiguration = LockerRoomUnencryptedLockboxConfiguration()
+    @ObservedObject var unencryptedLockboxConfiguration = LockerRoomUnencryptedLockboxConfiguration()
     
     let lockboxManager = LockboxManager.shared
     
     var body: some View {
-        Text("Create a new Lockbox")
+        Text("Create a New Lockbox")
             .padding()
         
         VStack {
@@ -60,7 +61,7 @@ struct LockerRoomUnencryptedLockboxAddView: View {
                 Text("Name")
                 Spacer()
             }
-            TextField("Name", text: $unencryptedLockboxConfiguration.name)
+            TextField("", text: $unencryptedLockboxConfiguration.name)
         }
         .padding()
         
@@ -69,7 +70,7 @@ struct LockerRoomUnencryptedLockboxAddView: View {
                 Text("Size (MB)")
                 Spacer()
             }
-            TextField("Size (MB)", value: $unencryptedLockboxConfiguration.size, format: .number)
+            TextField("", value: $unencryptedLockboxConfiguration.size, format: .number)
         }
         .padding()
         
@@ -91,7 +92,7 @@ struct LockerRoomUnencryptedLockboxAddView: View {
                     return
                 }
                 
-                guard let unencryptedLockbox = lockboxManager.addUnencryptedLockbox(name: name, size: size) else { // TODO: Maybe revert to assignment
+                guard let unencryptedLockbox = lockboxManager.addUnencryptedLockbox(name: name, size: size) else {
                     print("[Error] LockerRoom failed to create a new unencrypted lockbox \(name) of size \(size)MB")
                     showView = false
                     return
@@ -100,7 +101,7 @@ struct LockerRoomUnencryptedLockboxAddView: View {
                 self.unencryptedLockbox = unencryptedLockbox
                 viewStyle = .encrypt
             }
-            .buttonStyle(.borderedProminent) // Customizable style
+            .buttonStyle(.borderedProminent)
             .tint(.blue)
                         
             Button("Close") {
@@ -183,8 +184,7 @@ struct LockerRoomUnencryptedLockboxEncryptView: View {
             }
             print("[Default] LockerRoom encrypted an unencrypted lockbox \(name)")
             
-            // TODO: Unencrypted lockbox is removed before encrypted lockbox is added. Could lead to data loss.
-            guard lockboxManager.removeUnencryptedLockbox(name: name) else {
+            guard lockboxManager.removeUnencryptedLockbox(name: name) else { // TODO: Unencrypted lockbox is removed before encrypted lockbox is added. May cause data loss.
                 print("[Error] LockerRoom failed to removed an unencrypted lockbox \(name)")
                 return
             }

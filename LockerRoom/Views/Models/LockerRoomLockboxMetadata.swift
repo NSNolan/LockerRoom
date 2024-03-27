@@ -1,5 +1,5 @@
 //
-//  LockerRoomLockboxes.swift
+//  LockerRoomLockboxMetadata.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 3/26/24.

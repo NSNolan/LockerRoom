@@ -9,38 +9,25 @@ import Foundation
 
 class UnencryptedLockbox {
     let name: String
-    let exists: Bool
+    let existingData: Data?
     
     internal let lockboxStore: LockboxStoring
     
-    init(name: String, exists: Bool = false, lockboxStore: LockboxStoring) {
+    init(name: String, existingData: Data? = nil, lockboxStore: LockboxStoring) {
         self.name = name
-        self.exists = exists
+        self.existingData = existingData
         self.lockboxStore = lockboxStore
     }
     
-    var unencryptedContentURL: URL? {
-        guard !name.isEmpty else {
-            print("[Error] Unencrypted lockbox failed to return an unencrypted content URL without a name")
-            return nil
-        }
-        
-        return lockboxStore.lockboxURLProvider.urlForLockboxFile(name: name, type: .unencryptedContentFileType)
-    }
-    
-    func create(withSize size: Int, orExistingData data: Data? = nil) -> Bool {
-        if let data {
-            guard lockboxStore.writeToLockbox(data: data, name: name, fileType: .unencryptedContentFileType) else {
-                print("[Error] Unencrypted lockbox failed to add \(name) from data \(data)")
+    func create(size: Int) -> Bool {
+        if let existingData {
+            print("[Default] Unencrypted lockbox is ignoring create size in favor or existing data")
+            guard lockboxStore.writeToLockbox(data: existingData, name: name, fileType: .unencryptedContentFileType) else {
+                print("[Error] Unencrypted lockbox failed to add \(name) from data \(existingData)")
                 return false
             }
             
             return attachDiskImage()
-        }
-        
-        guard !self.exists else {
-            print("[Error] Unencrypted lockbox \(name) already exists")
-            return false
         }
         
         guard lockboxStore.addLockbox(name: name) else {
@@ -168,30 +155,4 @@ class UnencryptedLockbox {
         }
         return true
     }
-    
-//    private func openVolume() -> Bool {
-//        let mountedVolumeURL = lockboxStore.lockboxURLProvider.urlForMountedVolume(name: name)
-//        let mountedVolumePath = mountedVolumeURL.path()
-//        
-//        let process = Process()
-//        process.launchPath = "/usr/bin/osascript"
-//        process.arguments = [
-//            "-e", "tell application \"Finder\" to open POSIX file \"\(mountedVolumePath)\""
-//        ]
-//
-//        do {
-//            try process.run()
-//            process.waitUntilExit()
-//            
-//            let status = process.terminationStatus
-//            if status != 0 {
-//                print("[Error] Unencrypted lockbox \(name) failed to open mounted volume at path \(mountedVolumePath) with status \(status)")
-//                return false
-//            }
-//        } catch {
-//            print("[Error] Unencrypted lockbox \(name) failed to open mounted volume at path \(mountedVolumePath) with error \(error)")
-//            return false
-//        }
-//        return true
-//    }
 }
