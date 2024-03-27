@@ -8,7 +8,7 @@
 import Foundation
 
 protocol LockboxStoring {
-    var lockboxURLProvider: LockboxURLProviding { get }
+    var lockerRoomURLProvider: LockerRoomURLProviding { get }
     
     func addLockbox(name: String) -> Bool
     func removeLockbox(name: String) -> Bool
@@ -27,16 +27,16 @@ protocol LockboxStoring {
 struct LockboxStore: LockboxStoring {
     private let fileManager = FileManager.default
     
-    internal var lockboxURLProvider: LockboxURLProviding
+    internal var lockerRoomURLProvider: LockerRoomURLProviding
     
     static let shared = LockboxStore()
     
-    private init(lockboxURLProvider: LockboxURLProviding = LockboxURLProvider()) {
-        self.lockboxURLProvider = lockboxURLProvider
+    private init(lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()) {
+        self.lockerRoomURLProvider = lockerRoomURLProvider
     }
     
     func addLockbox(name: String) -> Bool {
-        let lockboxURL = lockboxURLProvider.urlForLockbox(name: name)
+        let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
         let lockboxPath = lockboxURL.path()
         
         do {
@@ -49,7 +49,7 @@ struct LockboxStore: LockboxStoring {
     }
     
     func removeLockbox(name: String) -> Bool {
-        let lockboxURL = lockboxURLProvider.urlForLockbox(name: name)
+        let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
         let lockboxPath = lockboxURL.path()
         
         do {
@@ -62,7 +62,7 @@ struct LockboxStore: LockboxStoring {
     }
     
     func readFromLockbox(name: String, fileType: LockboxFileType) -> Data? {
-        let lockboxURL = lockboxURLProvider.urlForLockbox(name: name)
+        let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
         let lockboxPath = lockboxURL.path()
         
         guard fileManager.fileExists(atPath: lockboxPath) else {
@@ -70,7 +70,7 @@ struct LockboxStore: LockboxStoring {
             return nil
         }
         
-        let lockboxFileURL = lockboxURLProvider.urlForLockboxFile(name: name, type: fileType)
+        let lockboxFileURL = lockerRoomURLProvider.urlForLockboxFile(name: name, type: fileType)
         let lockboxFilePath = lockboxFileURL.path()
         
         guard fileManager.fileExists(atPath: lockboxFilePath) else {
@@ -87,7 +87,7 @@ struct LockboxStore: LockboxStoring {
     }
     
     func writeToLockbox(data: Data?, name: String, fileType: LockboxFileType) -> Bool {
-        let lockboxFileURL = lockboxURLProvider.urlForLockboxFile(name: name, type: fileType)
+        let lockboxFileURL = lockerRoomURLProvider.urlForLockboxFile(name: name, type: fileType)
         let lockboxFilePath = lockboxFileURL.path()
         
         guard let data else {
@@ -100,7 +100,7 @@ struct LockboxStore: LockboxStoring {
             }
         }
         
-        let lockboxURL = lockboxURLProvider.urlForLockbox(name: name)
+        let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
         let lockboxPath = lockboxURL.path()
         
         if !fileManager.fileExists(atPath: lockboxPath) {
@@ -122,19 +122,19 @@ struct LockboxStore: LockboxStoring {
     }
     
     func lockboxExists(name: String) -> Bool {
-        let lockboxURL = lockboxURLProvider.urlForLockbox(name: name)
+        let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
         let lockboxPath = lockboxURL.path()
         return fileManager.fileExists(atPath: lockboxPath)
     }
     
     func lockboxFileExists(name: String, fileType: LockboxFileType) -> Bool {
-        let lockboxFileURL = lockboxURLProvider.urlForLockboxFile(name: name, type: fileType)
+        let lockboxFileURL = lockerRoomURLProvider.urlForLockboxFile(name: name, type: fileType)
         let lockboxFilePath = lockboxFileURL.path()
         return fileManager.fileExists(atPath: lockboxFilePath)
     }
     
     func allLockboxURLs() -> [URL] {
-        let lockboxesURL = lockboxURLProvider.urlForLockboxes
+        let lockboxesURL = lockerRoomURLProvider.urlForLockboxes
         do {
             let lockboxURLS = try fileManager.contentsOfDirectory(at: lockboxesURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]).filter { lockboxURL in
                 var isDirectory: ObjCBool = false
@@ -153,7 +153,7 @@ struct LockboxStore: LockboxStoring {
     }
     
     func lockboxSize(name: String, fileType: LockboxFileType) -> Int {
-        let lockboxURL = lockboxURLProvider.urlForLockbox(name: name)
+        let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
         let lockboxPath = lockboxURL.path()
         do {
             let fileAttributes = try fileManager.attributesOfItem(atPath: lockboxPath)
@@ -170,7 +170,7 @@ struct LockboxStore: LockboxStoring {
     }
     
     func lockboxFileSize(name: String, fileType: LockboxFileType) -> Int {
-        let lockboxFileURL = lockboxURLProvider.urlForLockboxFile(name: name, type: fileType)
+        let lockboxFileURL = lockerRoomURLProvider.urlForLockboxFile(name: name, type: fileType)
         let lockboxFilePath = lockboxFileURL.path()
         do {
             let fileAttributes = try fileManager.attributesOfItem(atPath: lockboxFilePath)

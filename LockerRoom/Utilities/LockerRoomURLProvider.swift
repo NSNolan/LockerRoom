@@ -1,5 +1,5 @@
 //
-//  LockboxURLProvider.swift
+//  LockerRoomURLProvider.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 3/25/24.
@@ -13,7 +13,7 @@ enum LockboxFileType: String {
     case unencryptedContentFileType = "UnencryptedContent.dmg"
 }
 
-protocol LockboxURLProviding {
+protocol LockerRoomURLProviding {
     var rootURL: URL { get }
     var urlForLockboxes: URL { get }
     func urlForLockbox(name: String) -> URL
@@ -21,7 +21,7 @@ protocol LockboxURLProviding {
     func urlForMountedVolume(name: String) -> URL
 }
 
-struct LockboxURLProvider: LockboxURLProviding {
+struct LockerRoomURLProvider: LockerRoomURLProviding {
     internal var rootURL: URL
     private let fileManager = FileManager.default
         

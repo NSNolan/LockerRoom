@@ -35,7 +35,7 @@ class UnencryptedLockbox {
             return false
         }
         
-        let lockboxUnencryptedContentURL = lockboxStore.lockboxURLProvider.urlForLockboxFile(name: name, type: .unencryptedContentFileType)
+        let lockboxUnencryptedContentURL = lockboxStore.lockerRoomURLProvider.urlForLockboxFile(name: name, type: .unencryptedContentFileType)
         let lockboxUnencryptedContentPath = lockboxUnencryptedContentURL.path()
         
         let process = Process()
@@ -101,7 +101,7 @@ class UnencryptedLockbox {
     }
     
     func attachDiskImage() -> Bool {
-        let lockboxUnencryptedContentURL = lockboxStore.lockboxURLProvider.urlForLockboxFile(name: name, type: .unencryptedContentFileType)
+        let lockboxUnencryptedContentURL = lockboxStore.lockerRoomURLProvider.urlForLockboxFile(name: name, type: .unencryptedContentFileType)
         let lockboxUnencryptedContentPath = lockboxUnencryptedContentURL.path()
         
         let process = Process()
@@ -131,7 +131,7 @@ class UnencryptedLockbox {
     }
     
     func detachDiskImage() -> Bool {
-        let mountedVolumeURL = lockboxStore.lockboxURLProvider.urlForMountedVolume(name: name)
+        let mountedVolumeURL = lockboxStore.lockerRoomURLProvider.urlForMountedVolume(name: name)
         let mountedVolumePath = mountedVolumeURL.path()
         
         let process = Process()
