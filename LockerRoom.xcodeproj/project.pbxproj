@@ -1,0 +1,717 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BF1DD0432BAC99BF001FA81F /* LockerRoomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0422BAC99BF001FA81F /* LockerRoomApp.swift */; };
+		BF1DD0472BAC99C0001FA81F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF1DD0462BAC99C0001FA81F /* Assets.xcassets */; };
+		BF1DD04B2BAC99C0001FA81F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF1DD04A2BAC99C0001FA81F /* Preview Assets.xcassets */; };
+		BF1DD0552BAC99C0001FA81F /* LockerRoomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0542BAC99C0001FA81F /* LockerRoomTests.swift */; };
+		BF1DD05F2BAC99C0001FA81F /* LockerRoomUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD05E2BAC99C0001FA81F /* LockerRoomUITests.swift */; };
+		BF1DD0612BAC99C0001FA81F /* LockerRoomUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0602BAC99C0001FA81F /* LockerRoomUITestsLaunchTests.swift */; };
+		BF1DD0702BAC9B88001FA81F /* YubiKit in Frameworks */ = {isa = PBXBuildFile; productRef = BF1DD06F2BAC9B88001FA81F /* YubiKit */; };
+		BF1DD0722BACAB48001FA81F /* LockboxKeyCryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0712BACAB48001FA81F /* LockboxKeyCryptor.swift */; };
+		BF1DD0742BAF4D48001FA81F /* LockerRoomListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0732BAF4D48001FA81F /* LockerRoomListView.swift */; };
+		BF1DD0762BAF5DCB001FA81F /* LockboxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0752BAF5DCB001FA81F /* LockboxManager.swift */; };
+		BF1DD0852BAF88DA001FA81F /* EncryptedLockbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0842BAF88DA001FA81F /* EncryptedLockbox.swift */; };
+		BF1DD0882BAF91BF001FA81F /* LockerRoomUnencryptedLockboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0872BAF91BF001FA81F /* LockerRoomUnencryptedLockboxView.swift */; };
+		BF1DD08A2BAF94F7001FA81F /* UnencryptedLockbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0892BAF94F7001FA81F /* UnencryptedLockbox.swift */; };
+		BF1DD08D2BAFD2A1001FA81F /* LockboxCryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD08C2BAFD2A1001FA81F /* LockboxCryptor.swift */; };
+		BF1DD08F2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD08E2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift */; };
+		BF1DD0912BB1C823001FA81F /* LockboxStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0902BB1C823001FA81F /* LockboxStore.swift */; };
+		BF1DD0952BB1CAB9001FA81F /* LockboxURLProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0942BB1CAB9001FA81F /* LockboxURLProvider.swift */; };
+		BF1DD0992BB3035E001FA81F /* LockerRoomLockboxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0982BB3035E001FA81F /* LockerRoomLockboxes.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BF1DD0512BAC99C0001FA81F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF1DD0372BAC99BF001FA81F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BF1DD03E2BAC99BF001FA81F;
+			remoteInfo = LockerRoom;
+		};
+		BF1DD05B2BAC99C0001FA81F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF1DD0372BAC99BF001FA81F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BF1DD03E2BAC99BF001FA81F;
+			remoteInfo = LockerRoom;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		BF1DD03F2BAC99BF001FA81F /* LockerRoom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LockerRoom.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF1DD0422BAC99BF001FA81F /* LockerRoomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomApp.swift; sourceTree = "<group>"; };
+		BF1DD0462BAC99C0001FA81F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BF1DD0482BAC99C0001FA81F /* LockerRoom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LockerRoom.entitlements; sourceTree = "<group>"; };
+		BF1DD04A2BAC99C0001FA81F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		BF1DD0502BAC99C0001FA81F /* LockerRoomTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LockerRoomTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF1DD0542BAC99C0001FA81F /* LockerRoomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomTests.swift; sourceTree = "<group>"; };
+		BF1DD05A2BAC99C0001FA81F /* LockerRoomUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LockerRoomUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF1DD05E2BAC99C0001FA81F /* LockerRoomUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomUITests.swift; sourceTree = "<group>"; };
+		BF1DD0602BAC99C0001FA81F /* LockerRoomUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		BF1DD0712BACAB48001FA81F /* LockboxKeyCryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxKeyCryptor.swift; sourceTree = "<group>"; };
+		BF1DD0732BAF4D48001FA81F /* LockerRoomListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomListView.swift; sourceTree = "<group>"; };
+		BF1DD0752BAF5DCB001FA81F /* LockboxManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxManager.swift; sourceTree = "<group>"; };
+		BF1DD0842BAF88DA001FA81F /* EncryptedLockbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptedLockbox.swift; sourceTree = "<group>"; };
+		BF1DD0872BAF91BF001FA81F /* LockerRoomUnencryptedLockboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomUnencryptedLockboxView.swift; sourceTree = "<group>"; };
+		BF1DD0892BAF94F7001FA81F /* UnencryptedLockbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnencryptedLockbox.swift; sourceTree = "<group>"; };
+		BF1DD08C2BAFD2A1001FA81F /* LockboxCryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxCryptor.swift; sourceTree = "<group>"; };
+		BF1DD08E2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomEncryptedLockboxView.swift; sourceTree = "<group>"; };
+		BF1DD0902BB1C823001FA81F /* LockboxStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxStore.swift; sourceTree = "<group>"; };
+		BF1DD0942BB1CAB9001FA81F /* LockboxURLProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxURLProvider.swift; sourceTree = "<group>"; };
+		BF1DD0982BB3035E001FA81F /* LockerRoomLockboxes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockboxes.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BF1DD03C2BAC99BF001FA81F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF1DD0702BAC9B88001FA81F /* YubiKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF1DD04D2BAC99C0001FA81F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF1DD0572BAC99C0001FA81F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BF1DD0362BAC99BF001FA81F = {
+			isa = PBXGroup;
+			children = (
+				BF1DD0412BAC99BF001FA81F /* LockerRoom */,
+				BF1DD0532BAC99C0001FA81F /* LockerRoomTests */,
+				BF1DD05D2BAC99C0001FA81F /* LockerRoomUITests */,
+				BF1DD0402BAC99BF001FA81F /* Products */,
+				BF1DD06E2BAC9B88001FA81F /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		BF1DD0402BAC99BF001FA81F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DD03F2BAC99BF001FA81F /* LockerRoom.app */,
+				BF1DD0502BAC99C0001FA81F /* LockerRoomTests.xctest */,
+				BF1DD05A2BAC99C0001FA81F /* LockerRoomUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BF1DD0412BAC99BF001FA81F /* LockerRoom */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DD0422BAC99BF001FA81F /* LockerRoomApp.swift */,
+				BF1DD0932BB1C850001FA81F /* Views */,
+				BF1DD0922BB1C82C001FA81F /* Lockbox */,
+				BF1DD0962BB1FAC1001FA81F /* Cryptors */,
+				BF1DD0462BAC99C0001FA81F /* Assets.xcassets */,
+				BF1DD0482BAC99C0001FA81F /* LockerRoom.entitlements */,
+				BF1DD0492BAC99C0001FA81F /* Preview Content */,
+			);
+			path = LockerRoom;
+			sourceTree = "<group>";
+		};
+		BF1DD0492BAC99C0001FA81F /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DD04A2BAC99C0001FA81F /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		BF1DD0532BAC99C0001FA81F /* LockerRoomTests */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DD0542BAC99C0001FA81F /* LockerRoomTests.swift */,
+			);
+			path = LockerRoomTests;
+			sourceTree = "<group>";
+		};
+		BF1DD05D2BAC99C0001FA81F /* LockerRoomUITests */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DD05E2BAC99C0001FA81F /* LockerRoomUITests.swift */,
+				BF1DD0602BAC99C0001FA81F /* LockerRoomUITestsLaunchTests.swift */,
+			);
+			path = LockerRoomUITests;
+			sourceTree = "<group>";
+		};
+		BF1DD06E2BAC9B88001FA81F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BF1DD0922BB1C82C001FA81F /* Lockbox */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DD0752BAF5DCB001FA81F /* LockboxManager.swift */,
+				BF1DD0902BB1C823001FA81F /* LockboxStore.swift */,
+				BF1DD0942BB1CAB9001FA81F /* LockboxURLProvider.swift */,
+				BF1DD0842BAF88DA001FA81F /* EncryptedLockbox.swift */,
+				BF1DD0892BAF94F7001FA81F /* UnencryptedLockbox.swift */,
+			);
+			path = Lockbox;
+			sourceTree = "<group>";
+		};
+		BF1DD0932BB1C850001FA81F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DD0972BB30339001FA81F /* Models */,
+				BF1DD0732BAF4D48001FA81F /* LockerRoomListView.swift */,
+				BF1DD0872BAF91BF001FA81F /* LockerRoomUnencryptedLockboxView.swift */,
+				BF1DD08E2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BF1DD0962BB1FAC1001FA81F /* Cryptors */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DD08C2BAFD2A1001FA81F /* LockboxCryptor.swift */,
+				BF1DD0712BACAB48001FA81F /* LockboxKeyCryptor.swift */,
+			);
+			path = Cryptors;
+			sourceTree = "<group>";
+		};
+		BF1DD0972BB30339001FA81F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BF1DD0982BB3035E001FA81F /* LockerRoomLockboxes.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BF1DD03E2BAC99BF001FA81F /* LockerRoom */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BF1DD0642BAC99C0001FA81F /* Build configuration list for PBXNativeTarget "LockerRoom" */;
+			buildPhases = (
+				BF1DD03B2BAC99BF001FA81F /* Sources */,
+				BF1DD03C2BAC99BF001FA81F /* Frameworks */,
+				BF1DD03D2BAC99BF001FA81F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LockerRoom;
+			packageProductDependencies = (
+				BF1DD06F2BAC9B88001FA81F /* YubiKit */,
+			);
+			productName = LockerRoom;
+			productReference = BF1DD03F2BAC99BF001FA81F /* LockerRoom.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BF1DD04F2BAC99C0001FA81F /* LockerRoomTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BF1DD0672BAC99C0001FA81F /* Build configuration list for PBXNativeTarget "LockerRoomTests" */;
+			buildPhases = (
+				BF1DD04C2BAC99C0001FA81F /* Sources */,
+				BF1DD04D2BAC99C0001FA81F /* Frameworks */,
+				BF1DD04E2BAC99C0001FA81F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BF1DD0522BAC99C0001FA81F /* PBXTargetDependency */,
+			);
+			name = LockerRoomTests;
+			productName = LockerRoomTests;
+			productReference = BF1DD0502BAC99C0001FA81F /* LockerRoomTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BF1DD0592BAC99C0001FA81F /* LockerRoomUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BF1DD06A2BAC99C0001FA81F /* Build configuration list for PBXNativeTarget "LockerRoomUITests" */;
+			buildPhases = (
+				BF1DD0562BAC99C0001FA81F /* Sources */,
+				BF1DD0572BAC99C0001FA81F /* Frameworks */,
+				BF1DD0582BAC99C0001FA81F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BF1DD05C2BAC99C0001FA81F /* PBXTargetDependency */,
+			);
+			name = LockerRoomUITests;
+			productName = LockerRoomUITests;
+			productReference = BF1DD05A2BAC99C0001FA81F /* LockerRoomUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BF1DD0372BAC99BF001FA81F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1530;
+				LastUpgradeCheck = 1530;
+				TargetAttributes = {
+					BF1DD03E2BAC99BF001FA81F = {
+						CreatedOnToolsVersion = 15.3;
+					};
+					BF1DD04F2BAC99C0001FA81F = {
+						CreatedOnToolsVersion = 15.3;
+						TestTargetID = BF1DD03E2BAC99BF001FA81F;
+					};
+					BF1DD0592BAC99C0001FA81F = {
+						CreatedOnToolsVersion = 15.3;
+						TestTargetID = BF1DD03E2BAC99BF001FA81F;
+					};
+				};
+			};
+			buildConfigurationList = BF1DD03A2BAC99BF001FA81F /* Build configuration list for PBXProject "LockerRoom" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = BF1DD0362BAC99BF001FA81F;
+			packageReferences = (
+				BF1DD06D2BAC9AB8001FA81F /* XCRemoteSwiftPackageReference "yubikit-swift" */,
+			);
+			productRefGroup = BF1DD0402BAC99BF001FA81F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BF1DD03E2BAC99BF001FA81F /* LockerRoom */,
+				BF1DD04F2BAC99C0001FA81F /* LockerRoomTests */,
+				BF1DD0592BAC99C0001FA81F /* LockerRoomUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BF1DD03D2BAC99BF001FA81F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF1DD04B2BAC99C0001FA81F /* Preview Assets.xcassets in Resources */,
+				BF1DD0472BAC99C0001FA81F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF1DD04E2BAC99C0001FA81F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF1DD0582BAC99C0001FA81F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BF1DD03B2BAC99BF001FA81F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF1DD0952BB1CAB9001FA81F /* LockboxURLProvider.swift in Sources */,
+				BF1DD0742BAF4D48001FA81F /* LockerRoomListView.swift in Sources */,
+				BF1DD0992BB3035E001FA81F /* LockerRoomLockboxes.swift in Sources */,
+				BF1DD0852BAF88DA001FA81F /* EncryptedLockbox.swift in Sources */,
+				BF1DD0432BAC99BF001FA81F /* LockerRoomApp.swift in Sources */,
+				BF1DD08A2BAF94F7001FA81F /* UnencryptedLockbox.swift in Sources */,
+				BF1DD0912BB1C823001FA81F /* LockboxStore.swift in Sources */,
+				BF1DD08F2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift in Sources */,
+				BF1DD08D2BAFD2A1001FA81F /* LockboxCryptor.swift in Sources */,
+				BF1DD0762BAF5DCB001FA81F /* LockboxManager.swift in Sources */,
+				BF1DD0722BACAB48001FA81F /* LockboxKeyCryptor.swift in Sources */,
+				BF1DD0882BAF91BF001FA81F /* LockerRoomUnencryptedLockboxView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF1DD04C2BAC99C0001FA81F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF1DD0552BAC99C0001FA81F /* LockerRoomTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BF1DD0562BAC99C0001FA81F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF1DD05F2BAC99C0001FA81F /* LockerRoomUITests.swift in Sources */,
+				BF1DD0612BAC99C0001FA81F /* LockerRoomUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BF1DD0522BAC99C0001FA81F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BF1DD03E2BAC99BF001FA81F /* LockerRoom */;
+			targetProxy = BF1DD0512BAC99C0001FA81F /* PBXContainerItemProxy */;
+		};
+		BF1DD05C2BAC99C0001FA81F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BF1DD03E2BAC99BF001FA81F /* LockerRoom */;
+			targetProxy = BF1DD05B2BAC99C0001FA81F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		BF1DD0622BAC99C0001FA81F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		BF1DD0632BAC99C0001FA81F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		BF1DD0652BAC99C0001FA81F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = LockerRoom/LockerRoom.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"LockerRoom/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nastrein.LockerRoom;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BF1DD0662BAC99C0001FA81F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = LockerRoom/LockerRoom.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"LockerRoom/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nastrein.LockerRoom;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BF1DD0682BAC99C0001FA81F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nastrein.LockerRoomTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LockerRoom.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LockerRoom";
+			};
+			name = Debug;
+		};
+		BF1DD0692BAC99C0001FA81F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nastrein.LockerRoomTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LockerRoom.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LockerRoom";
+			};
+			name = Release;
+		};
+		BF1DD06B2BAC99C0001FA81F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nastrein.LockerRoomUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LockerRoom;
+			};
+			name = Debug;
+		};
+		BF1DD06C2BAC99C0001FA81F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nastrein.LockerRoomUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LockerRoom;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BF1DD03A2BAC99BF001FA81F /* Build configuration list for PBXProject "LockerRoom" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF1DD0622BAC99C0001FA81F /* Debug */,
+				BF1DD0632BAC99C0001FA81F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BF1DD0642BAC99C0001FA81F /* Build configuration list for PBXNativeTarget "LockerRoom" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF1DD0652BAC99C0001FA81F /* Debug */,
+				BF1DD0662BAC99C0001FA81F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BF1DD0672BAC99C0001FA81F /* Build configuration list for PBXNativeTarget "LockerRoomTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF1DD0682BAC99C0001FA81F /* Debug */,
+				BF1DD0692BAC99C0001FA81F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BF1DD06A2BAC99C0001FA81F /* Build configuration list for PBXNativeTarget "LockerRoomUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF1DD06B2BAC99C0001FA81F /* Debug */,
+				BF1DD06C2BAC99C0001FA81F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BF1DD06D2BAC9AB8001FA81F /* XCRemoteSwiftPackageReference "yubikit-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Yubico/yubikit-swift/";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BF1DD06F2BAC9B88001FA81F /* YubiKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BF1DD06D2BAC9AB8001FA81F /* XCRemoteSwiftPackageReference "yubikit-swift" */;
+			productName = YubiKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = BF1DD0372BAC99BF001FA81F /* Project object */;
+}
