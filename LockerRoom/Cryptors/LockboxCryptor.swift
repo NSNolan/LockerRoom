@@ -12,7 +12,8 @@ import CryptoKit
 struct LockboxCryptor {
     static func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
-        guard let unencryptedContent = lockbox.unecryptedContent else {
+        let unencryptedContent = lockbox.unencryptedContent
+        guard !unencryptedContent.isEmpty else {
             print("[Error] Lockbox cryptor failed to read unencrypted lockbox content")
             return nil
         }
@@ -33,7 +34,8 @@ struct LockboxCryptor {
 
     static func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
-        guard let encryptedContent = lockbox.encryptedContent else {
+        let encryptedContent = lockbox.encryptedContent
+        guard !encryptedContent.isEmpty else {
             print("[Error] Lockbox cryptor failed to read encrypted lockbox content")
             return nil
         }

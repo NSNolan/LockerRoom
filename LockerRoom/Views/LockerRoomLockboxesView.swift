@@ -104,10 +104,10 @@ struct LockerRoomLockboxesView: View {
         if let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) { // TODO: Is this really the best way to get the row I just selected in this callback...
             let lockboxStore = lockboxManager.lockboxStore
             if metadata.isEncrypted {
-                selectedEncryptedLockbox = EncryptedLockbox(name: metadata.name, lockboxStore: lockboxStore)
+                selectedEncryptedLockbox = EncryptedLockbox.create(from: metadata, lockboxStore: lockboxStore)
                 showEncryptedLockboxView = true
             } else {
-                selectedUnencryptedLockbox = UnencryptedLockbox(name: metadata.name, lockboxStore: lockboxStore) // TODO: Consider how to indicate this unecrypted lockbox already exists
+                selectedUnencryptedLockbox = UnencryptedLockbox.create(from: metadata, lockboxStore: lockboxStore)
                 showUnencryptedLockboxView = true
             }
         }

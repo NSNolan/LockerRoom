@@ -83,8 +83,9 @@ struct LockerRoomEncryptedLockboxDecryptView: View {
         }
         
         let name = encryptedLockbox.name
+        let encryptedSymmetricKey = encryptedLockbox.encryptedSymmetricKey
         
-        guard let encryptedSymmetricKey = encryptedLockbox.encryptedSymmetricKey else {
+        guard !encryptedSymmetricKey.isEmpty else {
             print("[Error] LockerRoom is missing an encrypted symmetric to decrypt")
             return
         }
