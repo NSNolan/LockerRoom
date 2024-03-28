@@ -7,10 +7,17 @@
 
 import SwiftUI
 
+enum LockerRoomLockboxesViewStyle: String, CaseIterable {
+    case lockboxes = "Lockboxes"
+    case keys = "Keys"
+}
+
 struct LockerRoomLockboxesView: View {
     @ObservedObject var lockboxManager = LockboxManager.shared
     
     @State private var lockboxMetadatas = [LockerRoomLockboxMetadata]()
+    
+    @State private var viewStyle: LockerRoomLockboxesViewStyle = .lockboxes
     
     @State private var showUnencryptedLockboxAddView = false
     @State private var showUnencryptedLockboxView = false
@@ -43,16 +50,7 @@ struct LockerRoomLockboxesView: View {
             .contextMenu(forSelectionType: LockerRoomLockboxMetadata.ID.self) { metadataIDs in
                 // None
             } primaryAction: { metadataIDs in
-                if let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) { // TODO: Is this really the best way to get the row I just selected in this callback...
-                    let lockboxStore = lockboxManager.lockboxStore
-                    if metadata.isEncrypted {
-                        selectedEncryptedLockbox = EncryptedLockbox(name: metadata.name, lockboxStore: lockboxStore)
-                        showEncryptedLockboxView = true
-                    } else {
-                        selectedUnencryptedLockbox = UnencryptedLockbox(name: metadata.name, lockboxStore: lockboxStore) // TODO: Consider how to indicate this unecrypted lockbox already exists
-                        showUnencryptedLockboxView = true
-                    }
-                }
+                selectLockbox(fromMetadataIDs: metadataIDs)
             }
             
             HStack {
@@ -92,6 +90,26 @@ struct LockerRoomLockboxesView: View {
         }
         .sheet(isPresented: $showKeysView) {
             LockerRoomKeysView(showView: $showKeysView, viewStyle: .main)
+        }
+//        .toolbar {
+//            Picker("", selection: $viewStyle) {
+//                ForEach(LockerRoomKeysViewStyle.allCases) { option in
+//                    Text(option.rawValue).tag(option)
+//                }
+//            }
+//        }
+    }
+    
+    private func selectLockbox(fromMetadataIDs metadataIDs: Set<LockerRoomLockboxMetadata.ID>) {
+        if let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) { // TODO: Is this really the best way to get the row I just selected in this callback...
+            let lockboxStore = lockboxManager.lockboxStore
+            if metadata.isEncrypted {
+                selectedEncryptedLockbox = EncryptedLockbox(name: metadata.name, lockboxStore: lockboxStore)
+                showEncryptedLockboxView = true
+            } else {
+                selectedUnencryptedLockbox = UnencryptedLockbox(name: metadata.name, lockboxStore: lockboxStore) // TODO: Consider how to indicate this unecrypted lockbox already exists
+                showUnencryptedLockboxView = true
+            }
         }
     }
 }

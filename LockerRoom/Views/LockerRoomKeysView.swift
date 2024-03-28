@@ -19,6 +19,7 @@ class LockerRoomKeyConfiguration: ObservableObject {
     @Published var algorithm = LockerRoom.LockerRoomKeyMetadata.Algorithm.RSA2048
     @Published var pinPolicy = LockerRoom.LockerRoomKeyMetadata.PinPolicy.never
     @Published var touchPolicy = LockerRoom.LockerRoomKeyMetadata.TouchPolicy.never
+    @Published var managementKeyString = "c4b4b9040f8e950063b8cbd21a972827d6f520b76d665ff2dad1e2703c7d63a8" // TODO: Update to default management key 010203040506070801020304050607080102030405060708
 }
 
 struct LockerRoomKeysView: View {
@@ -63,7 +64,7 @@ struct LockerRoomEnrollKeyView: View {
     
     var body: some View {
         Text("Enroll a New Key")
-            .padding()
+            .padding(.bottom)
         
         VStack {
             HStack {
@@ -126,6 +127,14 @@ struct LockerRoomEnrollKeyView: View {
             .pickerStyle(.segmented)
         }
         
+        VStack {
+            HStack {
+                Text("PIV Management Key")
+                Spacer()
+            }
+            TextField("", text: $keyConfiguration.managementKeyString)
+        }
+        
         HStack {
             Spacer()
             
@@ -145,7 +154,7 @@ struct LockerRoomEnrollKeyView: View {
             .buttonStyle(.bordered)
             .tint(.red)
         }
-        .padding()
+        .padding(.top)
     }
     
     private func enroll() async {
@@ -153,7 +162,8 @@ struct LockerRoomEnrollKeyView: View {
             slot:keyConfiguration.slot,
             algorithm: keyConfiguration.algorithm,
             pinPolicy: keyConfiguration.pinPolicy,
-            touchPolicy: keyConfiguration.touchPolicy
+            touchPolicy: keyConfiguration.touchPolicy,
+            managementKeyString: keyConfiguration.managementKeyString
         ) else {
             print("[Error] LockerRoom failed to generate public key from data with configuration: \(keyConfiguration)")
             return

@@ -13,7 +13,7 @@ struct LockboxKeyCryptor {
     static func encrypt(symmetricKey: Data) async -> Data? {
         do {
             let connection = try await ConnectionHelper.anyWiredConnection()
-            defer { Task { await closeConnection(connection: connection) } }
+            defer { Task { await connection.close(error: nil) } }
             
             do {
                 let session = try await PIVSession.session(withConnection: connection)

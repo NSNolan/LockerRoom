@@ -100,5 +100,6 @@ struct LockerRoomKeyMetadata: Identifiable {
     let algorithm: Algorithm
     let pinPolicy: PinPolicy
     let touchPolicy: TouchPolicy
-    var publicKey: SecKey? = nil
+    let managementKeyString: String
+    let publicKey: SecKey
 }

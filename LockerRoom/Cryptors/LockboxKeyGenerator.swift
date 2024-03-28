@@ -20,19 +20,24 @@ struct LockboxKeyGenerator {
         slot: LockerRoom.LockerRoomKeyMetadata.Slot,
         algorithm: LockerRoom.LockerRoomKeyMetadata.Algorithm,
         pinPolicy: LockerRoom.LockerRoomKeyMetadata.PinPolicy,
-        touchPolicy: LockerRoom.LockerRoomKeyMetadata.TouchPolicy
+        touchPolicy: LockerRoom.LockerRoomKeyMetadata.TouchPolicy,
+        managementKeyString: String
     ) async -> (publicKey: SecKey, serialNumber: UInt32)? {
         do {
             let connection = try await ConnectionHelper.anyWiredConnection()
-            defer { Task { await closeConnection(connection: connection) } }
+            defer { Task { await connection.close(error: nil) } }
+            
             do {
                 let session = try await PIVSession.session(withConnection: connection)
-                let defaultManagementKey = Data(hexEncodedString: "c4b4b9040f8e950063b8cbd21a972827d6f520b76d665ff2dad1e2703c7d63a8")!
                 do {
                     let managementKeyMetadata = try await session.getManagementKeyMetadata()
                     do {
                         let managementKeyType = managementKeyMetadata.keyType
-                        try await session.authenticateWith(managementKey: defaultManagementKey, keyType: managementKeyType)
+                        guard let managementKeyData = Data(hexEncodedString: managementKeyString) else {
+                            print("[Error] Lockbox key generator failed to create management key data from hex encoded string: \(managementKeyString)")
+                            return nil
+                        }
+                        try await session.authenticateWith(managementKey: managementKeyData, keyType: managementKeyType)
                         do {
                             let publicKey = try await session.generateKeyInSlot(
                                 slot: slot.pivSlot,
