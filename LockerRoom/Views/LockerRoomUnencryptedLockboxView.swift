@@ -14,7 +14,7 @@ enum LockerRoomUnencryptedLockboxViewStyle {
     case encrypting
 }
 
-class LockerRoomUnencryptedLockboxConfiguration: ObservableObject {
+private class LockerRoomUnencryptedLockboxConfiguration: ObservableObject {
     @Published var name = ""
     @Published var size = 0
 }
@@ -43,7 +43,7 @@ struct LockerRoomUnencryptedLockboxView: View {
     }
 }
 
-struct LockerRoomUnencryptedLockboxAddView: View {
+private struct LockerRoomUnencryptedLockboxAddView: View {
     @Binding var showView: Bool
     @Binding var unencryptedLockbox: UnencryptedLockbox?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
@@ -114,7 +114,7 @@ struct LockerRoomUnencryptedLockboxAddView: View {
     }
 }
 
-struct LockerRoomUnencryptedLockboxEncryptView: View {
+private struct LockerRoomUnencryptedLockboxEncryptView: View {
     @Binding var showView: Bool
     @Binding var unencryptedLockbox: UnencryptedLockbox?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
@@ -199,7 +199,7 @@ struct LockerRoomUnencryptedLockboxEncryptView: View {
     }
 }
 
-struct LockerRoomUnencryptedLockboxWaitingForKeyView: View {
+private struct LockerRoomUnencryptedLockboxWaitingForKeyView: View {
     @Binding var showView: Bool
     @Binding var unencryptedLockbox: UnencryptedLockbox?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
@@ -225,7 +225,7 @@ struct LockerRoomUnencryptedLockboxWaitingForKeyView: View {
     }
 }
 
-struct LockerRoomUnencryptedLockboxEncryptingView: View {
+private struct LockerRoomUnencryptedLockboxEncryptingView: View {
     @Binding var showView: Bool
     @Binding var unencryptedLockbox: UnencryptedLockbox?
     

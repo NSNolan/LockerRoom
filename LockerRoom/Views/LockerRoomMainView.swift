@@ -1,5 +1,5 @@
 //
-//  LockerRoomLockboxesView.swift
+//  LockerRoomMainView.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 3/23/24.
@@ -7,25 +7,45 @@
 
 import SwiftUI
 
-enum LockerRoomLockboxesViewStyle: String, CaseIterable {
+enum LockerRoomMainViewStyle: String, CaseIterable, Identifiable {
     case lockboxes = "Lockboxes"
     case keys = "Keys"
+    
+    var id: String { self.rawValue }
 }
 
-struct LockerRoomLockboxesView: View {
+struct LockerRoomMainView: View {
+    @State private var viewStyle: LockerRoomMainViewStyle = .lockboxes
+
+    var body: some View {
+        VStack {
+            switch viewStyle {
+            case .lockboxes:
+                LockerRoomLockboxesView()
+            case .keys:
+                LockerRoomKeysView()
+            }
+        }
+        .toolbar { // TODO: Adding this break compilation
+            Picker("", selection: $viewStyle) {
+                ForEach(LockerRoomMainViewStyle.allCases) { option in
+                    Text(option.rawValue).tag(option)
+                }
+            }
+        }
+    }
+}
+
+private struct LockerRoomLockboxesView: View {
     @ObservedObject var lockboxManager = LockboxManager.shared
     
     @State private var lockboxMetadatas = [LockerRoomLockboxMetadata]()
-    
-    @State private var viewStyle: LockerRoomLockboxesViewStyle = .lockboxes
+    @State private var selection: LockerRoomLockboxMetadata.ID? = nil
+    @State private var sortOrder = [KeyPathComparator(\LockerRoomLockboxMetadata.name)]
     
     @State private var showUnencryptedLockboxAddView = false
     @State private var showUnencryptedLockboxView = false
     @State private var showEncryptedLockboxView = false
-    @State private var showKeysView = false
-    
-    @State private var selection: LockerRoomLockboxMetadata.ID? = nil
-    @State private var sortOrder = [KeyPathComparator(\LockerRoomLockboxMetadata.name)]
     
     @State private var selectedUnencryptedLockbox: UnencryptedLockbox? = nil
     @State private var selectedEncryptedLockbox: EncryptedLockbox? = nil
@@ -33,8 +53,8 @@ struct LockerRoomLockboxesView: View {
     var body: some View {
         VStack {
             Table(lockboxMetadatas, selection: $selection, sortOrder: $sortOrder) {
-                TableColumn("") { metadata in
-                    if metadata.isEncrypted {
+                TableColumn("") { lockboxMetadata in
+                    if lockboxMetadata.isEncrypted {
                         Image(systemName: "lock")
                     } else {
                         Image(systemName: "lock.open")
@@ -43,8 +63,8 @@ struct LockerRoomLockboxesView: View {
                 .width(min: 0, ideal: 0, max: 0)
                 
                 TableColumn("Name", value: \.name)
-                TableColumn("Path") { metadata in
-                    Text(metadata.url.path())
+                TableColumn("Path") { lockboxMetadata in
+                    Text(lockboxMetadata.url.path())
                 }
             }
             .contextMenu(forSelectionType: LockerRoomLockboxMetadata.ID.self) { metadataIDs in
@@ -55,10 +75,6 @@ struct LockerRoomLockboxesView: View {
             
             HStack {
                 Spacer()
-                
-                Button("Keys...") {
-                    showKeysView = true
-                }
                 
                 Button(action: {
                     showUnencryptedLockboxAddView = true
@@ -88,16 +104,6 @@ struct LockerRoomLockboxesView: View {
         .sheet(isPresented: $showEncryptedLockboxView) {
             LockerRoomEncryptedLockboxView(showView: $showEncryptedLockboxView, encryptedLockbox: $selectedEncryptedLockbox, viewStyle: .decrypt)
         }
-        .sheet(isPresented: $showKeysView) {
-            LockerRoomKeysView(showView: $showKeysView, viewStyle: .main)
-        }
-//        .toolbar { // TODO: Adding this break compilation
-//            Picker("", selection: $viewStyle) {
-//                ForEach(LockerRoomKeysViewStyle.allCases) { option in
-//                    Text(option.rawValue).tag(option)
-//                }
-//            }
-//        }
     }
     
     private func selectLockbox(fromMetadataIDs metadataIDs: Set<LockerRoomLockboxMetadata.ID>) {
@@ -114,6 +120,28 @@ struct LockerRoomLockboxesView: View {
     }
 }
 
+private struct LockerRoomKeysView: View {
+    @State private var showKeyView = false
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                
+                Button(action: {
+                    showKeyView = true
+                }) {
+                    Image(systemName: "plus")
+                }
+            }
+            .padding()
+        }
+        .sheet(isPresented: $showKeyView) {
+            LockerRoomKeyView(showView: $showKeyView, viewStyle: .enroll)
+        }
+    }
+}
+
 #Preview {
-    LockerRoomLockboxesView()
+    LockerRoomMainView()
 }

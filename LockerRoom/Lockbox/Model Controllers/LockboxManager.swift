@@ -16,7 +16,7 @@ class LockboxManager: ObservableObject {
     
     static let shared = LockboxManager()
     
-    private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore.shared) {
+    private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore()) {
         self.lockerRoomStore = lockerRoomStore
         self.lockboxMetadatas = updateLockboxMetadatas()
     }
@@ -100,7 +100,7 @@ class LockboxManager: ObservableObject {
         var results = [LockerRoomLockboxMetadata]()
         
         do {
-            let lockboxURLs = lockerRoomStore.allLockboxURLs()
+            let lockboxURLs = lockerRoomStore.lockboxURLs()
             for lockboxURL in lockboxURLs {
                 let lockboxName = lockboxURL.lastPathComponent
                 let isEncrypted = lockerRoomStore.lockboxFileExists(name: lockboxName, fileType: .encryptedContentFileType) &&

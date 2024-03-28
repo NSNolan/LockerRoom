@@ -35,7 +35,7 @@ struct LockerRoomEncryptedLockboxView: View {
     }
 }
 
-struct LockerRoomEncryptedLockboxDecryptView: View {
+private struct LockerRoomEncryptedLockboxDecryptView: View {
     @Binding var showView: Bool
     @Binding var encryptedLockbox: EncryptedLockbox?
     @Binding var viewStyle: LockerRoomEncryptedLockboxViewStyle
@@ -120,7 +120,7 @@ struct LockerRoomEncryptedLockboxDecryptView: View {
     }
 }
 
-struct LockerRoomEncryptedLockboxWaitingForKeyView: View {
+private struct LockerRoomEncryptedLockboxWaitingForKeyView: View {
     @Binding var showView: Bool
     @Binding var encryptedLockbox: EncryptedLockbox?
     @Binding var viewStyle: LockerRoomEncryptedLockboxViewStyle
@@ -147,7 +147,7 @@ struct LockerRoomEncryptedLockboxWaitingForKeyView: View {
     }
 }
 
-struct LockerRoomEncryptedLockboxDecryptingView: View {
+private struct LockerRoomEncryptedLockboxDecryptingView: View {
     @Binding var showView: Bool
     @Binding var encryptedLockbox: EncryptedLockbox?
     

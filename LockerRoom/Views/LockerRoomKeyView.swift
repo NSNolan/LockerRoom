@@ -1,5 +1,5 @@
 //
-//  LockerRoomKeysView.swift
+//  LockerRoomKeyView.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 3/26/24.
@@ -8,12 +8,11 @@
 import SwiftUI
 
 enum LockerRoomKeysViewStyle {
-    case main
     case enroll
     case waitingForKey
 }
 
-class LockerRoomKeyConfiguration: ObservableObject {
+private class LockerRoomKeyConfiguration: ObservableObject {
     @Published var name = ""
     @Published var slot = LockerRoom.LockerRoomKeyMetadata.Slot.cardAuthentication
     @Published var algorithm = LockerRoom.LockerRoomKeyMetadata.Algorithm.RSA2048
@@ -22,7 +21,7 @@ class LockerRoomKeyConfiguration: ObservableObject {
     @Published var managementKeyString = "c4b4b9040f8e950063b8cbd21a972827d6f520b76d665ff2dad1e2703c7d63a8" // TODO: Update to default management key 010203040506070801020304050607080102030405060708
 }
 
-struct LockerRoomKeysView: View {
+struct LockerRoomKeyView: View {
     @Binding var showView: Bool
     
     @State var viewStyle: LockerRoomKeysViewStyle
@@ -30,12 +29,10 @@ struct LockerRoomKeysView: View {
     var body: some View {
         VStack {
             switch viewStyle {
-            case .main:
-                LockerRoomMainKeyView(showView: $showView, viewStyle: $viewStyle)
             case .enroll:
-                LockerRoomEnrollKeyView(showView: $showView, viewStyle: $viewStyle)
+                LockerRoomKeyEnrollView(showView: $showView, viewStyle: $viewStyle)
             case .waitingForKey:
-                LockerRoomWaitingForKeyView(showView: $showView, viewStyle: $viewStyle)
+                LockerRoomKeyWaitingForKeyView(showView: $showView, viewStyle: $viewStyle)
             }
         }
         .frame(width: 300)
@@ -43,20 +40,7 @@ struct LockerRoomKeysView: View {
     }
 }
 
-struct LockerRoomMainKeyView: View {
-    @Binding var showView: Bool
-    @Binding var viewStyle: LockerRoomKeysViewStyle
-    
-    var body: some View {
-        VStack {
-            Button("Enroll Key") {
-                viewStyle = .enroll
-            }
-        }
-    }
-}
-
-struct LockerRoomEnrollKeyView: View {
+private struct LockerRoomKeyEnrollView: View {
     @Binding var showView: Bool
     @Binding var viewStyle: LockerRoomKeysViewStyle
     
@@ -171,7 +155,7 @@ struct LockerRoomEnrollKeyView: View {
     }
 }
 
-struct LockerRoomWaitingForKeyView: View {
+private struct LockerRoomKeyWaitingForKeyView: View {
     @Binding var showView: Bool
     @Binding var viewStyle: LockerRoomKeysViewStyle
     

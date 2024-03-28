@@ -18,7 +18,7 @@ protocol LockerRoomStoring {
     
     func lockboxExists(name: String) -> Bool
     func lockboxFileExists(name: String, fileType: LockboxFileType) -> Bool
-    func allLockboxURLs() -> [URL]
+    func lockboxURLs() -> [URL]
     
     func lockboxSize(name: String, fileType: LockboxFileType) -> Int
     func lockboxFileSize(name: String, fileType: LockboxFileType) -> Int
@@ -28,10 +28,8 @@ struct LockerRoomStore: LockerRoomStoring {
     private let fileManager = FileManager.default
     
     internal var lockerRoomURLProvider: LockerRoomURLProviding
-    
-    static let shared = LockerRoomStore()
-    
-    private init(lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()) {
+        
+    init(lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()) {
         self.lockerRoomURLProvider = lockerRoomURLProvider
     }
     
@@ -133,7 +131,7 @@ struct LockerRoomStore: LockerRoomStoring {
         return fileManager.fileExists(atPath: lockboxFilePath)
     }
     
-    func allLockboxURLs() -> [URL] {
+    func lockboxURLs() -> [URL] {
         let lockboxesURL = lockerRoomURLProvider.urlForLockboxes
         do {
             let lockboxURLS = try fileManager.contentsOfDirectory(at: lockboxesURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]).filter { lockboxURL in
@@ -147,7 +145,7 @@ struct LockerRoomStore: LockerRoomStoring {
             }
             return lockboxURLS
         } catch {
-            print("[Error] Lockbox store failed to get all lockbox URLs with error \(error)")
+            print("[Warning] Lockbox store failed to get all lockbox URLs with error \(error)")
             return [URL]()
         }
     }

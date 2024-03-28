@@ -11,7 +11,7 @@ import SwiftUI
 struct LockerRoomApp: App {
     var body: some Scene {
         WindowGroup {
-            LockerRoomLockboxesView()
+            LockerRoomMainView()
         }
     }
 }
