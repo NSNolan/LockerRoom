@@ -12,7 +12,7 @@ struct UnencryptedLockbox {
     let size: Int
     let unencryptedContent: Data
     
-    internal let lockerRoomStore: LockerRoomStoring
+    private let lockerRoomStore: LockerRoomStoring
     
     private init(name: String, size: Int, unencryptedContent: Data, lockerRoomStore: LockerRoomStoring) {
         self.name = name

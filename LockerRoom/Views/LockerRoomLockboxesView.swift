@@ -91,7 +91,7 @@ struct LockerRoomLockboxesView: View {
         .sheet(isPresented: $showKeysView) {
             LockerRoomKeysView(showView: $showKeysView, viewStyle: .main)
         }
-//        .toolbar {
+//        .toolbar { // TODO: Adding this break compilation
 //            Picker("", selection: $viewStyle) {
 //                ForEach(LockerRoomKeysViewStyle.allCases) { option in
 //                    Text(option.rawValue).tag(option)

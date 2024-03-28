@@ -25,7 +25,7 @@ struct LockboxKeyCryptor {
                     }
                     
                     var error: Unmanaged<CFError>?
-                    if let encryptedSymmetricKey = SecKeyCreateEncryptedData(publicKey, .rsaEncryptionOAEPSHA256, symmetricKey as CFData, &error) {
+                    if let encryptedSymmetricKey = SecKeyCreateEncryptedData(publicKey, .rsaEncryptionOAEPSHA256, symmetricKey as CFData, &error) { // TODO: Only use RSA algorithm
                         print("[Default] Lockbox key cryptor encrypted symmetric key \(encryptedSymmetricKey)")
                         return encryptedSymmetricKey as Data
                     } else if let error {
@@ -36,7 +36,7 @@ struct LockboxKeyCryptor {
                         return nil
                     }
                 } catch {
-                    print("[Error] Lockbox key cryptor failed to get certificate from slot \(PIVSlot.keyManagement) with error \(error)")
+                    print("[Error] Lockbox key cryptor failed to get certificate from slot \(PIVSlot.cardAuth) with error \(error)") // TODO: Update this log line from cardAuth being hardcoded
                     return nil
                 }
             } catch {
@@ -56,7 +56,7 @@ struct LockboxKeyCryptor {
             do {
                 let session = try await PIVSession.session(withConnection: connection)
                 do {
-                    let decryptedSymmetricKey = try await session.decryptWithKeyInSlot(slot: .cardAuth, algorithm: .rsaEncryptionOAEPSHA256, encrypted: encryptedSymmetricKey) // TODO: Only using cardAuth slot to decrypt
+                    let decryptedSymmetricKey = try await session.decryptWithKeyInSlot(slot: .cardAuth, algorithm: .rsaEncryptionOAEPSHA256, encrypted: encryptedSymmetricKey) // TODO: Only using cardAuth slot and RSA algorithm to decrypt
                     print("[Default] Lockbox key cryptor decrypted symmetric key \(decryptedSymmetricKey)")
                     return decryptedSymmetricKey
                 } catch {

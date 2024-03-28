@@ -13,7 +13,7 @@ class EncryptedLockbox {
     let encryptedContent: Data
     let encryptedSymmetricKey: Data
     
-    internal let lockerRoomStore: LockerRoomStoring
+    private let lockerRoomStore: LockerRoomStoring
     
     private init(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKey: Data, lockerRoomStore: LockerRoomStoring) {
         self.name = name

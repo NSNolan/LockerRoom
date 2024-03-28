@@ -16,7 +16,7 @@ class LockboxManager: ObservableObject {
     
     static let shared = LockboxManager()
     
-    private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore.shared) {        
+    private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore.shared) {
         self.lockerRoomStore = lockerRoomStore
         self.lockboxMetadatas = updateLockboxMetadatas()
     }
