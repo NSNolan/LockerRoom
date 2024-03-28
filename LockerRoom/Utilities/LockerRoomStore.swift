@@ -1,5 +1,5 @@
 //
-//  LockboxStore.swift
+//  LockerRoomStore.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 3/25/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol LockboxStoring {
+protocol LockerRoomStoring {
     var lockerRoomURLProvider: LockerRoomURLProviding { get }
     
     func addLockbox(name: String) -> Bool
@@ -24,12 +24,12 @@ protocol LockboxStoring {
     func lockboxFileSize(name: String, fileType: LockboxFileType) -> Int
 }
 
-struct LockboxStore: LockboxStoring {
+struct LockerRoomStore: LockerRoomStoring {
     private let fileManager = FileManager.default
     
     internal var lockerRoomURLProvider: LockerRoomURLProviding
     
-    static let shared = LockboxStore()
+    static let shared = LockerRoomStore()
     
     private init(lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()) {
         self.lockerRoomURLProvider = lockerRoomURLProvider
