@@ -59,6 +59,11 @@ struct LockboxKey: Codable {
     }
     
     static func create(name: String, serialNumber: UInt32, slot: Slot, algorithm: Algorithm, pinPolicy: PinPolicy, touchPolicy: TouchPolicy, managementKeyString: String, publicKey: SecKey, lockerRoomStore: LockerRoomStoring) -> LockboxKey? {
+        guard !lockerRoomStore.lockboxKeyExists(name: name) else {
+            print("[Error] Lockbox key failed to create \(name) at existing path")
+            return nil
+        }
+        
         let key = LockboxKey(
             name: name,
             serialNumber: serialNumber,
@@ -69,11 +74,6 @@ struct LockboxKey: Codable {
             managementKeyString: managementKeyString,
             publicKey: publicKey
         )
-        
-        guard !lockerRoomStore.lockboxKeyExists(name: name) else {
-            print("[Error] Lockbox key failed to create \(name) at existing path")
-            return nil
-        }
         
         guard lockerRoomStore.writeLockboxKey(key, name: name, fileType: .publicKeysFileType) else {
             print("[Error] Lockbox key failed to write key \(key) for \(name)")

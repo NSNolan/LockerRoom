@@ -37,7 +37,7 @@ struct LockerRoomMainView: View {
 }
 
 private struct LockerRoomLockboxesView: View {
-    @ObservedObject var lockboxManager = LockboxManager.shared
+    @ObservedObject var lockerRoomManager = LockerRoomManager.shared
     
     @State private var lockboxMetadatas = [LockerRoomLockboxMetadata]()
     @State private var selection: LockerRoomLockboxMetadata.ID? = nil
@@ -85,11 +85,11 @@ private struct LockerRoomLockboxesView: View {
             .padding()
         }
         .onAppear() {
-            lockboxMetadatas = lockboxManager.lockboxMetadatas
+            lockboxMetadatas = lockerRoomManager.lockboxMetadatas
             lockboxMetadatas.sort(using: sortOrder)
         }
-        .onChange(of: lockboxManager.lockboxMetadatas) {
-            lockboxMetadatas = lockboxManager.lockboxMetadatas
+        .onChange(of: lockerRoomManager.lockboxMetadatas) {
+            lockboxMetadatas = lockerRoomManager.lockboxMetadatas
             lockboxMetadatas.sort(using: sortOrder)
         }
         .onChange(of: sortOrder) {
@@ -108,7 +108,7 @@ private struct LockerRoomLockboxesView: View {
     
     private func selectLockbox(fromMetadataIDs metadataIDs: Set<LockerRoomLockboxMetadata.ID>) {
         if let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) { // TODO: Is this really the best way to get the row I just selected in this callback...
-            let lockerRoomStore = lockboxManager.lockerRoomStore
+            let lockerRoomStore = lockerRoomManager.lockerRoomStore
             if metadata.isEncrypted {
                 selectedEncryptedLockbox = EncryptedLockbox.create(from: metadata, lockerRoomStore: lockerRoomStore)
                 showEncryptedLockboxView = true

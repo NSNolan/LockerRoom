@@ -21,15 +21,15 @@ class EncryptedLockbox {
     }
     
     static func create(name: String, size: Int = 0, encryptedContent: Data, encryptedSymmetricKey: Data, lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
+        guard !lockerRoomStore.lockboxExists(name: name) else {
+            print("[Error] Encrypted lockbox failed to add \(name) at existing path")
+            return nil
+        }
+        
         let actualSize = size > 0 ? size : (encryptedContent.count / (1024 * 1024)) // Convert to MBs
         guard actualSize > 0 else {
             print("[Error] Encrypted lockbox failed to create emtpy lockbox \(name)")
             _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
-            return nil
-        }
-        
-        guard !lockerRoomStore.lockboxExists(name: name) else {
-            print("[Error] Encrypted lockbox failed to add \(name) at existing path")
             return nil
         }
         

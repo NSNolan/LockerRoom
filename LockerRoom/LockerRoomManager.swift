@@ -1,5 +1,5 @@
 //
-//  LockboxManager.swift
+//  LockerRoomManager.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 3/23/24.
@@ -7,14 +7,13 @@
 
 import Foundation
 
-class LockboxManager: ObservableObject {
-    private let fileManager = FileManager.default
-    
+class LockerRoomManager: ObservableObject {
     internal let lockerRoomStore: LockerRoomStoring
     
     @Published var lockboxMetadatas = [LockerRoomLockboxMetadata]()
+    @Published var lockboxKeyMetadatas = [LockerRoomLockboxKeyMetadata]()
     
-    static let shared = LockboxManager()
+    static let shared = LockerRoomManager()
     
     private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore()) {
         self.lockerRoomStore = lockerRoomStore
@@ -23,7 +22,7 @@ class LockboxManager: ObservableObject {
     
     func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
         guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Lockbox manager failed to add unencrypted lockbox \(name) to path")
+            print("[Error] Lockbox manager failed to add unencrypted lockbox \(name)")
             return nil
         }
         
@@ -33,7 +32,7 @@ class LockboxManager: ObservableObject {
     
     func addUnencryptedLockbox(name: String, unencryptedContent: Data) -> UnencryptedLockbox? {
         guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, unencryptedContent: unencryptedContent, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Lockbox manager failed to add unencrypted lockbox \(name) to path with existing data \(unencryptedContent)")
+            print("[Error] Lockbox manager failed to add unencrypted lockbox \(name) with data")
             return nil
         }
         
@@ -43,7 +42,7 @@ class LockboxManager: ObservableObject {
     
     func addEncryptedLockbox(name: String, encryptedContent: Data, encryptedSymmetricKey: Data) -> EncryptedLockbox? {
         guard let encryptedLockbox = EncryptedLockbox.create(name: name, encryptedContent: encryptedContent, encryptedSymmetricKey: encryptedSymmetricKey, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Lockbox manager failed to add encrypted lockbox \(name)")
+            print("[Error] Lockbox manager failed to add encrypted lockbox \(name) with data")
             return nil
         }
         
@@ -89,6 +88,38 @@ class LockboxManager: ObservableObject {
                 
                 let metadata = LockerRoomLockboxMetadata(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted)
                 results.append(metadata)
+            }
+        }
+        
+        return results
+    }
+    
+    func addLockboxKey(
+        name: String,
+        serialNumber: UInt32,
+        slot: LockboxKey.Slot,
+        algorithm: LockboxKey.Algorithm,
+        pinPolicy: LockboxKey.PinPolicy,
+        touchPolicy: LockboxKey.TouchPolicy,
+        managementKeyString: String,
+        publicKey: SecKey
+    ) -> LockboxKey? {
+        guard let lockboxKey = LockboxKey.create(name: name, serialNumber: serialNumber, slot: slot, algorithm: algorithm, pinPolicy: pinPolicy, touchPolicy: touchPolicy, managementKeyString: managementKeyString, publicKey: publicKey, lockerRoomStore: lockerRoomStore) else {
+            print("[Error] Lockbox manager failed to add key \(name)")
+            return nil
+        }
+        
+        self.lockboxKeyMetadatas = updateLockboxKeyMetadatas()
+        return lockboxKey
+    }
+    
+    private func updateLockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata] {
+        var results = [LockerRoomLockboxKeyMetadata]()
+        
+        do {
+            let keyURLs = lockerRoomStore.lockboxKeyURLs()
+            for lockboxURL in keyURLs {
+
             }
         }
         

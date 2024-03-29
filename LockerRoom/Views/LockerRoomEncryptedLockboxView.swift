@@ -40,7 +40,7 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
     @Binding var encryptedLockbox: EncryptedLockbox?
     @Binding var viewStyle: LockerRoomEncryptedLockboxViewStyle
     
-    let lockboxManager = LockboxManager.shared
+    let lockerRoomManager = LockerRoomManager.shared
     
     var body: some View {
         VStack(spacing: 0) {
@@ -105,13 +105,13 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
             }
             print("[Default] LockerRoom decrypted an encrypted lockbox \(name)")
             
-            guard lockboxManager.removeEncryptedLockbox(name: name) else { // TODO: Encrypted lockbox is removed before unencrypted lockbox is added. May cause data loss.
+            guard lockerRoomManager.removeEncryptedLockbox(name: name) else { // TODO: Encrypted lockbox is removed before unencrypted lockbox is added. May cause data loss.
                 print("[Error] LockerRoom failed to remove an encrypted lockbox \(name)")
                 return
             }
             print("[Default] LockerRoom removed an encrypted lockbox \(name)")
             
-            guard lockboxManager.addUnencryptedLockbox(name: name, unencryptedContent: content) != nil else {
+            guard lockerRoomManager.addUnencryptedLockbox(name: name, unencryptedContent: content) != nil else {
                 print("[Error] LockerRoom failed to add an unencrypted lockbox \(name) with content")
                 return
             }

@@ -19,15 +19,15 @@ struct UnencryptedLockbox {
     }
     
     static func create(name: String, size: Int = 0, unencryptedContent: Data = Data(), lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
+        guard !lockerRoomStore.lockboxExists(name: name) else {
+            print("[Error] Unencrypted lockback failed to create \(name) at existing path")
+            return nil
+        }
+        
         let actualSize = size > 0 ? size : (unencryptedContent.count / (1024 * 1024)) // Convert to MBs
         guard actualSize > 0 else {
             print("[Error] Unencrypted lockbox failed to create emtpy lockbox \(name)")
             _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
-            return nil
-        }
-        
-        guard !lockerRoomStore.lockboxExists(name: name) else {
-            print("[Error] Unencrypted lockback failed to create \(name) at existing path")
             return nil
         }
         

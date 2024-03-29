@@ -50,7 +50,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
     
     @ObservedObject var unencryptedLockboxConfiguration = LockerRoomUnencryptedLockboxConfiguration()
     
-    let lockboxManager = LockboxManager.shared
+    let lockerRoomManager = LockerRoomManager.shared
     
     var body: some View {
         Text("Create a New Lockbox")
@@ -92,7 +92,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
                     return
                 }
                 
-                guard let unencryptedLockbox = lockboxManager.addUnencryptedLockbox(name: name, size: size) else {
+                guard let unencryptedLockbox = lockerRoomManager.addUnencryptedLockbox(name: name, size: size) else {
                     print("[Error] LockerRoom failed to create a new unencrypted lockbox \(name) of size \(size)MB")
                     showView = false
                     return
@@ -119,7 +119,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
     @Binding var unencryptedLockbox: UnencryptedLockbox?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     
-    let lockboxManager = LockboxManager.shared
+    let lockerRoomManager = LockerRoomManager.shared
     
     var body: some View {
         VStack(spacing: 0) {
@@ -184,13 +184,13 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
             }
             print("[Default] LockerRoom encrypted an unencrypted lockbox \(name)")
             
-            guard lockboxManager.removeUnencryptedLockbox(name: name) else { // TODO: Unencrypted lockbox is removed before encrypted lockbox is added. May cause data loss.
+            guard lockerRoomManager.removeUnencryptedLockbox(name: name) else { // TODO: Unencrypted lockbox is removed before encrypted lockbox is added. May cause data loss.
                 print("[Error] LockerRoom failed to removed an unencrypted lockbox \(name)")
                 return
             }
             print("[Default] LockerRoom removed an unencrypted lockbox \(name)")
             
-            guard lockboxManager.addEncryptedLockbox(name: name, encryptedContent: encryptedContent, encryptedSymmetricKey: encryptedSymmetricKeyData) != nil else {
+            guard lockerRoomManager.addEncryptedLockbox(name: name, encryptedContent: encryptedContent, encryptedSymmetricKey: encryptedSymmetricKeyData) != nil else {
                 print("[Error] LockerRoom failed to add an encrypted lockbox \(name)")
                 return
             }
