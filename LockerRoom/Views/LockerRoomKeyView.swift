@@ -48,7 +48,6 @@ private struct LockerRoomKeyEnrollView: View {
     
     var body: some View {
         Text("Enroll a New Key")
-            .padding(.bottom)
         
         VStack {
             HStack {
@@ -138,16 +137,21 @@ private struct LockerRoomKeyEnrollView: View {
             .buttonStyle(.bordered)
             .tint(.red)
         }
-        .padding(.top)
     }
     
     private func enroll() async {
+        let slot = keyConfiguration.slot
+        let algorithm = keyConfiguration.algorithm
+        let pinPolicy = keyConfiguration.pinPolicy
+        let touchPolicy = keyConfiguration.touchPolicy
+        let managementKeyString = keyConfiguration.managementKeyString
+        
         guard let result = await LockboxKeyGenerator.generatePublicKeyDataFromDevice(
-            slot:keyConfiguration.slot,
-            algorithm: keyConfiguration.algorithm,
-            pinPolicy: keyConfiguration.pinPolicy,
-            touchPolicy: keyConfiguration.touchPolicy,
-            managementKeyString: keyConfiguration.managementKeyString
+            slot: slot,
+            algorithm: algorithm,
+            pinPolicy: pinPolicy,
+            touchPolicy: touchPolicy,
+            managementKeyString: managementKeyString
         ) else {
             print("[Error] LockerRoom failed to generate public key from data with configuration: \(keyConfiguration)")
             return

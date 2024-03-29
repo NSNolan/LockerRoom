@@ -19,10 +19,8 @@ protocol LockerRoomStoring {
     
     func lockboxExists(name: String) -> Bool
     func lockboxFileExists(name: String, fileType: LockerRoomLockboxFileType) -> Bool
-    func lockboxURLs() -> [URL]
-    
-    func lockboxSize(name: String, fileType: LockerRoomLockboxFileType) -> Int
     func lockboxFileSize(name: String, fileType: LockerRoomLockboxFileType) -> Int
+    func lockboxURLs() -> [URL]
     
     // Lockbox Keys
     func removeLockboxKey(name: String) -> Bool
@@ -31,7 +29,7 @@ protocol LockerRoomStoring {
     func writeLockboxKey(_ key: LockboxKey?, name: String, fileType: LockerRoomKeyFileType) -> Bool
     
     func lockboxKeyExists(name: String) -> Bool
-    //func lockboxKeyURLs() -> [URL]
+    func lockboxKeyURLs() -> [URL]
 }
 
 struct LockerRoomStore: LockerRoomStoring {
@@ -144,42 +142,6 @@ struct LockerRoomStore: LockerRoomStoring {
         return fileManager.fileExists(atPath: lockboxFilePath)
     }
     
-    func lockboxURLs() -> [URL] {
-        let lockboxesURL = lockerRoomURLProvider.urlForLockboxes
-        do {
-            let lockboxURLS = try fileManager.contentsOfDirectory(at: lockboxesURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]).filter { lockboxURL in
-                var isDirectory: ObjCBool = false
-                let lockboxPath = lockboxURL.path()
-                if fileManager.fileExists(atPath: lockboxPath, isDirectory: &isDirectory) {
-                    return isDirectory.boolValue
-                } else {
-                    return false
-                }
-            }
-            return lockboxURLS
-        } catch {
-            print("[Warning] Lockbox store failed to get all lockbox URLs with error \(error)")
-            return [URL]()
-        }
-    }
-    
-    func lockboxSize(name: String, fileType: LockerRoomLockboxFileType) -> Int {
-        let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
-        let lockboxPath = lockboxURL.path()
-        do {
-            let fileAttributes = try fileManager.attributesOfItem(atPath: lockboxPath)
-            if let size = fileAttributes[.size] as? Int {
-                return size / (1024 * 1024) // Convert to MBs
-            } else {
-                print("[Error] Lockbox store failed to cast lockbox size as Int")
-                return 0
-            }
-        } catch {
-            print("[Error] Lockbox store failed to get lockbox attributes at path \(lockboxPath) with error \(error)")
-            return 0
-        }
-    }
-    
     func lockboxFileSize(name: String, fileType: LockerRoomLockboxFileType) -> Int {
         let lockboxFileURL = lockerRoomURLProvider.urlForLockboxFile(name: name, type: fileType)
         let lockboxFilePath = lockboxFileURL.path()
@@ -194,6 +156,25 @@ struct LockerRoomStore: LockerRoomStoring {
         } catch {
             print("[Error] Lockbox store failed to get lockbox file attributes at path \(lockboxFilePath) with error \(error)")
             return 0
+        }
+    }
+    
+    func lockboxURLs() -> [URL] {
+        let lockboxesURL = lockerRoomURLProvider.urlForLockboxes
+        do {
+            let lockboxURLs = try fileManager.contentsOfDirectory(at: lockboxesURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]).filter { lockboxURL in
+                var isDirectory: ObjCBool = false
+                let lockboxPath = lockboxURL.path()
+                if fileManager.fileExists(atPath: lockboxPath, isDirectory: &isDirectory) {
+                    return isDirectory.boolValue
+                } else {
+                    return false
+                }
+            }
+            return lockboxURLs
+        } catch {
+            print("[Warning] Lockbox store failed to get all lockbox URLs with error \(error)")
+            return [URL]()
         }
     }
     
@@ -287,5 +268,25 @@ struct LockerRoomStore: LockerRoomStoring {
         let keyURL = lockerRoomURLProvider.urlForKey(name: name)
         let keyPath = keyURL.path()
         return fileManager.fileExists(atPath: keyPath)
+    }
+    
+    func lockboxKeyURLs() -> [URL] {
+        let keysURL = lockerRoomURLProvider.urlForKeys
+
+        do {
+            let keyURLs = try fileManager.contentsOfDirectory(at: keysURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]).filter { keyURL in
+                var isDirectory: ObjCBool = false
+                let keyPath = keyURL.path()
+                if fileManager.fileExists(atPath: keyPath, isDirectory: &isDirectory) {
+                    return isDirectory.boolValue
+                } else {
+                    return false
+                }
+            }
+            return keyURLs
+        } catch {
+            print("[Warning] Lockbox store failed to get all key URLs with error \(error)")
+            return [URL]()
+        }
     }
 }
