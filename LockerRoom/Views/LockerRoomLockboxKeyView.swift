@@ -1,5 +1,5 @@
 //
-//  LockerRoomKeyView.swift
+//  LockerRoomLockboxKeyView.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 3/26/24.
@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-enum LockerRoomKeysViewStyle {
+enum LockerRoomLockboxKeyViewStyle {
     case enroll
     case waitingForKey
 }
 
-private class LockerRoomKeyConfiguration: ObservableObject {
+private class LockerRoomLockboxKeyConfiguration: ObservableObject {
     @Published var name = ""
     @Published var slot = LockboxKey.Slot.cardAuthentication
     @Published var algorithm = LockboxKey.Algorithm.RSA2048
@@ -21,18 +21,18 @@ private class LockerRoomKeyConfiguration: ObservableObject {
     @Published var managementKeyString = "c4b4b9040f8e950063b8cbd21a972827d6f520b76d665ff2dad1e2703c7d63a8" // TODO: Update to default management key 010203040506070801020304050607080102030405060708
 }
 
-struct LockerRoomKeyView: View {
+struct LockerRoomLockboxKeyView: View {
     @Binding var showView: Bool
     
-    @State var viewStyle: LockerRoomKeysViewStyle
+    @State var viewStyle: LockerRoomLockboxKeyViewStyle
     
     var body: some View {
         VStack {
             switch viewStyle {
             case .enroll:
-                LockerRoomKeyEnrollView(showView: $showView, viewStyle: $viewStyle)
+                LockerRoomLockboxKeyEnrollView(showView: $showView, viewStyle: $viewStyle)
             case .waitingForKey:
-                LockerRoomKeyWaitingForKeyView(showView: $showView, viewStyle: $viewStyle)
+                LockerRoomLockboxKeyWaitingForKeyView(showView: $showView, viewStyle: $viewStyle)
             }
         }
         .frame(width: 300)
@@ -40,11 +40,11 @@ struct LockerRoomKeyView: View {
     }
 }
 
-private struct LockerRoomKeyEnrollView: View {
+private struct LockerRoomLockboxKeyEnrollView: View {
     @Binding var showView: Bool
-    @Binding var viewStyle: LockerRoomKeysViewStyle
+    @Binding var viewStyle: LockerRoomLockboxKeyViewStyle
     
-    @ObservedObject var keyConfiguration = LockerRoomKeyConfiguration()
+    @ObservedObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
     
     var body: some View {
         Text("Enroll a New Key")
@@ -159,9 +159,9 @@ private struct LockerRoomKeyEnrollView: View {
     }
 }
 
-private struct LockerRoomKeyWaitingForKeyView: View {
+private struct LockerRoomLockboxKeyWaitingForKeyView: View {
     @Binding var showView: Bool
-    @Binding var viewStyle: LockerRoomKeysViewStyle
+    @Binding var viewStyle: LockerRoomLockboxKeyViewStyle
     
     var body: some View {
         Text("Insert YubiKit to Enroll")

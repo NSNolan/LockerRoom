@@ -1,5 +1,5 @@
 //
-//  LockerRoomKeyMetadata.swift
+//  LockerRoomLockboxKeyMetadata.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 3/26/24.
@@ -9,7 +9,7 @@ import Foundation
 
 import YubiKit
 
-struct LockerRoomKeyMetadata: Identifiable {
+struct LockerRoomLockboxKeyMetadata: Identifiable {
     let id = UUID()
     let name: String
     let serialNumber: UInt32

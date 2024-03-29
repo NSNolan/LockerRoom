@@ -137,7 +137,7 @@ private struct LockerRoomKeysView: View {
             .padding()
         }
         .sheet(isPresented: $showKeyView) {
-            LockerRoomKeyView(showView: $showKeyView, viewStyle: .enroll)
+            LockerRoomLockboxKeyView(showView: $showKeyView, viewStyle: .enroll)
         }
     }
 }
