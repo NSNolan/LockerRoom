@@ -22,11 +22,6 @@ class LockboxManager: ObservableObject {
     }
     
     func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
-        guard !lockerRoomStore.lockboxExists(name: name) else {
-            print("[Error] Lockbox manager failed to add unencrypted lockbox \(name) to existing path")
-            return nil
-        } 
-        
         guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Lockbox manager failed to add unencrypted lockbox \(name) to path")
             return nil
@@ -37,11 +32,6 @@ class LockboxManager: ObservableObject {
     }
     
     func addUnencryptedLockbox(name: String, unencryptedContent: Data) -> UnencryptedLockbox? {
-        guard !lockerRoomStore.lockboxExists(name: name) else {
-            print("[Error] Lockbox manager failed to add unencrypted lockbox \(name) to existing path with existing data \(unencryptedContent)")
-            return nil
-        }
-        
         guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, unencryptedContent: unencryptedContent, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Lockbox manager failed to add unencrypted lockbox \(name) to path with existing data \(unencryptedContent)")
             return nil
@@ -52,11 +42,6 @@ class LockboxManager: ObservableObject {
     }
     
     func addEncryptedLockbox(name: String, encryptedContent: Data, encryptedSymmetricKey: Data) -> EncryptedLockbox? {
-        guard !lockerRoomStore.lockboxExists(name: name) else {
-            print("[Error] Lockbox manager failed to add encrypted lockbox \(name) to existing path")
-            return nil
-        }
-
         guard let encryptedLockbox = EncryptedLockbox.create(name: name, encryptedContent: encryptedContent, encryptedSymmetricKey: encryptedSymmetricKey, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Lockbox manager failed to add encrypted lockbox \(name)")
             return nil
@@ -67,11 +52,6 @@ class LockboxManager: ObservableObject {
     }
     
     func removeUnencryptedLockbox(name: String) -> Bool {
-        guard lockerRoomStore.lockboxExists(name: name) else {
-            print("[Error] Lockbox manager failed to remove non-existing unencrypted lockbox \(name)")
-            return false
-        }
-        
         guard UnencryptedLockbox.destroy(name: name, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Lockbox manager failed to remove unencrypted lockbox \(name)")
             return false
@@ -81,12 +61,7 @@ class LockboxManager: ObservableObject {
         return true
     }
     
-    func removeEncryptedLockbox(name: String) -> Bool {
-        guard lockerRoomStore.lockboxExists(name: name) else {
-            print("[Error] Lockbox manager failed to remove encrypted non-existing lockbox \(name)")
-            return false
-        }
-        
+    func removeEncryptedLockbox(name: String) -> Bool {        
         guard EncryptedLockbox.destroy(name: name, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Lockbox manager failed to remove encrypted lockbox \(name)")
             return false

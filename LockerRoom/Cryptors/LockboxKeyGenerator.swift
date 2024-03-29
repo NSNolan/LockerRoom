@@ -17,10 +17,10 @@ struct LockboxKeyGenerator {
     }
     
     static func generatePublicKeyDataFromDevice(
-        slot: LockerRoom.LockerRoomKeyMetadata.Slot,
-        algorithm: LockerRoom.LockerRoomKeyMetadata.Algorithm,
-        pinPolicy: LockerRoom.LockerRoomKeyMetadata.PinPolicy,
-        touchPolicy: LockerRoom.LockerRoomKeyMetadata.TouchPolicy,
+        slot: LockboxKey.Slot,
+        algorithm: LockboxKey.Algorithm,
+        pinPolicy: LockboxKey.PinPolicy,
+        touchPolicy: LockboxKey.TouchPolicy,
         managementKeyString: String
     ) async -> (publicKey: SecKey, serialNumber: UInt32)? {
         do {
@@ -74,15 +74,5 @@ struct LockboxKeyGenerator {
             print("[Error] Lockbox key generator failed to find a wired connection with error \(error)")
             return nil
         }
-    }
-    
-    private static func closeConnection(connection: Connection) async -> Bool {
-        if let error = await connection.connectionDidClose() {
-            print("[Error] Lockbox key generator failed to close connection with error \(error)")
-            return false
-        } else {
-            print("[Default] Lockbox key generator did close connection")
-        }
-        return true
     }
 }

@@ -52,7 +52,7 @@ struct LockboxKeyCryptor {
     static func decrypt(encryptedSymmetricKey: Data) async -> Data? {
         do {
             let connection = try await ConnectionHelper.anyWiredConnection()
-            defer { Task { await closeConnection(connection: connection) } }
+            defer { Task { await connection.close(error: nil) } }
             do {
                 let session = try await PIVSession.session(withConnection: connection)
                 do {
@@ -72,13 +72,5 @@ struct LockboxKeyCryptor {
             print("[Error] Lockbox key cryptor failed to find a wired connection with error \(error)")
             return nil
         }
-    }
-    
-    static private func closeConnection(connection: Connection) async -> Bool {
-        if let error = await connection.connectionDidClose() {
-            print("[Error] Lockbox key cryptor failed to close connection with error \(error)")
-            return false
-        }
-        return true
     }
 }

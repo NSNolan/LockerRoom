@@ -12,13 +12,10 @@ struct UnencryptedLockbox {
     let size: Int
     let unencryptedContent: Data
     
-    private let lockerRoomStore: LockerRoomStoring
-    
-    private init(name: String, size: Int, unencryptedContent: Data, lockerRoomStore: LockerRoomStoring) {
+    private init(name: String, size: Int, unencryptedContent: Data) {
         self.name = name
         self.size = size
         self.unencryptedContent = unencryptedContent
-        self.lockerRoomStore = lockerRoomStore
     }
     
     static func create(name: String, size: Int = 0, unencryptedContent: Data = Data(), lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
@@ -29,11 +26,16 @@ struct UnencryptedLockbox {
             return nil
         }
         
+        guard !lockerRoomStore.lockboxExists(name: name) else {
+            print("[Error] Unencrypted lockback failed to create \(name) at existing path")
+            return nil
+        }
+        
         let diskImage = LockerRoomDiskImage()
         
         if !unencryptedContent.isEmpty {
             print("[Default] Unencrypted lockbox is ignoring create size in favor or existing data")
-            guard lockerRoomStore.writeToLockbox(data: unencryptedContent, name: name, fileType: .unencryptedContentFileType) else {
+            guard lockerRoomStore.writeToLockbox(unencryptedContent, name: name, fileType: .unencryptedContentFileType) else {
                 print("[Error] Unencrypted lockbox failed to add \(name) from data \(unencryptedContent)")
                 _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
                 return nil
@@ -45,7 +47,7 @@ struct UnencryptedLockbox {
                 return nil
             }
             
-            return UnencryptedLockbox(name: name, size: actualSize, unencryptedContent: unencryptedContent, lockerRoomStore: lockerRoomStore)
+            return UnencryptedLockbox(name: name, size: actualSize, unencryptedContent: unencryptedContent)
         }
         
         guard lockerRoomStore.addLockbox(name: name) else {
@@ -72,29 +74,35 @@ struct UnencryptedLockbox {
             return nil
         }
         
-        return UnencryptedLockbox(name: name, size: actualSize, unencryptedContent: newUnencryptedContent, lockerRoomStore: lockerRoomStore)
+        return UnencryptedLockbox(name: name, size: actualSize, unencryptedContent: newUnencryptedContent)
     }
     
     static func create(from unencryptedLockboxMetadata: LockerRoomLockboxMetadata, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
-        guard !unencryptedLockboxMetadata.isEncrypted else {
-            print("[Error] Unencrypted lockback failed to create from encrypted lockbox metadata")
-            return nil
-        }
-        
+        let isEncrypted = unencryptedLockboxMetadata.isEncrypted
         let name = unencryptedLockboxMetadata.name
         let size = unencryptedLockboxMetadata.size
+        
+        guard !isEncrypted else {
+            print("[Error] Unencrypted lockback failed to create \(name) from encrypted lockbox metadata")
+            return nil
+        }
         
         guard let unencryptedContent = lockerRoomStore.readFromLockbox(name: name, fileType: .unencryptedContentFileType) else {
             print("[Error] Unencrypted lockbox failed to read unencrypted content for \(name)")
             return nil
         }
         
-        return UnencryptedLockbox(name: name, size: size, unencryptedContent: unencryptedContent, lockerRoomStore: lockerRoomStore)
+        return UnencryptedLockbox(name: name, size: size, unencryptedContent: unencryptedContent)
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {        
         guard !name.isEmpty else {
             print("[Error] Unencrypted lockbox failed to destory lockbox without a name")
+            return false
+        }
+        
+        guard lockerRoomStore.lockboxExists(name: name) else {
+            print("[Error] Unencrypted lockbox failed to destroy non-existing \(name)")
             return false
         }
         
@@ -107,5 +115,4 @@ struct UnencryptedLockbox {
             return false
         }
     }
-
 }

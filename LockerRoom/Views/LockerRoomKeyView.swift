@@ -14,10 +14,10 @@ enum LockerRoomKeysViewStyle {
 
 private class LockerRoomKeyConfiguration: ObservableObject {
     @Published var name = ""
-    @Published var slot = LockerRoom.LockerRoomKeyMetadata.Slot.cardAuthentication
-    @Published var algorithm = LockerRoom.LockerRoomKeyMetadata.Algorithm.RSA2048
-    @Published var pinPolicy = LockerRoom.LockerRoomKeyMetadata.PinPolicy.never
-    @Published var touchPolicy = LockerRoom.LockerRoomKeyMetadata.TouchPolicy.never
+    @Published var slot = LockboxKey.Slot.cardAuthentication
+    @Published var algorithm = LockboxKey.Algorithm.RSA2048
+    @Published var pinPolicy = LockboxKey.PinPolicy.never
+    @Published var touchPolicy = LockboxKey.TouchPolicy.never
     @Published var managementKeyString = "c4b4b9040f8e950063b8cbd21a972827d6f520b76d665ff2dad1e2703c7d63a8" // TODO: Update to default management key 010203040506070801020304050607080102030405060708
 }
 
@@ -64,7 +64,7 @@ private struct LockerRoomKeyEnrollView: View {
                 Spacer()
             }
             Picker("", selection: $keyConfiguration.slot) {
-                ForEach(LockerRoom.LockerRoomKeyMetadata.Slot.allCases) { option in
+                ForEach(LockboxKey.Slot.allCases) { option in
                     Text(option.rawValue).tag(option)
                 }
             }
@@ -78,7 +78,7 @@ private struct LockerRoomKeyEnrollView: View {
                 Spacer()
             }
             Picker("", selection: $keyConfiguration.algorithm) {
-                ForEach(LockerRoom.LockerRoomKeyMetadata.Algorithm.allCases) { option in
+                ForEach(LockboxKey.Algorithm.allCases) { option in
                     Text(option.rawValue).tag(option)
                 }
             }
@@ -91,7 +91,7 @@ private struct LockerRoomKeyEnrollView: View {
                 Spacer()
             }
             Picker("", selection: $keyConfiguration.pinPolicy) {
-                ForEach(LockerRoom.LockerRoomKeyMetadata.PinPolicy.allCases) { option in
+                ForEach(LockboxKey.PinPolicy.allCases) { option in
                     Text(option.rawValue).tag(option)
                 }
             }
@@ -104,7 +104,7 @@ private struct LockerRoomKeyEnrollView: View {
                 Spacer()
             }
             Picker("", selection: $keyConfiguration.touchPolicy) {
-                ForEach(LockerRoom.LockerRoomKeyMetadata.TouchPolicy.allCases) { option in
+                ForEach(LockboxKey.TouchPolicy.allCases) { option in
                     Text(option.rawValue).tag(option)
                 }
             }
