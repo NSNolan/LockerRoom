@@ -118,8 +118,8 @@ class LockerRoomManager: ObservableObject {
         
         do {
             let keyURLs = lockerRoomStore.lockboxKeyURLs()
-            for lockboxURL in keyURLs {
-
+            for keyURL in keyURLs {
+                
             }
         }
         

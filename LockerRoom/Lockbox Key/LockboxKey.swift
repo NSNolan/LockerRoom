@@ -76,7 +76,7 @@ struct LockboxKey: Codable {
         )
         
         guard lockerRoomStore.writeLockboxKey(key, name: name, fileType: .publicKeysFileType) else {
-            print("[Error] Lockbox key failed to write key \(key) for \(name)")
+            print("[Error] Lockbox key failed to write \(name)")
             _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
             return nil
         }
@@ -84,18 +84,8 @@ struct LockboxKey: Codable {
         return key
     }
     
-    static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {
-        guard !name.isEmpty else {
-            print("[Error] Lockbox key failed to destory key without a name")
-            return false
-        }
-        
-        guard lockerRoomStore.lockboxKeyExists(name: name) else {
-            print("[Error] Lockbox key failed to destroy non-existing \(name)")
-            return false
-        }
-        
-        guard lockerRoomStore.removeLockbox(name: name) else {
+    static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {        
+        guard lockerRoomStore.removeLockboxKey(name: name) else {
             print("[Error] Lockbox key failed to remove \(name)")
             return false
         }

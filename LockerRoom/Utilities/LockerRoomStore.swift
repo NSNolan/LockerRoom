@@ -23,6 +23,7 @@ protocol LockerRoomStoring {
     func lockboxURLs() -> [URL]
     
     // Lockbox Keys
+    // func addLockboxKey(name: String) -> Bool
     func removeLockboxKey(name: String) -> Bool
     
     func readLockboxKey(name: String, fileType: LockerRoomKeyFileType) -> LockboxKey?
@@ -45,8 +46,18 @@ struct LockerRoomStore: LockerRoomStoring {
     }
     
     func addLockbox(name: String) -> Bool {
+        guard !name.isEmpty else {
+            print("[Error] Lockbox store failed to add lockbock with empty name")
+            return false
+        }
+        
         let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
         let lockboxPath = lockboxURL.path()
+        
+        guard !fileManager.fileExists(atPath: lockboxPath) else {
+            print("[Error] Lockbox store failed to add lockbock \(name) at existing path \(lockboxPath)")
+            return false
+        }
         
         do {
             try fileManager.createDirectory(at: lockboxURL, withIntermediateDirectories: true)
@@ -58,8 +69,18 @@ struct LockerRoomStore: LockerRoomStoring {
     }
     
     func removeLockbox(name: String) -> Bool {
+        guard !name.isEmpty else {
+            print("[Error] Lockbox store failed to remove lockbock with empty name")
+            return false
+        }
+        
         let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
         let lockboxPath = lockboxURL.path()
+        
+        guard fileManager.fileExists(atPath: lockboxPath) else {
+            print("[Error] Lockbox store failed to remove lockbox \(name) at non-existing path \(lockboxPath)")
+            return false
+        }
         
         do {
             try fileManager.removeItem(at: lockboxURL)
@@ -75,7 +96,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let lockboxPath = lockboxURL.path()
         
         guard fileManager.fileExists(atPath: lockboxPath) else {
-            print("[Error] Lockbox store failed to find lockbox \(name) at path \(lockboxPath)")
+            print("[Error] Lockbox store failed to read lockbox \(name) at non-existing path \(lockboxPath)")
             return nil
         }
         
@@ -83,14 +104,14 @@ struct LockerRoomStore: LockerRoomStoring {
         let lockboxFilePath = lockboxFileURL.path()
         
         guard fileManager.fileExists(atPath: lockboxFilePath) else {
-            print("[Error] Lockbox store failed to find lockbox file for \(name) of type \(fileType) at path \(lockboxFilePath)")
+            print("[Error] Lockbox store failed to read lockbox \(name) for type \(fileType) at non-existing file path \(lockboxFilePath)")
             return nil
         }
         
         do {
             return try Data(contentsOf: lockboxFileURL, options: .mappedIfSafe)
         } catch {
-            print("[Error] Lockbox store failed to read lockbox file for \(name) of type \(fileType) with error \(error)")
+            print("[Error] Lockbox store failed to read lockbox \(name) for type \(fileType) with error \(error)")
             return nil
         }
     }
@@ -104,7 +125,7 @@ struct LockerRoomStore: LockerRoomStoring {
                 try fileManager.removeItem(at: lockboxFileURL)
                 return true
             } catch {
-                print("[Error] Lockbox store failed to remove lockbox file for \(name) of type \(fileType) at path \(lockboxFilePath) with error \(error)")
+                print("[Error] Lockbox store failed to remove lockbox \(name) for type \(fileType) at path \(lockboxFilePath) with error \(error)")
                 return false
             }
         }
@@ -116,7 +137,7 @@ struct LockerRoomStore: LockerRoomStoring {
             do {
                 try fileManager.createDirectory(at: lockboxURL, withIntermediateDirectories: true)
             } catch {
-                print("[Error] Lockbox store failed to create lockbox directory for \(name) at path \(lockboxPath)")
+                print("[Error] Lockbox store failed to write lockbox directory \(name) at path \(lockboxPath)")
                 return false
             }
         }
@@ -125,7 +146,7 @@ struct LockerRoomStore: LockerRoomStoring {
             try data.write(to: lockboxFileURL, options: .atomic)
             return true
         } catch {
-            print("[Error] Lockbox store failed to write data for \(name) of type \(fileType) to path \(lockboxFilePath)")
+            print("[Error] Lockbox store failed to write lockbox \(name) for type \(fileType) with error \(error)")
             return false
         }
     }
@@ -173,20 +194,30 @@ struct LockerRoomStore: LockerRoomStoring {
             }
             return lockboxURLs
         } catch {
-            print("[Warning] Lockbox store failed to get all lockbox URLs with error \(error)")
+            print("[Warning] Lockbox store failed to get lockbox URLs with error \(error)")
             return [URL]()
         }
     }
     
     func removeLockboxKey(name: String) -> Bool {
+        guard !name.isEmpty else {
+            print("[Error] Lockbox store failed to remove key with empty name")
+            return false
+        }
+        
         let keyURL = lockerRoomURLProvider.urlForKey(name: name)
-        let KeyPath = keyURL.path()
+        let keyPath = keyURL.path()
+        
+        guard fileManager.fileExists(atPath: keyPath) else {
+            print("[Error] Lockbox store failed to remove key \(name) at non-existing path \(keyPath)")
+            return false
+        }
         
         do {
             try fileManager.removeItem(at: keyURL)
             return true
         } catch {
-            print("[Error] Lockbox store failed to remove key \(name) at path \(KeyPath)")
+            print("[Error] Lockbox store failed to remove key \(name) at path \(keyPath)")
             return false
         }
     }
@@ -196,7 +227,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let keyPath = keyURL.path()
         
         guard fileManager.fileExists(atPath: keyPath) else {
-            print("[Error] Lockbox store failed to find key \(name) at path \(keyPath)")
+            print("[Error] Lockbox store failed to read key \(name) at non-existing path \(keyPath)")
             return nil
         }
         
@@ -204,7 +235,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let keyFilePath = keyFileURL.path()
         
         guard fileManager.fileExists(atPath: keyFilePath) else {
-            print("[Error] Lockbox store failed to find key file for \(name) of type \(fileType) at path \(keyFilePath)")
+            print("[Error] Lockbox store failed to read key \(name) for type \(fileType) at path \(keyFilePath)")
             return nil
         }
         
@@ -214,11 +245,11 @@ struct LockerRoomStore: LockerRoomStoring {
             do {
                  return try decoder.decode(LockboxKey.self, from: keyPlistData)
             } catch {
-                print("[Error] Lockbox store failed to decode key plist data \(keyPlistData) for \(name) of type \(fileType) at path \(keyFilePath) with error \(error)")
+                print("[Error] Lockbox store failed to decode key \(name) with plist data \(keyPlistData) for type \(fileType) at path \(keyFilePath) with error \(error)")
                 return nil
             }
         } catch {
-            print("[Error] Lockbox store failed to read key file for \(name) of type \(fileType) with error \(error)")
+            print("[Error] Lockbox store failed to read key \(name) for type \(fileType) with error \(error)")
             return nil
         }
     }
@@ -232,7 +263,7 @@ struct LockerRoomStore: LockerRoomStoring {
                 try fileManager.removeItem(at: keyFileURL)
                 return true
             } catch {
-                print("[Error] Lockbox store failed to remove key file for \(name) of type \(fileType) at path \(keyFilePath) with error \(error)")
+                print("[Error] Lockbox store failed to remove key \(name) for type \(fileType) at path \(keyFilePath) with error \(error)")
                 return false
             }
         }
@@ -246,7 +277,7 @@ struct LockerRoomStore: LockerRoomStoring {
                 do {
                     try fileManager.createDirectory(at: keyURL, withIntermediateDirectories: true)
                 } catch {
-                    print("[Error] Lockbox store failed to create key directory for \(name) at path \(keyPath)")
+                    print("[Error] Lockbox store failed to create key directory \(name) at path \(keyPath)")
                     return false
                 }
             }
@@ -255,11 +286,11 @@ struct LockerRoomStore: LockerRoomStoring {
                 try keyPlistData.write(to: keyFileURL, options: .atomic)
                 return true
             } catch {
-                print("[Error] Lockbox store failed to write key plist data \(keyPlistData) for \(name) of type \(fileType) to path \(keyFileURL)")
+                print("[Error] Lockbox store failed to write key \(name) with plist data \(keyPlistData) for type \(fileType) to path \(keyFileURL)")
                 return false
             }
         } catch {
-            print("[Error] Lockbox store failed to encode key \(key) for \(name) of type \(fileType) at path \(keyFilePath) with error \(error)")
+            print("[Error] Lockbox store failed to encode key \(name) for type \(fileType) at path \(keyFilePath) with error \(error)")
         }
         return true
     }
@@ -285,7 +316,7 @@ struct LockerRoomStore: LockerRoomStoring {
             }
             return keyURLs
         } catch {
-            print("[Warning] Lockbox store failed to get all key URLs with error \(error)")
+            print("[Warning] Lockbox store failed to get key URLs with error \(error)")
             return [URL]()
         }
     }

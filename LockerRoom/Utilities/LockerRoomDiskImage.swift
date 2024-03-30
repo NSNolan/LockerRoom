@@ -65,7 +65,7 @@ struct LockerRoomDiskImage {
             
             let status = process.terminationStatus
             if status != 0 {
-                print("[Error] Disk image operation for \(name) with arguments \(arguments) failed with status \(status)")
+                print("[Warning] Disk image operation for \(name) with arguments \(arguments) failed with status \(status)")
                 return false
             }
             return true
