@@ -18,7 +18,7 @@ struct LockerRoomDiskImage {
     
     func create(name: String, size: Int) -> Bool {
         let lockboxUnencryptedContentPath = lockerRoomURLProvider.urlForLockboxFile(name: name, type: .unencryptedContentFileType).path
-        return runHdiutil(
+        return hdiutil(
             arguments: [
                 "create",
                 "-verbose",
@@ -33,7 +33,7 @@ struct LockerRoomDiskImage {
     
     func attach(name: String) -> Bool {
         let lockboxUnencryptedContentPath = lockerRoomURLProvider.urlForLockboxFile(name: name, type: .unencryptedContentFileType).path
-        return runHdiutil(
+        return hdiutil(
             arguments: [
                 "attach",
                 "-autoopen",
@@ -45,7 +45,7 @@ struct LockerRoomDiskImage {
     
     func detach(name: String) -> Bool {
         let mountedVolumePath = lockerRoomURLProvider.urlForMountedVolume(name: name).path
-        return runHdiutil(
+        return hdiutil(
             arguments: [
                 "detach",
                 mountedVolumePath
@@ -54,7 +54,7 @@ struct LockerRoomDiskImage {
         )
     }
     
-    private func runHdiutil(arguments: [String], name: String) -> Bool {
+    private func hdiutil(arguments: [String], name: String) -> Bool {
         let process = Process()
         process.launchPath = LockerRoomDiskImage.hdiutilLaunchPath
         process.arguments = arguments

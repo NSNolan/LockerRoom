@@ -11,7 +11,7 @@ protocol LockerRoomStoring {
     var lockerRoomURLProvider: LockerRoomURLProviding { get }
     
     // Lockboxes
-    func addLockbox(name: String) -> Bool // Called before `hdiutil` creates a lockbox disk image because it does not create intermediary directories.
+    func addLockbox(name: String) -> Bool // Called before `hdiutil` creates a lockbox disk image because it will not create intermediary directories.
     func removeLockbox(name: String) -> Bool
     
     func readFromLockbox(name: String, fileType: LockerRoomLockboxFileType) -> Data?

@@ -26,7 +26,7 @@ struct LockerRoomMainView: View {
                 LockerRoomKeysView()
             }
         }
-        .toolbar { // TODO: Adding this break compilation
+        .toolbar {
             Picker("", selection: $viewStyle) {
                 ForEach(LockerRoomMainViewStyle.allCases) { option in
                     Text(option.rawValue).tag(option)
