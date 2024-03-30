@@ -29,19 +29,16 @@ class EncryptedLockbox {
         let actualSize = size > 0 ? size : (encryptedContent.count / (1024 * 1024)) // Convert to MBs
         guard actualSize > 0 else {
             print("[Error] Encrypted lockbox failed to create emtpy sized lockbox \(name)")
-            _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
             return nil
         }
         
         guard lockerRoomStore.writeToLockbox(encryptedContent, name: name, fileType: .encryptedContentFileType) else {
             print("[Error] Encrypted lockbox failed to write \(name) with encrypted content")
-            _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
             return nil
         }
         
         guard lockerRoomStore.writeToLockbox(encryptedSymmetricKey, name: name, fileType: .encryptedSymmetricKeyFileType) else {
             print("[Error] Encrypted lockbox failed to write \(name) with encrypted symmetric key")
-            _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
             return nil
         }
         

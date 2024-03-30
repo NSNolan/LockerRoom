@@ -19,45 +19,45 @@ struct UnencryptedLockbox {
     }
     
     static func create(name: String, size: Int = 0, unencryptedContent: Data = Data(), lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
-        let actualSize = size > 0 ? size : (unencryptedContent.count / (1024 * 1024)) // Convert to MBs
-        guard actualSize > 0 else {
-            print("[Error] Unencrypted lockbox failed to create emtpy sized lockbox \(name)")
-            _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
-            return nil
-        }
-        
         let diskImage = LockerRoomDiskImage()
         
         if unencryptedContent.isEmpty {
             print("[Default] Unencrypted lockbox creating \(name) for new content")
             
+            guard size > 0 else {
+                print("[Error] Unencrypted lockbox failed to create emtpy sized lockbox \(name)")
+                return nil
+            }
+            
             guard lockerRoomStore.addLockbox(name: name) else {
                 print("[Error] Unencrypted lockbox failed to add \(name)")
-                _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
                 return nil
             }
 
             guard diskImage.create(name: name, size: size) else {
                 print("[Error] Unencrypted lockbox failed to attach to disk image \(name)")
-                _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
                 return nil
             }
             
             guard let newUnencryptedContent = lockerRoomStore.readFromLockbox(name: name, fileType: .unencryptedContentFileType) else {
                 print("[Error] Unencrypted lockbox failed to read \(name) for new content")
-                _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
                 return nil
             }
             
             guard diskImage.attach(name: name) else {
                 print("[Error] Unencrypted lockbox failed to attach \(name) as disk image")
-                _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
                 return nil
             }
             
-            return UnencryptedLockbox(name: name, size: actualSize, unencryptedContent: newUnencryptedContent)
+            return UnencryptedLockbox(name: name, size: size, unencryptedContent: newUnencryptedContent)
         } else {
             print("[Default] Unencrypted lockbox creating \(name) from existing content")
+            
+            let unencryptedContentSize = unencryptedContent.count / (1024 * 1024) // Convert to MBs
+            guard unencryptedContentSize > 0 else {
+                print("[Error] Unencrypted lockbox failed to create from emtpy sized lockbox \(name)")
+                return nil
+            }
             
             guard !lockerRoomStore.lockboxExists(name: name) else {
                 print("[Error] Unencrypted lockback failed to add \(name) at existing path")
@@ -66,17 +66,15 @@ struct UnencryptedLockbox {
             
             guard lockerRoomStore.writeToLockbox(unencryptedContent, name: name, fileType: .unencryptedContentFileType) else {
                 print("[Error] Unencrypted lockbox failed to add \(name) from data \(unencryptedContent)")
-                _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
                 return nil
             }
             
             guard diskImage.attach(name: name) else {
                 print("[Error] Unencrypted lockbox failed to attach to disk image \(name)")
-                _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
                 return nil
             }
             
-            return UnencryptedLockbox(name: name, size: actualSize, unencryptedContent: unencryptedContent)
+            return UnencryptedLockbox(name: name, size: unencryptedContentSize, unencryptedContent: unencryptedContent)
         }
     }
     
