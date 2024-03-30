@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LockerRoomLockboxKeyMetadata: Identifiable {
+struct LockerRoomLockboxKeyMetadata: Identifiable, Equatable {
     let id = UUID()
     let name: String
     let serialNumber: UInt32
@@ -15,7 +15,15 @@ struct LockerRoomLockboxKeyMetadata: Identifiable {
     let algorithm: LockboxKey.Algorithm
     let pinPolicy: LockboxKey.PinPolicy
     let touchPolicy: LockboxKey.TouchPolicy
-    let managementKeyString: String
+    
+    fileprivate init(name: String, serialNumber: UInt32, slot: LockboxKey.Slot, algorithm: LockboxKey.Algorithm, pinPolicy: LockboxKey.PinPolicy, touchPolicy: LockboxKey.TouchPolicy) {
+        self.name = name
+        self.serialNumber = serialNumber
+        self.slot = slot
+        self.algorithm = algorithm
+        self.pinPolicy = pinPolicy
+        self.touchPolicy = touchPolicy
+    }
 }
 
 extension LockboxKey.Slot: Identifiable {
@@ -32,4 +40,17 @@ extension LockboxKey.PinPolicy: Identifiable {
 
 extension LockboxKey.TouchPolicy: Identifiable {
     var id: String { self.rawValue }
+}
+
+extension LockboxKey {
+    var metadata: LockerRoomLockboxKeyMetadata {
+        return LockerRoomLockboxKeyMetadata(
+            name: name,
+            serialNumber: serialNumber,
+            slot: slot,
+            algorithm: algorithm,
+            pinPolicy: pinPolicy,
+            touchPolicy: touchPolicy
+        )
+    }
 }

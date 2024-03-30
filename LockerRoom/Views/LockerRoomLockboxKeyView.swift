@@ -46,6 +46,8 @@ private struct LockerRoomLockboxKeyEnrollView: View {
     
     @ObservedObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
     
+    let lockerRoomManager = LockerRoomManager.shared
+    
     var body: some View {
         Text("Enroll a New Key")
         
@@ -140,6 +142,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
     }
     
     private func enroll() async {
+        let name = keyConfiguration.name
         let slot = keyConfiguration.slot
         let algorithm = keyConfiguration.algorithm
         let pinPolicy = keyConfiguration.pinPolicy
@@ -156,6 +159,25 @@ private struct LockerRoomLockboxKeyEnrollView: View {
             print("[Error] LockerRoom failed to generate public key from data with configuration: \(keyConfiguration)")
             return
         }
+        
+        let publicKey = result.publicKey
+        let serialNumber = result.serialNumber
+        
+        guard lockerRoomManager.addLockboxKey(
+            name: name,
+            serialNumber: serialNumber,
+            slot: slot,
+            algorithm: algorithm,
+            pinPolicy: pinPolicy,
+            touchPolicy: touchPolicy,
+            managementKeyString: managementKeyString,
+            publicKey: publicKey
+        ) != nil else {
+            print("[Error] LockerRoom failed to create a new lockbox key \(name) serial number \(serialNumber) slot \(slot) algorithm \(algorithm) pin policy \(pinPolicy) touch policy \(touchPolicy) management key string \(managementKeyString) public key \(publicKey)")
+            return
+        }
+        
+        print("[Default] LockerRoom added a lockbox key \(name)")
     }
 }
 

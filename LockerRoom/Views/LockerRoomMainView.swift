@@ -121,23 +121,50 @@ private struct LockerRoomLockboxesView: View {
 }
 
 private struct LockerRoomKeysView: View {
-    @State private var showKeyView = false
+    @ObservedObject var lockerRoomManager = LockerRoomManager.shared
+    
+    @State private var lockboxKeyMetadatas = [LockerRoomLockboxKeyMetadata]()
+    @State private var selection: LockerRoomLockboxKeyMetadata.ID? = nil
+    @State private var sortOrder = [KeyPathComparator(\LockerRoomLockboxKeyMetadata.name)]
+    
+    @State private var showLockboKeyAddView = false
+    
+    @State private var selectedLockboxKey: LockboxKey? = nil
     
     var body: some View {
         VStack {
+            Table(lockboxKeyMetadatas, selection: $selection, sortOrder: $sortOrder) {
+                TableColumn("Name", value: \.name)
+                TableColumn("Slot", value: \.slot.rawValue)
+                TableColumn("Algorithm", value: \.algorithm.rawValue)
+                TableColumn("Pin Policy", value: \.pinPolicy.rawValue)
+                TableColumn("Touch Policy", value: \.touchPolicy.rawValue)
+            }
+            
             HStack {
                 Spacer()
                 
                 Button(action: {
-                    showKeyView = true
+                    showLockboKeyAddView = true
                 }) {
                     Image(systemName: "plus")
                 }
             }
             .padding()
         }
-        .sheet(isPresented: $showKeyView) {
-            LockerRoomLockboxKeyView(showView: $showKeyView, viewStyle: .enroll)
+        .onAppear() {
+            lockboxKeyMetadatas = lockerRoomManager.lockboxKeyMetadatas
+            lockboxKeyMetadatas.sort(using: sortOrder)
+        }
+        .onChange(of: lockerRoomManager.lockboxKeyMetadatas) {
+            lockboxKeyMetadatas = lockerRoomManager.lockboxKeyMetadatas
+            lockboxKeyMetadatas.sort(using: sortOrder)
+        }
+        .onChange(of: sortOrder) {
+            lockboxKeyMetadatas.sort(using: sortOrder)
+        }
+        .sheet(isPresented: $showLockboKeyAddView) {
+            LockerRoomLockboxKeyView(showView: $showLockboKeyAddView, viewStyle: .enroll)
         }
     }
 }

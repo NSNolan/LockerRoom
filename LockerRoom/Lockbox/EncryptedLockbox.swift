@@ -7,15 +7,17 @@
 
 import Foundation
 
-class EncryptedLockbox {
+class EncryptedLockbox: Lockbox {
     let name: String
     let size: Int
+    let isEncrypted: Bool
     let encryptedContent: Data
     let encryptedSymmetricKey: Data
         
     private init(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKey: Data) {
         self.name = name
         self.size = size
+        self.isEncrypted = true
         self.encryptedContent = encryptedContent
         self.encryptedSymmetricKey = encryptedSymmetricKey
     }

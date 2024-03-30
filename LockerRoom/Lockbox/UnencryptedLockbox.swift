@@ -7,14 +7,16 @@
 
 import Foundation
 
-struct UnencryptedLockbox {
+struct UnencryptedLockbox: Lockbox {
     let name: String
     let size: Int
+    let isEncrypted: Bool
     let unencryptedContent: Data
     
     private init(name: String, size: Int, unencryptedContent: Data) {
         self.name = name
         self.size = size
+        self.isEncrypted = false
         self.unencryptedContent = unencryptedContent
     }
     

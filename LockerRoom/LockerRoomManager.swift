@@ -18,55 +18,56 @@ class LockerRoomManager: ObservableObject {
     private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore()) {
         self.lockerRoomStore = lockerRoomStore
         self.lockboxMetadatas = updateLockboxMetadatas()
+        self.lockboxKeyMetadatas = updateLockboxKeyMetadatas()
     }
     
     func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
         guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Lockbox manager failed to add unencrypted lockbox \(name)")
+            print("[Error] Locker room manager failed to add unencrypted lockbox \(name)")
             return nil
         }
         
-        self.lockboxMetadatas = updateLockboxMetadatas()
+        lockboxMetadatas = updateLockboxMetadatas()
         return unencryptedLockbox
     }
     
     func addUnencryptedLockbox(name: String, unencryptedContent: Data) -> UnencryptedLockbox? {
         guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, unencryptedContent: unencryptedContent, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Lockbox manager failed to add unencrypted lockbox \(name) with data")
+            print("[Error] Locker room manager failed to add unencrypted lockbox \(name) with data")
             return nil
         }
         
-        self.lockboxMetadatas = updateLockboxMetadatas()
+        lockboxMetadatas = updateLockboxMetadatas()
         return unencryptedLockbox
     }
     
     func addEncryptedLockbox(name: String, encryptedContent: Data, encryptedSymmetricKey: Data) -> EncryptedLockbox? {
         guard let encryptedLockbox = EncryptedLockbox.create(name: name, encryptedContent: encryptedContent, encryptedSymmetricKey: encryptedSymmetricKey, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Lockbox manager failed to add encrypted lockbox \(name) with data")
+            print("[Error] Locker room manager failed to add encrypted lockbox \(name) with data")
             return nil
         }
         
-        self.lockboxMetadatas = updateLockboxMetadatas()
+        lockboxMetadatas = updateLockboxMetadatas()
         return encryptedLockbox
     }
     
     func removeUnencryptedLockbox(name: String) -> Bool {
         guard UnencryptedLockbox.destroy(name: name, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Lockbox manager failed to remove unencrypted lockbox \(name)")
+            print("[Error] Locker room manager failed to remove unencrypted lockbox \(name)")
             return false
         }
         
-        self.lockboxMetadatas = updateLockboxMetadatas()
+        lockboxMetadatas = updateLockboxMetadatas()
         return true
     }
     
     func removeEncryptedLockbox(name: String) -> Bool {        
         guard EncryptedLockbox.destroy(name: name, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Lockbox manager failed to remove encrypted lockbox \(name)")
+            print("[Error] Locker room manager failed to remove encrypted lockbox \(name)")
             return false
         }
         
-        self.lockboxMetadatas = updateLockboxMetadatas()
+        lockboxMetadatas = updateLockboxMetadatas()
         return true
     }
     
@@ -105,24 +106,26 @@ class LockerRoomManager: ObservableObject {
         publicKey: SecKey
     ) -> LockboxKey? {
         guard let lockboxKey = LockboxKey.create(name: name, serialNumber: serialNumber, slot: slot, algorithm: algorithm, pinPolicy: pinPolicy, touchPolicy: touchPolicy, managementKeyString: managementKeyString, publicKey: publicKey, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Lockbox manager failed to add key \(name)")
+            print("[Error] Locker room manager failed to add key \(name)")
             return nil
         }
         
-        self.lockboxKeyMetadatas = updateLockboxKeyMetadatas()
+        lockboxKeyMetadatas = updateLockboxKeyMetadatas()
         return lockboxKey
     }
     
-    private func updateLockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata] {
-        var results = [LockerRoomLockboxKeyMetadata]()
-        
-        do {
-            let keyURLs = lockerRoomStore.lockboxKeyURLs()
-            for keyURL in keyURLs {
-                
-            }
+    func removeLockboxKey(name: String) -> Bool {
+        guard LockboxKey.destroy(name: name, lockerRoomStore: lockerRoomStore) else {
+            print("[Error] Locker room manager failed to remove key \(name)")
+            return false
         }
         
-        return results
+        lockboxKeyMetadatas = updateLockboxKeyMetadatas()
+        return true
+    }
+    
+    private func updateLockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata] {
+        let keyURLs = lockerRoomStore.lockboxKeys()
+        return keyURLs.map { $0.metadata }
     }
 }
