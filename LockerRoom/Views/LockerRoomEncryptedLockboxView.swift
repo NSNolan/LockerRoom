@@ -83,14 +83,14 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
         }
         
         let name = encryptedLockbox.name
-        let encryptedSymmetricKey = encryptedLockbox.encryptedSymmetricKey
+        let encryptedSymmetricKeysBySerialNumber = encryptedLockbox.encryptedSymmetricKeysBySerialNumber
         
-        guard !encryptedSymmetricKey.isEmpty else {
-            print("[Error] LockerRoom is missing an encrypted symmetric to decrypt")
+        guard !encryptedSymmetricKeysBySerialNumber.isEmpty else {
+            print("[Error] LockerRoom is missing encrypted symmetric keys to decrypt")
             return
         }
         
-        guard let symmetricKeyData = await LockboxKeyCryptor.decrypt(encryptedSymmetricKey:encryptedSymmetricKey) else {
+        guard let symmetricKeyData = await LockboxKeyCryptor.decrypt(encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber) else {
             print("[Error] LockerRoom failed to decrypt an encrypted symmetric key")
             return
         }

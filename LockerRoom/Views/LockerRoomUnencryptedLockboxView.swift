@@ -10,7 +10,6 @@ import SwiftUI
 enum LockerRoomUnencryptedLockboxViewStyle {
     case add
     case encrypt
-    case waitingForKey
     case encrypting
 }
 
@@ -32,8 +31,6 @@ struct LockerRoomUnencryptedLockboxView: View {
                 LockerRoomUnencryptedLockboxAddView(showView: $showView, unencryptedLockbox: $unencryptedLockbox, viewStyle: $viewStyle)
             case .encrypt:
                 LockerRoomUnencryptedLockboxEncryptView(showView: $showView, unencryptedLockbox: $unencryptedLockbox, viewStyle: $viewStyle)
-            case .waitingForKey:
-                LockerRoomUnencryptedLockboxWaitingForKeyView(showView: $showView, unencryptedLockbox: $unencryptedLockbox, viewStyle: $viewStyle)
             case .encrypting:
                 LockerRoomUnencryptedLockboxEncryptingView(showView: $showView, unencryptedLockbox: $unencryptedLockbox)
             }
@@ -137,9 +134,9 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
         
             HStack {
                 Button("Encrypt") {
-                    viewStyle = .waitingForKey
+                    viewStyle = .encrypting
                     Task {
-                        await encrypt()
+                        encrypt()
                         showView = false
                     }
                 }
@@ -160,68 +157,40 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
         }
     }
     
-    private func encrypt() async {
+    private func encrypt() {
         guard let unencryptedLockbox else {
             print("[Error] LockerRoom is missing an unencrypted lockbox to encrypt")
             return
         }
         
-        let name = unencryptedLockbox.name
         let symmetricKeyData = LockboxKeyGenerator.generateSymmetricKeyData()
-        
-        guard let encryptedSymmetricKeyData = await LockboxKeyCryptor.encrypt(symmetricKey: symmetricKeyData) else {
-            print("[Error] LockerRoom failed to encrypt an unencrypted symmetric key")
+        let encryptedSymmetricKeysBySerialNumber = lockerRoomManager.encrypt(symmetricKeyData: symmetricKeyData)
+        guard !encryptedSymmetricKeysBySerialNumber.isEmpty else {
+            print("[Error] LockerRoom failed to encrypt a symmetric key")
             return
         }
-        print("[Default] LockerRoom encrypted an unencrypted symmetric key")
         
-        DispatchQueue.main.async {
-            viewStyle = .encrypting
-            
-            guard let encryptedContent = LockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
-                print("[Error] LockerRoom failed to encrypt an unencrypted lockbox \(name)")
-                return
-            }
-            print("[Default] LockerRoom encrypted an unencrypted lockbox \(name)")
-            
-            guard lockerRoomManager.removeUnencryptedLockbox(name: name) else { // TODO: Unencrypted lockbox is removed before encrypted lockbox is added. May cause data loss.
-                print("[Error] LockerRoom failed to removed an unencrypted lockbox \(name)")
-                return
-            }
-            print("[Default] LockerRoom removed an unencrypted lockbox \(name)")
-            
-            guard lockerRoomManager.addEncryptedLockbox(name: name, encryptedContent: encryptedContent, encryptedSymmetricKey: encryptedSymmetricKeyData) != nil else {
-                print("[Error] LockerRoom failed to add an encrypted lockbox \(name)")
-                return
-            }
-            print("[Default] LockerRoom added an encrypted lockbox \(name)")
+        print("[Default] LockerRoom encrypted a symmetric key")
+        
+        let name = unencryptedLockbox.name
+        
+        guard let encryptedContent = LockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+            print("[Error] LockerRoom failed to encrypt an unencrypted lockbox \(name)")
+            return
         }
-    }
-}
-
-private struct LockerRoomUnencryptedLockboxWaitingForKeyView: View {
-    @Binding var showView: Bool
-    @Binding var unencryptedLockbox: UnencryptedLockbox?
-    @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
-    
-    var body: some View {
-        if let unencryptedLockbox {
-            Text("Insert YubiKit to Encrypt \(unencryptedLockbox.name)")
-                .padding()
-        } else {
-            Text("Missing Lockbox to Encrypt")
+        print("[Default] LockerRoom encrypted an unencrypted lockbox \(name)")
+        
+        guard lockerRoomManager.removeUnencryptedLockbox(name: name) else { // TODO: Unencrypted lockbox is removed before encrypted lockbox is added. May cause data loss.
+            print("[Error] LockerRoom failed to removed an unencrypted lockbox \(name)")
+            return
         }
+        print("[Default] LockerRoom removed an unencrypted lockbox \(name)")
         
-        Spacer()
-        
-        ProgressView().progressViewStyle(CircularProgressViewStyle())
-        
-        Spacer()
-        
-        Button("Close") {
-            showView = false
+        guard lockerRoomManager.addEncryptedLockbox(name: name, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber) != nil else {
+            print("[Error] LockerRoom failed to add an encrypted lockbox \(name)")
+            return
         }
-        .padding()
+        print("[Default] LockerRoom added an encrypted lockbox \(name)")
     }
 }
 

@@ -41,8 +41,8 @@ class LockerRoomManager: ObservableObject {
         return unencryptedLockbox
     }
     
-    func addEncryptedLockbox(name: String, encryptedContent: Data, encryptedSymmetricKey: Data) -> EncryptedLockbox? {
-        guard let encryptedLockbox = EncryptedLockbox.create(name: name, encryptedContent: encryptedContent, encryptedSymmetricKey: encryptedSymmetricKey, lockerRoomStore: lockerRoomStore) else {
+    func addEncryptedLockbox(name: String, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data]) -> EncryptedLockbox? {
+        guard let encryptedLockbox = EncryptedLockbox.create(name: name, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Locker room manager failed to add encrypted lockbox \(name) with data")
             return nil
         }
@@ -69,30 +69,6 @@ class LockerRoomManager: ObservableObject {
         
         lockboxMetadatas = updateLockboxMetadatas()
         return true
-    }
-    
-    private func updateLockboxMetadatas() -> [LockerRoomLockboxMetadata] {
-        var results = [LockerRoomLockboxMetadata]()
-        
-        do {
-            let lockboxURLs = lockerRoomStore.lockboxURLs()
-            for lockboxURL in lockboxURLs {
-                let lockboxName = lockboxURL.lastPathComponent
-                let isEncrypted = lockerRoomStore.lockboxFileExists(name: lockboxName, fileType: .encryptedContentFileType) &&
-                                  lockerRoomStore.lockboxFileExists(name: lockboxName, fileType: .encryptedSymmetricKeyFileType)
-                let size: Int
-                if isEncrypted {
-                    size = lockerRoomStore.lockboxFileSize(name: lockboxName, fileType: .encryptedContentFileType)
-                } else {
-                    size = lockerRoomStore.lockboxFileSize(name: lockboxName, fileType: .unencryptedContentFileType)
-                }
-                
-                let metadata = LockerRoomLockboxMetadata(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted)
-                results.append(metadata)
-            }
-        }
-        
-        return results
     }
     
     func addLockboxKey(
@@ -122,6 +98,44 @@ class LockerRoomManager: ObservableObject {
         
         lockboxKeyMetadatas = updateLockboxKeyMetadatas()
         return true
+    }
+    
+    func encrypt(symmetricKeyData: Data) -> [UInt32:Data] {
+        let lockboxKeys = lockerRoomStore.lockboxKeys()
+        var encryptedSymmetricKeysBySerialNumbers = [UInt32:Data]()
+        
+        for lockboxKey in lockboxKeys {
+            guard let encryptedSymmetricKeyData = LockboxKeyCryptor.encrypt(symmetricKey: symmetricKeyData, lockboxKey: lockboxKey) else {
+                print("[Error] LockerRoom failed to encrypt an unencrypted symmetric key with lockbox key \(lockboxKey)")
+                continue
+            }
+            encryptedSymmetricKeysBySerialNumbers[lockboxKey.serialNumber] = encryptedSymmetricKeyData
+        }
+        
+        return encryptedSymmetricKeysBySerialNumbers
+    }
+    
+    private func updateLockboxMetadatas() -> [LockerRoomLockboxMetadata] {
+        var results = [LockerRoomLockboxMetadata]()
+        
+        do {
+            let lockboxURLs = lockerRoomStore.lockboxURLs()
+            for lockboxURL in lockboxURLs {
+                let lockboxName = lockboxURL.lastPathComponent
+                let isEncrypted = lockerRoomStore.lockboxFileExists(name: lockboxName, fileType: .encryptedLockboxFileType)
+                let size: Int
+                if isEncrypted {
+                    size = lockerRoomStore.lockboxFileSize(name: lockboxName, fileType: .encryptedLockboxFileType)
+                } else {
+                    size = lockerRoomStore.lockboxFileSize(name: lockboxName, fileType: .unencryptedContentFileType)
+                }
+                
+                let metadata = LockerRoomLockboxMetadata(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted)
+                results.append(metadata)
+            }
+        }
+        
+        return results
     }
     
     private func updateLockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata] {

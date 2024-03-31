@@ -7,22 +7,22 @@
 
 import Foundation
 
-class EncryptedLockbox: Lockbox {
+class EncryptedLockbox: Lockbox, Codable {
     let name: String
     let size: Int
     let isEncrypted: Bool
     let encryptedContent: Data
-    let encryptedSymmetricKey: Data
+    let encryptedSymmetricKeysBySerialNumber: [UInt32:Data]
         
-    private init(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKey: Data) {
+    private init(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data]) {
         self.name = name
         self.size = size
         self.isEncrypted = true
         self.encryptedContent = encryptedContent
-        self.encryptedSymmetricKey = encryptedSymmetricKey
+        self.encryptedSymmetricKeysBySerialNumber = encryptedSymmetricKeysBySerialNumber
     }
     
-    static func create(name: String, size: Int = 0, encryptedContent: Data, encryptedSymmetricKey: Data, lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
+    static func create(name: String, size: Int = 0, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
         guard !lockerRoomStore.lockboxExists(name: name) else {
             print("[Error] Encrypted lockbox failed to add \(name) at existing path")
             return nil
@@ -34,40 +34,31 @@ class EncryptedLockbox: Lockbox {
             return nil
         }
         
-        guard lockerRoomStore.writeToLockbox(encryptedContent, name: name, fileType: .encryptedContentFileType) else {
-            print("[Error] Encrypted lockbox failed to write \(name) with encrypted content")
+        let lockbox = EncryptedLockbox(name: name, size: actualSize, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber)
+        
+        guard lockerRoomStore.writeEncryptedLockbox(lockbox, name: name, fileType: .encryptedLockboxFileType) else {
+            print("[Error] Encrypted lockbox failed to write \(name)")
             return nil
         }
         
-        guard lockerRoomStore.writeToLockbox(encryptedSymmetricKey, name: name, fileType: .encryptedSymmetricKeyFileType) else {
-            print("[Error] Encrypted lockbox failed to write \(name) with encrypted symmetric key")
-            return nil
-        }
-        
-        return EncryptedLockbox(name: name, size: actualSize, encryptedContent: encryptedContent, encryptedSymmetricKey: encryptedSymmetricKey)
+        return lockbox
     }
     
     static func create(from encryptedLockboxMetadata: LockerRoomLockboxMetadata, lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
         let isEncrypted = encryptedLockboxMetadata.isEncrypted
         let name = encryptedLockboxMetadata.name
-        let size = encryptedLockboxMetadata.size
         
         guard isEncrypted else {
             print("[Error] Encrypted lockback failed to create \(name) with unencrypted lockbox metadata")
             return nil
         }
         
-        guard let encryptedContent = lockerRoomStore.readFromLockbox(name: name, fileType: .encryptedContentFileType) else {
-            print("[Error] Encrypted lockbox failed to read \(name) for encrypted content")
-            return nil
-        }
-        
-        guard let encryptedSymmetricKey = lockerRoomStore.readFromLockbox(name: name, fileType: .encryptedSymmetricKeyFileType) else {
-            print("[Error] Encrypted lockbox failed to read \(name) for encrypted symmetric key")
+        guard let encryptedLockbox = lockerRoomStore.readEncryptedLockbox(name: name, fileType: .encryptedLockboxFileType) else {
+            print("[Error] Encrypted lockbox failed to read \(name)")
             return nil
         }
 
-        return EncryptedLockbox(name: name, size: size, encryptedContent: encryptedContent, encryptedSymmetricKey: encryptedSymmetricKey)
+        return encryptedLockbox
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {

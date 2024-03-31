@@ -8,8 +8,7 @@
 import Foundation
 
 enum LockerRoomLockboxFileType: String {
-    case encryptedContentFileType = "EncryptedContent.dmg"
-    case encryptedSymmetricKeyFileType = "EncryptedSymmetricKey.key"
+    case encryptedLockboxFileType = "EncryptedLockbox.plist"
     case unencryptedContentFileType = "UnencryptedContent.dmg"
 }
 

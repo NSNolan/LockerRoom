@@ -17,6 +17,9 @@ protocol LockerRoomStoring {
     func readFromLockbox(name: String, fileType: LockerRoomLockboxFileType) -> Data?
     func writeToLockbox(_ data: Data?, name: String, fileType: LockerRoomLockboxFileType) -> Bool
     
+    func readEncryptedLockbox(name: String, fileType: LockerRoomLockboxFileType) -> EncryptedLockbox?
+    func writeEncryptedLockbox(_ lockbox: EncryptedLockbox?, name: String, fileType: LockerRoomLockboxFileType) -> Bool
+    
     func lockboxExists(name: String) -> Bool
     func lockboxFileExists(name: String, fileType: LockerRoomLockboxFileType) -> Bool
     func lockboxFileSize(name: String, fileType: LockerRoomLockboxFileType) -> Int
@@ -149,6 +152,79 @@ struct LockerRoomStore: LockerRoomStoring {
             print("[Error] Locker room store failed to write lockbox \(name) for type \(fileType) with error \(error)")
             return false
         }
+    }
+    
+    func readEncryptedLockbox(name: String, fileType: LockerRoomLockboxFileType) -> EncryptedLockbox? {
+        let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
+        let lockboxPath = lockboxURL.path()
+        
+        guard fileManager.fileExists(atPath: lockboxPath) else {
+            print("[Error] Locker room store failed to read encrypted lockbox \(name) at non-existing path \(lockboxPath)")
+            return nil
+        }
+        
+        let lockboxFileURL = lockerRoomURLProvider.urlForLockboxFile(name: name, type: .encryptedLockboxFileType)
+        let lockboxFilePath = lockboxFileURL.path()
+        
+        guard fileManager.fileExists(atPath: lockboxFilePath) else {
+            print("[Error] Locker room store failed to read encrypted lockbox \(name) for type \(fileType) at path \(lockboxFilePath)")
+            return nil
+        }
+        
+        do {
+            let lockboxPlistData = try Data(contentsOf: lockboxFileURL, options: .mappedIfSafe)
+            
+            do {
+                 return try decoder.decode(EncryptedLockbox.self, from: lockboxPlistData)
+            } catch {
+                print("[Error] Locker room store failed to decode encrypted lockbox \(name) with plist data \(lockboxPlistData) for type \(fileType) at path \(lockboxFilePath) with error \(error)")
+                return nil
+            }
+        } catch {
+            print("[Error] Locker room store failed to read encrypted lockbox \(name) for type \(fileType) with error \(error)")
+            return nil
+        }
+    }
+    
+    func writeEncryptedLockbox(_ lockbox: EncryptedLockbox?, name: String, fileType: LockerRoomLockboxFileType) -> Bool {
+        let lockboxFileURL = lockerRoomURLProvider.urlForLockboxFile(name: name, type: .encryptedLockboxFileType)
+        let lockboxFilePath = lockboxFileURL.path()
+        
+        guard let lockbox else {
+            do {
+                try fileManager.removeItem(at: lockboxFileURL)
+                return true
+            } catch {
+                print("[Error] Locker room store failed to remove encrypted lockbox \(name) for type \(fileType) at path \(lockboxFilePath) with error \(error)")
+                return false
+            }
+        }
+        
+        do {
+            let lockboxPlistData = try encoder.encode(lockbox)
+            let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
+            let lockboxPath = lockboxURL.path()
+            
+            if !fileManager.fileExists(atPath: lockboxPath) {
+                do {
+                    try fileManager.createDirectory(at: lockboxURL, withIntermediateDirectories: true)
+                } catch {
+                    print("[Error] Locker room store failed to create encrypted lockbox directory \(name) at path \(lockboxPath)")
+                    return false
+                }
+            }
+            
+            do {
+                try lockboxPlistData.write(to: lockboxFileURL, options: .atomic)
+                return true
+            } catch {
+                print("[Error] Locker room store failed to write encryped lockbox \(name) with plist data \(lockboxPlistData) for type \(fileType) to path \(lockboxFileURL)")
+                return false
+            }
+        } catch {
+            print("[Error] Locker room store failed to encode encrypted lockbox \(name) for type \(fileType) at path \(lockboxFilePath) with error \(error)")
+        }
+        return true
     }
     
     func lockboxExists(name: String) -> Bool {
