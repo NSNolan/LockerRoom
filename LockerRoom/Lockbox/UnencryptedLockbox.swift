@@ -41,7 +41,7 @@ struct UnencryptedLockbox: Lockbox {
                 return nil
             }
             
-            guard let newUnencryptedContent = lockerRoomStore.readFromLockbox(name: name, fileType: .unencryptedContentFileType) else {
+            guard let newUnencryptedContent = lockerRoomStore.readUnencryptedLockbox(name: name) else {
                 print("[Error] Unencrypted lockbox failed to read \(name) for new content")
                 return nil
             }
@@ -66,7 +66,7 @@ struct UnencryptedLockbox: Lockbox {
                 return nil
             }
             
-            guard lockerRoomStore.writeToLockbox(unencryptedContent, name: name, fileType: .unencryptedContentFileType) else {
+            guard lockerRoomStore.writeUnencryptedLockbox(unencryptedContent, name: name) else {
                 print("[Error] Unencrypted lockbox failed to add \(name) from data \(unencryptedContent)")
                 return nil
             }
@@ -90,7 +90,7 @@ struct UnencryptedLockbox: Lockbox {
             return nil
         }
         
-        guard let unencryptedContent = lockerRoomStore.readFromLockbox(name: name, fileType: .unencryptedContentFileType) else {
+        guard let unencryptedContent = lockerRoomStore.readUnencryptedLockbox(name: name) else {
             print("[Error] Unencrypted lockbox failed to read \(name) for unencrypted content")
             return nil
         }

@@ -122,12 +122,12 @@ class LockerRoomManager: ObservableObject {
             let lockboxURLs = lockerRoomStore.lockboxURLs()
             for lockboxURL in lockboxURLs {
                 let lockboxName = lockboxURL.lastPathComponent
-                let isEncrypted = lockerRoomStore.lockboxFileExists(name: lockboxName, fileType: .encryptedLockboxFileType)
+                let isEncrypted = lockerRoomStore.lockboxEncryptedExists(name: lockboxName)
                 let size: Int
                 if isEncrypted {
-                    size = lockerRoomStore.lockboxFileSize(name: lockboxName, fileType: .encryptedLockboxFileType)
+                    size = lockerRoomStore.lockboxEncryptedSize(name: lockboxName)
                 } else {
-                    size = lockerRoomStore.lockboxFileSize(name: lockboxName, fileType: .unencryptedContentFileType)
+                    size = lockerRoomStore.lockboxUnencryptedSize(name: lockboxName)
                 }
                 
                 let metadata = LockerRoomLockboxMetadata(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted)

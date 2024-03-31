@@ -198,8 +198,8 @@
 			isa = PBXGroup;
 			children = (
 				BF0BCB5E2BB8C9A500F91471 /* Lockbox.swift */,
-				BF1DD0842BAF88DA001FA81F /* EncryptedLockbox.swift */,
 				BF1DD0892BAF94F7001FA81F /* UnencryptedLockbox.swift */,
+				BF1DD0842BAF88DA001FA81F /* EncryptedLockbox.swift */,
 			);
 			path = Lockbox;
 			sourceTree = "<group>";

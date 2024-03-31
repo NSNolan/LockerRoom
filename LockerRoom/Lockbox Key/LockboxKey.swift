@@ -76,7 +76,7 @@ struct LockboxKey: Codable {
         )
         let keyName = String(serialNumber) // Index keys by their serial number
     
-        guard lockerRoomStore.writeLockboxKey(key, name: keyName, fileType: .publicKeysFileType) else {
+        guard lockerRoomStore.writeLockboxKey(key, name: keyName) else {
             print("[Error] Lockbox key failed to write \(key)")
             return nil
         }

@@ -36,7 +36,7 @@ class EncryptedLockbox: Lockbox, Codable {
         
         let lockbox = EncryptedLockbox(name: name, size: actualSize, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber)
         
-        guard lockerRoomStore.writeEncryptedLockbox(lockbox, name: name, fileType: .encryptedLockboxFileType) else {
+        guard lockerRoomStore.writeEncryptedLockbox(lockbox, name: name) else {
             print("[Error] Encrypted lockbox failed to write \(name)")
             return nil
         }
@@ -53,7 +53,7 @@ class EncryptedLockbox: Lockbox, Codable {
             return nil
         }
         
-        guard let encryptedLockbox = lockerRoomStore.readEncryptedLockbox(name: name, fileType: .encryptedLockboxFileType) else {
+        guard let encryptedLockbox = lockerRoomStore.readEncryptedLockbox(name: name) else {
             print("[Error] Encrypted lockbox failed to read \(name)")
             return nil
         }

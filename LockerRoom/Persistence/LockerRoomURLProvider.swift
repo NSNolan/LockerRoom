@@ -7,36 +7,32 @@
 
 import Foundation
 
-enum LockerRoomLockboxFileType: String {
-    case encryptedLockboxFileType = "EncryptedLockbox.plist"
-    case unencryptedContentFileType = "UnencryptedContent.dmg"
-}
-
-enum LockerRoomKeyFileType: String {
-    case publicKeysFileType = "LockboxKey.plist"
-}
-
 protocol LockerRoomURLProviding {
     var rootURL: URL { get }
     var urlForLockboxes: URL { get }
     var urlForKeys: URL { get }
     
     func urlForLockbox(name: String) -> URL
-    func urlForLockboxFile(name: String, type: LockerRoomLockboxFileType) -> URL
+    func urlForUnencryptedLockboxFile(name: String) -> URL
+    func urlForEncryptedLockboxFile(name: String) -> URL
     
     func urlForKey(name: String) -> URL
-    func urlForKeyFile(name: String, type: LockerRoomKeyFileType) -> URL
+    func urlForKeyFile(name: String) -> URL
     
     func urlForMountedVolume(name: String) -> URL
 }
 
 struct LockerRoomURLProvider: LockerRoomURLProviding {
-    static let lockboxesPathComponent = "Lockboxes"
-    static let keysPathComponent = "Keys"
-    static let volumesPathComponent = "/Volumes/"
+    private static let unencryptedLockboxFileName = "UnencryptedContent.dmg"
+    private static let encryptedLockboxFileName = "EncryptedLockbox.plist"
+    private static let lockboxKeyFileName = "LockboxKey.plist"
     
-    internal var rootURL: URL
+    private static let lockboxesPathComponent = "Lockboxes"
+    private static let keysPathComponent = "Keys"
+    private static let volumesPathComponent = "/Volumes/"
+    
     private let fileManager = FileManager.default
+    internal var rootURL: URL
         
     init(rootURL: URL? = nil) {
         let documentDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
@@ -67,16 +63,20 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
         urlForLockboxes.appending(component: name)
     }
     
-    func urlForLockboxFile(name: String, type: LockerRoomLockboxFileType) -> URL {
-        urlForLockbox(name: name).appending(component: type.rawValue)
+    func urlForUnencryptedLockboxFile(name: String) -> URL {
+        urlForLockbox(name: name).appending(component: LockerRoomURLProvider.unencryptedLockboxFileName)
+    }
+    
+    func urlForEncryptedLockboxFile(name: String) -> URL {
+        urlForLockbox(name: name).appending(component: LockerRoomURLProvider.encryptedLockboxFileName)
     }
     
     func urlForKey(name: String) -> URL {
         urlForKeys.appending(component: name)
     }
     
-    func urlForKeyFile(name: String, type: LockerRoomKeyFileType) -> URL {
-        urlForKey(name: name).appending(component: type.rawValue)
+    func urlForKeyFile(name: String) -> URL {
+        urlForKey(name: name).appending(component: LockerRoomURLProvider.lockboxKeyFileName)
     }
     
     func urlForMountedVolume(name: String) -> URL {
