@@ -14,7 +14,7 @@ enum LockerRoomLockboxFileType: String {
 }
 
 enum LockerRoomKeyFileType: String {
-    case publicKeysFileType = "PublicKey.plist"
+    case publicKeysFileType = "LockboxKey.plist"
 }
 
 protocol LockerRoomURLProviding {

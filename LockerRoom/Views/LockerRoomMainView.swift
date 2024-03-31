@@ -135,6 +135,9 @@ private struct LockerRoomKeysView: View {
         VStack {
             Table(lockboxKeyMetadatas, selection: $selection, sortOrder: $sortOrder) {
                 TableColumn("Name", value: \.name)
+                TableColumn("Serial Number") { lockboxKeyMetadata in
+                    Text("\(String(lockboxKeyMetadata.serialNumber))")
+                }
                 TableColumn("Slot", value: \.slot.rawValue)
                 TableColumn("Algorithm", value: \.algorithm.rawValue)
                 TableColumn("Pin Policy", value: \.pinPolicy.rawValue)

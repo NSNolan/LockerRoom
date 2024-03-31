@@ -74,10 +74,10 @@ struct LockboxKey: Codable {
             managementKeyString: managementKeyString,
             publicKey: publicKey
         )
-        
-        guard lockerRoomStore.writeLockboxKey(key, name: name, fileType: .publicKeysFileType) else {
-            print("[Error] Lockbox key failed to write \(name)")
-            _ = destroy(name: name, lockerRoomStore: lockerRoomStore)
+        let keyName = String(serialNumber) // Index keys by their serial number
+    
+        guard lockerRoomStore.writeLockboxKey(key, name: keyName, fileType: .publicKeysFileType) else {
+            print("[Error] Lockbox key failed to write \(key)")
             return nil
         }
         
