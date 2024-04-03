@@ -45,7 +45,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
     @Binding var unencryptedLockbox: UnencryptedLockbox?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     
-    @ObservedObject var unencryptedLockboxConfiguration = LockerRoomUnencryptedLockboxConfiguration()
+    @StateObject var unencryptedLockboxConfiguration = LockerRoomUnencryptedLockboxConfiguration()
     
     let lockerRoomManager = LockerRoomManager.shared
     

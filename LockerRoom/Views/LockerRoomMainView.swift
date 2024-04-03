@@ -16,14 +16,16 @@ enum LockerRoomMainViewStyle: String, CaseIterable, Identifiable {
 
 struct LockerRoomMainView: View {
     @State private var viewStyle: LockerRoomMainViewStyle = .lockboxes
+    
+    @StateObject var lockerRoomManager = LockerRoomManager.shared
 
     var body: some View {
         VStack {
             switch viewStyle {
             case .lockboxes:
-                LockerRoomLockboxesView()
+                LockerRoomLockboxesView(lockerRoomManager: lockerRoomManager)
             case .keys:
-                LockerRoomKeysView()
+                LockerRoomKeysView(lockerRoomManager: lockerRoomManager)
             }
         }
         .toolbar {
@@ -37,7 +39,7 @@ struct LockerRoomMainView: View {
 }
 
 private struct LockerRoomLockboxesView: View {
-    @ObservedObject var lockerRoomManager = LockerRoomManager.shared
+    @ObservedObject var lockerRoomManager: LockerRoomManager
     
     @State private var lockboxMetadatas = [LockerRoomLockboxMetadata]()
     @State private var selection: LockerRoomLockboxMetadata.ID? = nil
@@ -121,7 +123,7 @@ private struct LockerRoomLockboxesView: View {
 }
 
 private struct LockerRoomKeysView: View {
-    @ObservedObject var lockerRoomManager = LockerRoomManager.shared
+    @ObservedObject var lockerRoomManager: LockerRoomManager
     
     @State private var lockboxKeyMetadatas = [LockerRoomLockboxKeyMetadata]()
     @State private var selection: LockerRoomLockboxKeyMetadata.ID? = nil

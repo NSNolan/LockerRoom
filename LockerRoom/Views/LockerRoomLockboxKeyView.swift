@@ -44,7 +44,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
     @Binding var showView: Bool
     @Binding var viewStyle: LockerRoomLockboxKeyViewStyle
     
-    @ObservedObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
+    @StateObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
     
     let lockerRoomManager = LockerRoomManager.shared
     
