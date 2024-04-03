@@ -21,7 +21,7 @@ struct UnencryptedLockbox: Lockbox {
     }
     
     static func create(name: String, size: Int = 0, unencryptedContent: Data = Data(), lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
-        let diskImage = LockerRoomDiskImage()
+        let diskImage = LockerRoomDiskImage() // TODO: It is very awkward that the disk image routines create, attach and detach are called within create/destroy
         
         if unencryptedContent.isEmpty {
             print("[Default] Unencrypted lockbox creating \(name) for new content")
@@ -81,6 +81,7 @@ struct UnencryptedLockbox: Lockbox {
     }
     
     static func create(from unencryptedLockboxMetadata: LockerRoomLockboxMetadata, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
+        let diskImage = LockerRoomDiskImage()
         let isEncrypted = unencryptedLockboxMetadata.isEncrypted
         let name = unencryptedLockboxMetadata.name
         let size = unencryptedLockboxMetadata.size
@@ -95,11 +96,15 @@ struct UnencryptedLockbox: Lockbox {
             return nil
         }
         
+        
+        _ = diskImage.attach(name: name) // Not fatal
+        
         return UnencryptedLockbox(name: name, size: size, unencryptedContent: unencryptedContent)
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {
-        _ = LockerRoomDiskImage().detach(name: name) // Not fatal
+        let diskImage = LockerRoomDiskImage()
+        _ = diskImage.detach(name: name) // Not fatal
         
         guard lockerRoomStore.removeLockbox(name: name) else {
             print("[Error] Unencrypted lockbox failed to remove \(name)")

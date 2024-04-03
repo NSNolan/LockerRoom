@@ -107,7 +107,7 @@ private struct LockerRoomLockboxesView: View {
     }
     
     private func selectLockbox(fromMetadataIDs metadataIDs: Set<LockerRoomLockboxMetadata.ID>) {
-        if let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) { // TODO: Is this really the best way to get the row I just selected in this callback...
+        if let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) { // TODO: Is this really the best way to get the row I just selected...
             let lockerRoomStore = lockerRoomManager.lockerRoomStore
             if metadata.isEncrypted {
                 selectedEncryptedLockbox = EncryptedLockbox.create(from: metadata, lockerRoomStore: lockerRoomStore)

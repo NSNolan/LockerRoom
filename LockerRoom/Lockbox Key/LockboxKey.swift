@@ -40,7 +40,7 @@ struct LockboxKey: Codable {
     let algorithm: Algorithm
     let pinPolicy: PinPolicy
     let touchPolicy: TouchPolicy
-    let managementKeyString: String
+    let managementKeyString: String // TODO: Maybe I shouldn't persist the management key 
     let publicKeyData: Data
     
     private init(name: String, serialNumber: UInt32, slot: Slot, algorithm: Algorithm, pinPolicy: PinPolicy, touchPolicy: TouchPolicy, managementKeyString: String, publicKey: SecKey) {
