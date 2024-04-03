@@ -104,27 +104,20 @@ class LockerRoomManager: ObservableObject {
         return lockerRoomStore.lockboxKeys()
     }
     
-    private func updateLockboxMetadatas() -> [LockerRoomLockboxMetadata] { // TODO: this should be fetching codable objects instead of using the file system to construct the metadata
-        var results = [LockerRoomLockboxMetadata]()
-        
-        do {
-            let lockboxURLs = lockerRoomStore.lockboxURLs()
-            for lockboxURL in lockboxURLs {
-                let lockboxName = lockboxURL.lastPathComponent
-                let isEncrypted = lockerRoomStore.lockboxEncryptedExists(name: lockboxName)
-                let size: Int
-                if isEncrypted {
-                    size = lockerRoomStore.lockboxEncryptedSize(name: lockboxName)
-                } else {
-                    size = lockerRoomStore.lockboxUnencryptedSize(name: lockboxName)
-                }
-                
-                let metadata = LockerRoomLockboxMetadata(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted)
-                results.append(metadata)
+    private func updateLockboxMetadatas() -> [LockerRoomLockboxMetadata] { // TODO: this should be fetching codable objects instead of using the file system to construct the metadata        
+        let lockboxURLs = lockerRoomStore.lockboxURLs()
+        return lockboxURLs.map { lockboxURL in
+            let lockboxName = lockboxURL.lastPathComponent
+            let isEncrypted = lockerRoomStore.lockboxEncryptedExists(name: lockboxName)
+            let size: Int
+            if isEncrypted {
+                size = lockerRoomStore.lockboxEncryptedSize(name: lockboxName)
+            } else {
+                size = lockerRoomStore.lockboxUnencryptedSize(name: lockboxName)
             }
+            
+            return LockerRoomLockboxMetadata(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted)
         }
-        
-        return results
     }
     
     private func updateLockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata] {
