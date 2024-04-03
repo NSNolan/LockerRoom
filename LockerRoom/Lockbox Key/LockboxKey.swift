@@ -93,29 +93,3 @@ struct LockboxKey: Codable {
         return true
     }
 }
-
-private extension SecKey {
-    var data: Data? {
-        var error: Unmanaged<CFError>?
-        guard let data = SecKeyCopyExternalRepresentation(self, &error) as Data? else {
-            print("[Error] Lockbox key failed to convert public key to data: \(error.debugDescription)")
-            return nil
-        }
-        return data
-    }
-}
-
-private extension Data {
-    var publicKey: SecKey? {
-        let attributes: [String: Any] = [
-            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
-            kSecAttrKeyClass as String: kSecAttrKeyClassPublic
-        ]
-        var error: Unmanaged<CFError>?
-        guard let key = SecKeyCreateWithData(self as CFData, attributes as CFDictionary, &error) else {
-            print("[Error] Lockbox key failed to convert data to public key: \(error.debugDescription)")
-            return nil
-        }
-        return key
-    }
-}

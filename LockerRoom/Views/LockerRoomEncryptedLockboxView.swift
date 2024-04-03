@@ -86,15 +86,20 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
         let encryptedSymmetricKeysBySerialNumber = encryptedLockbox.encryptedSymmetricKeysBySerialNumber
         
         guard !encryptedSymmetricKeysBySerialNumber.isEmpty else {
-            print("[Error] LockerRoom is missing encrypted symmetric keys to decrypt")
+            print("[Error] LockerRoom is missing encrypted symmetric keys to decrypt an encrypted lockbox \(name)")
             return
         }
         
-        guard let symmetricKeyData = await LockboxKeyCryptor.decrypt(encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber) else {
-            print("[Error] LockerRoom failed to decrypt an encrypted symmetric key")
+        var lockboxKeysBySerialNumber = [UInt32:LockboxKey]()
+        for lockboxKey in lockerRoomManager.lockboxKeys {
+            lockboxKeysBySerialNumber[lockboxKey.serialNumber] = lockboxKey
+        }
+        
+        guard let symmetricKeyData = await LockboxKeyCryptor.decrypt(encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, lockboxKeysBySerialNumber: lockboxKeysBySerialNumber) else {
+            print("[Error] LockerRoom failed to decrypt an encrypted symmetric key to decrypt an encrypted lockbox \(name)")
             return
         }
-        print("[Default] LockerRoom decrypted an encrypted symmetric key")
+        print("[Default] LockerRoom decrypted an encrypted symmetric key to decrypt an encrypted lockbox \(name)")
         
         DispatchQueue.main.async {
             viewStyle = .decrypting

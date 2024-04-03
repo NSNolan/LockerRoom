@@ -100,22 +100,11 @@ class LockerRoomManager: ObservableObject {
         return true
     }
     
-    func encrypt(symmetricKeyData: Data) -> [UInt32:Data] {
-        let lockboxKeys = lockerRoomStore.lockboxKeys()
-        var encryptedSymmetricKeysBySerialNumbers = [UInt32:Data]()
-        
-        for lockboxKey in lockboxKeys {
-            guard let encryptedSymmetricKeyData = LockboxKeyCryptor.encrypt(symmetricKey: symmetricKeyData, lockboxKey: lockboxKey) else {
-                print("[Error] LockerRoom failed to encrypt an unencrypted symmetric key with lockbox key \(lockboxKey)")
-                continue
-            }
-            encryptedSymmetricKeysBySerialNumbers[lockboxKey.serialNumber] = encryptedSymmetricKeyData
-        }
-        
-        return encryptedSymmetricKeysBySerialNumbers
+    var lockboxKeys: [LockboxKey] {
+        return lockerRoomStore.lockboxKeys()
     }
     
-    private func updateLockboxMetadatas() -> [LockerRoomLockboxMetadata] {
+    private func updateLockboxMetadatas() -> [LockerRoomLockboxMetadata] { // TODO: this should be fetching codable objects instead of using the file system to construct the metadata
         var results = [LockerRoomLockboxMetadata]()
         
         do {
@@ -139,7 +128,7 @@ class LockerRoomManager: ObservableObject {
     }
     
     private func updateLockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata] {
-        let keyURLs = lockerRoomStore.lockboxKeys()
-        return keyURLs.map { $0.metadata }
+        let keys = lockerRoomStore.lockboxKeys()
+        return keys.map { $0.metadata }
     }
 }

@@ -77,7 +77,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
             Button("Add") {
                 let name = unencryptedLockboxConfiguration.name
                 guard !name.isEmpty else {
-                    print("[Error] LockerRoom cannot add a new decrypted lockbox \(name)")
+                    print("[Error] LockerRoom cannot add a new decrypted lockbox with missing name")
                     showView = false
                     return
                 }
@@ -164,7 +164,16 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
         }
         
         let symmetricKeyData = LockboxKeyGenerator.generateSymmetricKeyData()
-        let encryptedSymmetricKeysBySerialNumber = lockerRoomManager.encrypt(symmetricKeyData: symmetricKeyData)
+        
+        var encryptedSymmetricKeysBySerialNumber = [UInt32:Data]()
+        for lockboxKey in lockerRoomManager.lockboxKeys {
+            guard let encryptedSymmetricKeyData = LockboxKeyCryptor.encrypt(symmetricKeyData: symmetricKeyData, lockboxKey: lockboxKey) else {
+                print("[Error] LockerRoom failed to encrypt a symmetric key with lockbox key \(lockboxKey.name)")
+                continue
+            }
+            encryptedSymmetricKeysBySerialNumber[lockboxKey.serialNumber] = encryptedSymmetricKeyData
+        }
+        
         guard !encryptedSymmetricKeysBySerialNumber.isEmpty else {
             print("[Error] LockerRoom failed to encrypt a symmetric key")
             return
