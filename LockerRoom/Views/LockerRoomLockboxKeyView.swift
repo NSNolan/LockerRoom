@@ -18,7 +18,7 @@ private class LockerRoomLockboxKeyConfiguration: ObservableObject {
     @Published var algorithm = LockboxKey.Algorithm.RSA2048
     @Published var pinPolicy = LockboxKey.PinPolicy.never
     @Published var touchPolicy = LockboxKey.TouchPolicy.never
-    @Published var managementKeyString = "c4b4b9040f8e950063b8cbd21a972827d6f520b76d665ff2dad1e2703c7d63a8" // TODO: Update to default management key 010203040506070801020304050607080102030405060708
+    @Published var managementKeyString = "010203040506070801020304050607080102030405060708"
 }
 
 struct LockerRoomLockboxKeyView: View {
