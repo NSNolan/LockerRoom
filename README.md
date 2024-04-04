@@ -6,7 +6,7 @@ Locker Room is a macOS application to create, encrypt and decrypt local disk ima
 
 ### How-To
 
-There are two top-level views in the application: **Lockboxes** and **Keys**. These views can be toggled between using the menu bar item located in the top-right corner of the application. The **Lockboxes** view shows a list of created lockboxes.
+There are two top-level views in the application: **Lockboxes** and **Keys**. These views can be toggled using the menu bar item located in the top-right corner of the application. The **Lockboxes** view shows a list of created lockboxes.
 ![](Images/Locker-Room-Lockboxes.png)
 
 And the **Keys** view shows a list of enroll keys.
@@ -15,16 +15,24 @@ And the **Keys** view shows a list of enroll keys.
 When the **Lockboxes** view is selected the plus button in the bottom-right corner will prompt the user to add a new lockbox.
 ![](Images/Locker-Room-Add-Lockbox.png)
 
-And when on the **Keys** view is selected the plus button will prompt the user to enroll a new key using an external hardware device.
+And when on the **Keys** view is selected the same plus button will instead prompt the user to enroll a new key using an external hardware device.
 ![](Images/Locker-Room-Add-Key.png)
 
-When a lockbox is created it starts off unencrypted and a user can add files to it. A lockbox cannot be encrypted until at least one key has been enrolled using an external hardware device. Once a key is enrolled the hardware device's corresponding public key is stored. The public key can later be used to encrypt lockboxes without the external hardware device present. Every enrolled key will be used when a lockbox is encrypted to support the use of multiple external hardware devices as backup for decryption. Keys enrolled after a lockbox has been encrypted will not be used to retroactively encrypt any previously encrypted lockboxes and therefore cannot be used to decrypt any previously encrypted lockboxes.
+When a new lockbox is created it starts off unencrypted and a user can add files to it. A lockbox cannot be encrypted until at least one key has been enrolled using an external hardware device. Once a key is enrolled the hardware device's corresponding public key is stored. The public key can later be used to encrypt lockboxes without the external hardware device present. Every enrolled key will be used when a lockbox is encrypted to support the use of multiple external hardware devices as backup for decryption. Keys enrolled after a lockbox has been encrypted will not be used to retroactively encrypt any previously encrypted lockboxes and therefore cannot be used to decrypt any previously encrypted lockboxes.
 
 To enroll a key the user must switch to the **Keys** view and then click on the plus button. The user must specifiy a key name, PIV slot, algorithm, PIN policy, touch policy and the PIV management key to used when generating and storing the public-private key pair on the external hardware device. After the key details are configured, enrolling the key will wait for the external hardware device to become present. Once present the key enrollment process will complete.
 
 A user can choose to encrypt a lockbox directly after it is created or they can choose to encrypt it later. Double-clicking on an unencrypted lockbox will prompt the user to encrypt it. And double-clicking on an encrypted lockbox will prompt the user to decrypt it. Encryption does not require an external hardware device to be present because only previously enrolled keys are used. Decryption does require an external hardware device to be present because the private key stored on the external hardware device is used for decryption. After the encrypted lockbox is selected ,decrypting the lockbox will wait for an external hardware device to become present. If the lockbox was encrypted using an enrolled key corresponding to the external hardware device then the decryption process will complete.
 
 ### Technical Details
+
+A lockbox is logically a disk image. While a lockbox is unencrypted the disk image can be attached and the mounted volume used as a filesystem. While a lockbox is encrypted the disk image cannot be used.
+
+An enrolled key is logically a public key and serial number that maps to an external hardware device containing the corresponding private key. The type of public-private key pair is dictated by the configuration details used when the key is enrolled.
+
+When a lockbox is encrypted, a 256 bit symmetric is generated. This symmetric key is used to encrypt the lockbox. The symmetric key is then encrypted by all of the enrolled keys and stored on disk along with the encrypted lockbox. If multiple keys are enrolled then multiple copies of the symmetric key are encrypted and stored on disk. But there is only ever one copy of the encrypted lockbox.
+
+When a lockbox is decrypted, the serial number of the external device is used to map back to a encrypted symmetric key stored on disk and the hardware key is used to decrypt the symmetric key. The now decrypted symmetric key is the used to decrypt the lockbox. The symmetric key is thrown away and never used for future encryption.
 
 ### Known Issues
 
