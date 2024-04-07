@@ -10,6 +10,8 @@
 		BF0BCB5F2BB8C9A500F91471 /* Lockbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BCB5E2BB8C9A500F91471 /* Lockbox.swift */; };
 		BF0BCB612BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BCB602BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift */; };
 		BF0BCB632BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BCB622BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift */; };
+		BF0BCB652BC31B0400F91471 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF0BCB642BC31B0400F91471 /* README.md */; };
+		BF0BCB672BC31B0E00F91471 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = BF0BCB662BC31B0E00F91471 /* LICENSE */; };
 		BF1DD0432BAC99BF001FA81F /* LockerRoomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0422BAC99BF001FA81F /* LockerRoomApp.swift */; };
 		BF1DD0472BAC99C0001FA81F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF1DD0462BAC99C0001FA81F /* Assets.xcassets */; };
 		BF1DD04B2BAC99C0001FA81F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF1DD04A2BAC99C0001FA81F /* Preview Assets.xcassets */; };
@@ -56,6 +58,8 @@
 		BF0BCB5E2BB8C9A500F91471 /* Lockbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lockbox.swift; sourceTree = "<group>"; };
 		BF0BCB602BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomYubiKeyPrimitives.swift; sourceTree = "<group>"; };
 		BF0BCB622BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomSecKeyPrimitives.swift; sourceTree = "<group>"; };
+		BF0BCB642BC31B0400F91471 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		BF0BCB662BC31B0E00F91471 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		BF1DD03F2BAC99BF001FA81F /* LockerRoom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LockerRoom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF1DD0422BAC99BF001FA81F /* LockerRoomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomApp.swift; sourceTree = "<group>"; };
 		BF1DD0462BAC99C0001FA81F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -127,12 +131,22 @@
 			path = Persistence;
 			sourceTree = "<group>";
 		};
+		BF0BCB682BC31B1500F91471 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				BF0BCB662BC31B0E00F91471 /* LICENSE */,
+				BF0BCB642BC31B0400F91471 /* README.md */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
 		BF1DD0362BAC99BF001FA81F = {
 			isa = PBXGroup;
 			children = (
 				BF1DD0412BAC99BF001FA81F /* LockerRoom */,
 				BF1DD0532BAC99C0001FA81F /* LockerRoomTests */,
 				BF1DD05D2BAC99C0001FA81F /* LockerRoomUITests */,
+				BF0BCB682BC31B1500F91471 /* Support */,
 				BF1DD0402BAC99BF001FA81F /* Products */,
 				BF1DD06E2BAC9B88001FA81F /* Frameworks */,
 			);
@@ -359,7 +373,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF0BCB652BC31B0400F91471 /* README.md in Resources */,
 				BF1DD04B2BAC99C0001FA81F /* Preview Assets.xcassets in Resources */,
+				BF0BCB672BC31B0E00F91471 /* LICENSE in Resources */,
 				BF1DD0472BAC99C0001FA81F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
