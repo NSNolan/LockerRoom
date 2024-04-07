@@ -41,6 +41,7 @@ When a lockbox is decrypted, the serial number of the external hardware device i
 - There is no way to enter a pin if the pin policy of the enrolled key is set to anything besides `Never`.
 - When a lockbox is encrypted, the unencrypted content is deleted before the encrypted content is saved. This may lead to data loss. The same is also true of the decryption process.
 - When a lockbox is encrypted, the entire contents are read into memory. This is not a feasible implementation for large lockboxes. The same is also true of the decryption process.
+- Locker Room does not run in a sandbox because creating a disk image with `hdiutil` will fail.
 
 ### Future Enhancements
 
