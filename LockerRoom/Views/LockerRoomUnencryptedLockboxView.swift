@@ -99,13 +99,14 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
                 viewStyle = .encrypt
             }
             .buttonStyle(.borderedProminent)
+            .keyboardShortcut(.defaultAction)
             .tint(.blue)
                         
             Button("Close") {
                 showView = false
             }
             .buttonStyle(.bordered)
-            .tint(.red)
+            .keyboardShortcut(.escape)
         }
         .padding()
     }
@@ -141,13 +142,14 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
                 .tint(.blue)
                 
                 Button("Later") {
                     showView = false
                 }
                 .buttonStyle(.bordered)
-                .tint(.red)
+                .keyboardShortcut(.escape)
             }
         }
     }

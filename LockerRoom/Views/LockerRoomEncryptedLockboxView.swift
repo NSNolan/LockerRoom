@@ -65,13 +65,14 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
                 .tint(.blue)
                 
                 Button("Later") {
                     showView = false
                 }
                 .buttonStyle(.bordered)
-                .tint(.red)
+                .keyboardShortcut(.escape)
             }
         }
     }

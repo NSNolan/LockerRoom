@@ -131,13 +131,14 @@ private struct LockerRoomLockboxKeyEnrollView: View {
                 }
             }
             .buttonStyle(.borderedProminent)
+            .keyboardShortcut(.defaultAction)
             .tint(.blue)
             
             Button("Close") {
                 showView = false
             }
             .buttonStyle(.bordered)
-            .tint(.red)
+            .keyboardShortcut(.escape)
         }
     }
     
