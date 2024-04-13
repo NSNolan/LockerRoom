@@ -70,7 +70,7 @@ private struct LockerRoomLockboxesView: View {
                 }
             }
             .contextMenu(forSelectionType: LockerRoomLockboxMetadata.ID.self) { metadataIDs in
-                // None
+                selectedLockboxContextMenu(fromMetadataIDs: metadataIDs)
             } primaryAction: { metadataIDs in
                 selectLockbox(fromMetadataIDs: metadataIDs)
             }
@@ -108,8 +108,24 @@ private struct LockerRoomLockboxesView: View {
         }
     }
     
+    @ViewBuilder
+    private func selectedLockboxContextMenu(fromMetadataIDs metadataIDs: Set<LockerRoomLockboxMetadata.ID>) -> some View {
+        if let metadata = selectedLockboxMetadata(fromMetadataIDs: metadataIDs) {
+            if !metadata.isEncrypted {
+                Button("Delete") {
+                    guard lockerRoomManager.removeUnencryptedLockbox(name: metadata.name) else {
+                        print("[Error] LockerRoom failed to remove unencrypted lockbox")
+                        return
+                    }
+                }
+            } else {
+                EmptyView()
+            }
+        }
+    }
+    
     private func selectLockbox(fromMetadataIDs metadataIDs: Set<LockerRoomLockboxMetadata.ID>) {
-        if let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) { // TODO: Is this really the best way to get the row I just selected...
+        if let metadata = selectedLockboxMetadata(fromMetadataIDs: metadataIDs) {
             let lockerRoomStore = lockerRoomManager.lockerRoomStore
             if metadata.isEncrypted {
                 selectedEncryptedLockbox = EncryptedLockbox.create(from: metadata, lockerRoomStore: lockerRoomStore)
@@ -119,6 +135,14 @@ private struct LockerRoomLockboxesView: View {
                 showUnencryptedLockboxView = true
             }
         }
+    }
+        
+    private func selectedLockboxMetadata(fromMetadataIDs metadataIDs: Set<LockerRoomLockboxMetadata.ID>) -> LockerRoomLockboxMetadata? {
+        guard let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) else { // TODO: Is this really the best way to get the lockbox I just selected...
+            print("[Error] LockerRoom failed to find selected lockbox metadata")
+            return nil
+        }
+        return metadata
     }
 }
 

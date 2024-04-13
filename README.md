@@ -42,13 +42,14 @@ When a lockbox is decrypted, the serial number of the external hardware device i
 - When a lockbox is encrypted, the unencrypted content is deleted before the encrypted content is saved. This may lead to data loss. The same is also true of the decryption process.
 - When a lockbox is encrypted, the entire contents are read into memory. This is not a feasible implementation for large lockboxes. The same is also true of the decryption process.
 - Locker Room does not run in a sandbox because creating a disk image with `hdiutil` will fail.
-- There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device. 
+- There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
+- Unencrypted lockboxes cannot be deleted within Locker Room. But they can be removed using the filesystem.
+
 
 ### Future Enhancements
 
 - Add unit tests.
-- Delete lockboxes within Locker Room. They can only be removed using the filesystem.
-- Delete keys within Locker Room. They can be removed using the filesystem and there is no way to remove the corresponding private key on the external hardware device. [Yubico changelogs](https://github.com/Yubico/yubico-piv-tool/blob/master/debian/changelog) suggest that YubiKey firmware 5.7.0 will add support for deleting keys.
+- Allow key deletion within Locker Room but only after there are no more encrypted lockbox they can decrypt. Keys can be removed using the filesystem and there is currently no way to remove the corresponding private key on the external hardware device. Yubico [changelogs](https://github.com/Yubico/yubico-piv-tool/blob/master/debian/changelog) suggest that YubiKey firmware 5.7.0 will add support for deleting keys.
 - Add UI error messages for failures.
 - Write application log messages to the Unified Logging System.
 - Indicate which enrolled keys were used to encrypt a lockbox.
