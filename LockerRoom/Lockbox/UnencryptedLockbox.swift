@@ -7,6 +7,12 @@
 
 import Foundation
 
+// An `UnencryptedLockbox` is not `Codable` because its on-disk representation is a disk image file.
+// Instead of being persisted as JSON or Plist encoded data to disk this object needs to be persisted as data
+// that maintains the functionality of a disk image. Meaning that when this object is written as data to a file,
+// the subsequent file can be used to attach as a disk image and mount a volume. The name of the `UnencryptedLockbox`
+// is preserved by using the directory name that holds the disk image file and the size is calculated using
+// the file itself.
 struct UnencryptedLockbox: Lockbox {
     let name: String
     let size: Int

@@ -15,7 +15,7 @@ And the **Keys** view shows a list of enrolled keys.
 When the **Lockboxes** view is selected, the plus button in the bottom-right corner will prompt the user to add a new lockbox.
 ![](Images/Locker-Room-Add-Lockbox.png)
 
-And when on the **Keys** view is selected, the same plus button will instead prompt the user to enroll a new key using an external hardware device.
+And when the **Keys** view is selected, the same plus button will instead prompt the user to enroll a new key using an external hardware device.
 ![](Images/Locker-Room-Add-Key.png)
 
 When a new lockbox is created it starts off unencrypted and a user can add files to it. There is a lock icon to the left of the lockbox name indicating whether or not it has been encrypted. A lockbox cannot be encrypted until at least one key has been enrolled using an external hardware device. Once a key is enrolled the hardware device's corresponding public key is stored. The stored public key can then be used to encrypt lockboxes without the external hardware device present. Every currently enrolled key will be used when a lockbox is encrypted. Keys enrolled after a lockbox has been encrypted will not be used to retroactively encrypt previously encrypted lockboxes and therefore the corresponding external hardware device cannot be used to decrypt previously encrypted lockboxes.

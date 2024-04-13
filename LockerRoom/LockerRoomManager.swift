@@ -17,8 +17,8 @@ class LockerRoomManager: ObservableObject {
     
     private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore()) {
         self.lockerRoomStore = lockerRoomStore
-        self.lockboxMetadatas = updateLockboxMetadatas()
-        self.lockboxKeyMetadatas = updateLockboxKeyMetadatas()
+        self.lockboxMetadatas = fetchLockboxMetadatas()
+        self.lockboxKeyMetadatas = fetchLockboxKeyMetadatas()
     }
     
     func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
@@ -27,7 +27,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxMetadatas = updateLockboxMetadatas()
+        lockboxMetadatas = fetchLockboxMetadatas()
         return unencryptedLockbox
     }
     
@@ -37,7 +37,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxMetadatas = updateLockboxMetadatas()
+        lockboxMetadatas = fetchLockboxMetadatas()
         return unencryptedLockbox
     }
     
@@ -47,7 +47,7 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxMetadatas = updateLockboxMetadatas()
+        lockboxMetadatas = fetchLockboxMetadatas()
         return true
     }
     
@@ -57,7 +57,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxMetadatas = updateLockboxMetadatas()
+        lockboxMetadatas = fetchLockboxMetadatas()
         return encryptedLockbox
     }
     
@@ -67,7 +67,7 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxMetadatas = updateLockboxMetadatas()
+        lockboxMetadatas = fetchLockboxMetadatas()
         return true
     }
     
@@ -86,7 +86,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxKeyMetadatas = updateLockboxKeyMetadatas()
+        lockboxKeyMetadatas = fetchLockboxKeyMetadatas()
         return lockboxKey
     }
     
@@ -96,7 +96,7 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxKeyMetadatas = updateLockboxKeyMetadatas()
+        lockboxKeyMetadatas = fetchLockboxKeyMetadatas()
         return true
     }
     
@@ -104,24 +104,11 @@ class LockerRoomManager: ObservableObject {
         return lockerRoomStore.lockboxKeys()
     }
     
-    private func updateLockboxMetadatas() -> [LockerRoomLockboxMetadata] { // TODO: this should be fetching codable objects instead of using the file system to construct the metadata        
-        let lockboxURLs = lockerRoomStore.lockboxURLs()
-        return lockboxURLs.map { lockboxURL in
-            let lockboxName = lockboxURL.lastPathComponent
-            let isEncrypted = lockerRoomStore.lockboxEncryptedExists(name: lockboxName)
-            let size: Int
-            if isEncrypted {
-                size = lockerRoomStore.lockboxEncryptedSize(name: lockboxName)
-            } else {
-                size = lockerRoomStore.lockboxUnencryptedSize(name: lockboxName)
-            }
-            
-            return LockerRoomLockboxMetadata(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted)
-        }
+    private func fetchLockboxMetadatas() -> [LockerRoomLockboxMetadata] {
+        return lockerRoomStore.lockboxMetadatas()
     }
     
-    private func updateLockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata] {
-        let keys = lockerRoomStore.lockboxKeys()
-        return keys.map { $0.metadata }
+    private func fetchLockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata] {
+        return lockerRoomStore.lockboxKeyMetadatas()
     }
 }
