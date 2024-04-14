@@ -73,10 +73,6 @@ private struct LockerRoomLockboxesView: View {
                         Spacer()
                     }
                 }
-                
-                TableColumn("Path") { lockboxMetadata in
-                    Text(lockboxMetadata.url.path(percentEncoded:false))
-                }
             }
             .contextMenu(forSelectionType: LockerRoomLockboxMetadata.ID.self) { metadataIDs in
                 selectedLockboxContextMenu(fromMetadataIDs: metadataIDs)
