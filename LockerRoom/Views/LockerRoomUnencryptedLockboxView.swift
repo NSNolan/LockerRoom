@@ -163,12 +163,15 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
         let symmetricKeyData = LockboxKeyGenerator.generateSymmetricKeyData()
         
         var encryptedSymmetricKeysBySerialNumber = [UInt32:Data]()
+        var encryptionLockboxKeys = [LockboxKey]()
+        
         for lockboxKey in lockerRoomManager.lockboxKeys {
             guard let encryptedSymmetricKeyData = LockboxKeyCryptor.encrypt(symmetricKeyData: symmetricKeyData, lockboxKey: lockboxKey) else {
                 print("[Error] LockerRoom failed to encrypt a symmetric key with lockbox key \(lockboxKey.name)")
                 continue
             }
             encryptedSymmetricKeysBySerialNumber[lockboxKey.serialNumber] = encryptedSymmetricKeyData
+            encryptionLockboxKeys.append(lockboxKey)
         }
         
         guard !encryptedSymmetricKeysBySerialNumber.isEmpty else {
@@ -192,7 +195,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
         }
         print("[Default] LockerRoom removed an unencrypted lockbox \(name)")
         
-        guard lockerRoomManager.addEncryptedLockbox(name: name, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber) != nil else {
+        guard lockerRoomManager.addEncryptedLockbox(name: name, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys) != nil else {
             print("[Error] LockerRoom failed to add an encrypted lockbox \(name)")
             return
         }

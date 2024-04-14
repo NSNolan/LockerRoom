@@ -13,4 +13,5 @@ struct LockerRoomLockboxMetadata: Identifiable, Equatable {
     let size: Int
     let url: URL
     let isEncrypted: Bool
+    let encryptionKeyNames: [String]
 }

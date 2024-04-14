@@ -44,6 +44,7 @@ When a lockbox is decrypted, the serial number of the external hardware device i
 - Locker Room does not run in a sandbox because creating a disk image with `hdiutil` will fail.
 - There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
 - Unencrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
+- The entire encrypted lockbox content is read into memory when creating the lockbox metadata.
 
 
 ### Future Enhancements
@@ -52,7 +53,6 @@ When a lockbox is decrypted, the serial number of the external hardware device i
 - Allow key deletion within Locker Room but only after there are no more encrypted lockbox it can decrypt. Keys can be removed using the filesystem and there is currently no way to remove the corresponding private key on the external hardware device. Yubico [changelogs](https://github.com/Yubico/yubico-piv-tool/blob/master/debian/changelog) suggest that YubiKey firmware 5.7.0 will add support for deleting keys.
 - Add UI error messages for failures.
 - Write application log messages to the Unified Logging System.
-- Indicate which enrolled keys were used to encrypt a lockbox.
 - Select which enrolled keys are used to encrypt a lockbox instead of using all of them.
 - Encrypt and decrypt an external volume.
 - Write private keys to unregistered PIV slots on the external hardware device.

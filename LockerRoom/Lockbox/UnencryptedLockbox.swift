@@ -102,7 +102,6 @@ struct UnencryptedLockbox: Lockbox {
             return nil
         }
         
-        
         _ = diskImage.attach(name: name) // Not fatal
         
         return UnencryptedLockbox(name: name, size: size, unencryptedContent: unencryptedContent)

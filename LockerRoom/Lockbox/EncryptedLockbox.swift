@@ -13,16 +13,18 @@ class EncryptedLockbox: Lockbox, Codable {
     let isEncrypted: Bool
     let encryptedContent: Data
     let encryptedSymmetricKeysBySerialNumber: [UInt32:Data]
+    let encryptionLockboxKeys: [LockboxKey]
         
-    private init(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data]) {
+    private init(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey]) {
         self.name = name
         self.size = size
         self.isEncrypted = true
         self.encryptedContent = encryptedContent
         self.encryptedSymmetricKeysBySerialNumber = encryptedSymmetricKeysBySerialNumber
+        self.encryptionLockboxKeys = encryptionLockboxKeys
     }
     
-    static func create(name: String, size: Int = 0, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
+    static func create(name: String, size: Int = 0, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
         guard !lockerRoomStore.lockboxExists(name: name) else {
             print("[Error] Encrypted lockbox failed to add \(name) at existing path")
             return nil
@@ -34,7 +36,7 @@ class EncryptedLockbox: Lockbox, Codable {
             return nil
         }
         
-        let lockbox = EncryptedLockbox(name: name, size: actualSize, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber)
+        let lockbox = EncryptedLockbox(name: name, size: actualSize, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
         
         guard lockerRoomStore.writeEncryptedLockbox(lockbox, name: name) else {
             print("[Error] Encrypted lockbox failed to write \(name)")

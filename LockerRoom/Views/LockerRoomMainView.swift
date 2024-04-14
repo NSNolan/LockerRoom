@@ -64,9 +64,18 @@ private struct LockerRoomLockboxesView: View {
                 }
                 .width(min: 0, ideal: 0, max: 0)
                 
-                TableColumn("Name", value: \.name)
+                TableColumn("Name") { lockboxMetadata in
+                    HStack {
+                        Text(lockboxMetadata.name)
+                        ForEach(lockboxMetadata.encryptionKeyNames, id: \.self) { keyName in
+                            EncryptionKeyView(name: keyName)
+                        }
+                        Spacer()
+                    }
+                }
+                
                 TableColumn("Path") { lockboxMetadata in
-                    Text(lockboxMetadata.url.path())
+                    Text(lockboxMetadata.url.path(percentEncoded:false))
                 }
             }
             .contextMenu(forSelectionType: LockerRoomLockboxMetadata.ID.self) { metadataIDs in
@@ -195,6 +204,23 @@ private struct LockerRoomKeysView: View {
         .sheet(isPresented: $showLockboKeyAddView) {
             LockerRoomLockboxKeyView(showView: $showLockboKeyAddView, viewStyle: .enroll)
         }
+    }
+}
+
+private struct EncryptionKeyView: View {
+    let name: String
+    
+    var body: some View {
+        Text(name)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 2)
+            .background(
+                HStack {
+                    Capsule()
+                        .fill(Color.gray)
+                }
+            )
+            .foregroundColor(.white)
     }
 }
 

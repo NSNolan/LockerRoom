@@ -53,7 +53,7 @@ struct LockerRoomStore: LockerRoomStoring {
         }
         
         let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
-        let lockboxPath = lockboxURL.path()
+        let lockboxPath = lockboxURL.path(percentEncoded:false)
         
         guard !fileManager.fileExists(atPath: lockboxPath) else {
             print("[Error] Locker room store failed to add lockbock \(name) at existing path \(lockboxPath)")
@@ -76,7 +76,7 @@ struct LockerRoomStore: LockerRoomStoring {
         }
         
         let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
-        let lockboxPath = lockboxURL.path()
+        let lockboxPath = lockboxURL.path(percentEncoded:false)
         
         guard fileManager.fileExists(atPath: lockboxPath) else {
             print("[Error] Locker room store failed to remove lockbox \(name) at non-existing path \(lockboxPath)")
@@ -94,7 +94,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     func readUnencryptedLockbox(name: String) -> Data? {
         let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
-        let lockboxPath = lockboxURL.path()
+        let lockboxPath = lockboxURL.path(percentEncoded:false)
         
         guard fileManager.fileExists(atPath: lockboxPath) else {
             print("[Error] Locker room store failed to read unencrypted lockbox \(name) at non-existing path \(lockboxPath)")
@@ -102,7 +102,7 @@ struct LockerRoomStore: LockerRoomStoring {
         }
         
         let lockboxFileURL = lockerRoomURLProvider.urlForUnencryptedLockboxFile(name: name)
-        let lockboxFilePath = lockboxFileURL.path()
+        let lockboxFilePath = lockboxFileURL.path(percentEncoded:false)
         
         guard fileManager.fileExists(atPath: lockboxFilePath) else {
             print("[Error] Locker room store failed to read unencrypted lockbox \(name) at non-existing file path \(lockboxFilePath)")
@@ -119,7 +119,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     func writeUnencryptedLockbox(_ data: Data?, name: String) -> Bool {
         let lockboxFileURL = lockerRoomURLProvider.urlForUnencryptedLockboxFile(name: name)
-        let lockboxFilePath = lockboxFileURL.path()
+        let lockboxFilePath = lockboxFileURL.path(percentEncoded:false)
         
         guard let data else {
             do {
@@ -132,7 +132,7 @@ struct LockerRoomStore: LockerRoomStoring {
         }
         
         let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
-        let lockboxPath = lockboxURL.path()
+        let lockboxPath = lockboxURL.path(percentEncoded:false)
         
         if !fileManager.fileExists(atPath: lockboxPath) {
             do {
@@ -154,7 +154,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     func readEncryptedLockbox(name: String) -> EncryptedLockbox? {
         let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
-        let lockboxPath = lockboxURL.path()
+        let lockboxPath = lockboxURL.path(percentEncoded:false)
         
         guard fileManager.fileExists(atPath: lockboxPath) else {
             print("[Error] Locker room store failed to read encrypted lockbox \(name) at non-existing path \(lockboxPath)")
@@ -162,7 +162,7 @@ struct LockerRoomStore: LockerRoomStoring {
         }
         
         let lockboxFileURL = lockerRoomURLProvider.urlForEncryptedLockboxFile(name: name)
-        let lockboxFilePath = lockboxFileURL.path()
+        let lockboxFilePath = lockboxFileURL.path(percentEncoded:false)
         
         guard fileManager.fileExists(atPath: lockboxFilePath) else {
             print("[Error] Locker room store failed to read encrypted lockbox \(name) at non-existing file path \(lockboxFilePath)")
@@ -186,7 +186,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     func writeEncryptedLockbox(_ lockbox: EncryptedLockbox?, name: String) -> Bool {
         let lockboxFileURL = lockerRoomURLProvider.urlForEncryptedLockboxFile(name: name)
-        let lockboxFilePath = lockboxFileURL.path()
+        let lockboxFilePath = lockboxFileURL.path(percentEncoded:false)
         
         guard let lockbox else {
             do {
@@ -201,7 +201,7 @@ struct LockerRoomStore: LockerRoomStoring {
         do {
             let lockboxPlistData = try encoder.encode(lockbox)
             let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
-            let lockboxPath = lockboxURL.path()
+            let lockboxPath = lockboxURL.path(percentEncoded:false)
             
             if !fileManager.fileExists(atPath: lockboxPath) {
                 do {
@@ -227,7 +227,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     func lockboxExists(name: String) -> Bool {
         let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
-        let lockboxPath = lockboxURL.path()
+        let lockboxPath = lockboxURL.path(percentEncoded:false)
         return fileManager.fileExists(atPath: lockboxPath)
     }
     
@@ -237,7 +237,7 @@ struct LockerRoomStore: LockerRoomStoring {
         do {
             let lockboxURLs = try fileManager.contentsOfDirectory(at: baseLockboxesURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]).filter { lockboxURL in
                 var isDirectory: ObjCBool = false
-                let lockboxPath = lockboxURL.path()
+                let lockboxPath = lockboxURL.path(percentEncoded:false)
                 if fileManager.fileExists(atPath: lockboxPath, isDirectory: &isDirectory) {
                     return isDirectory.boolValue
                 } else {
@@ -245,17 +245,24 @@ struct LockerRoomStore: LockerRoomStoring {
                 }
             }
             
-            return lockboxURLs.map { lockboxURL in
+            return lockboxURLs.compactMap { lockboxURL -> LockerRoomLockboxMetadata? in
                 let lockboxName = lockboxURL.lastPathComponent
                 let isEncrypted = isLockboxEncrypted(name: lockboxName)
                 let size: Int
+                let encryptionKeyNames: [String]
                 if isEncrypted {
-                    size = lockboxEncryptedSize(name: lockboxName)
+                    guard let encryptedLockbox = readEncryptedLockbox(name: lockboxName) else { // TODO: The entire encrypted lockbox content is read into memory when creating the lockbox metadata.
+                        print("[Error] Locker room store failed to read unencrypted lockbox \(lockboxName)")
+                        return nil
+                    }
+                    size = encryptedLockbox.size
+                    encryptionKeyNames = encryptedLockbox.encryptionLockboxKeys.map { $0.name }
                 } else {
                     size = lockboxUnencryptedSize(name: lockboxName)
+                    encryptionKeyNames = [String]()
                 }
 
-                return LockerRoomLockboxMetadata(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted)
+                return LockerRoomLockboxMetadata(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted, encryptionKeyNames: encryptionKeyNames)
             }
         } catch {
             print("[Warning] Locker room store failed to get lockbox URLs with error \(error)")
@@ -265,10 +272,10 @@ struct LockerRoomStore: LockerRoomStoring {
     
     private func isLockboxEncrypted(name: String) -> Bool {
         let encryptedLockboxFileURL = lockerRoomURLProvider.urlForEncryptedLockboxFile(name: name)
-        let encryptedLockboxFilePath = encryptedLockboxFileURL.path()
+        let encryptedLockboxFilePath = encryptedLockboxFileURL.path(percentEncoded:false)
         
         let unencryptedLockboxFileURL = lockerRoomURLProvider.urlForUnencryptedLockboxFile(name: name)
-        let unencryptedLockboxFilePath = unencryptedLockboxFileURL.path()
+        let unencryptedLockboxFilePath = unencryptedLockboxFileURL.path(percentEncoded:false)
         
         return fileManager.fileExists(atPath: encryptedLockboxFilePath) && !fileManager.fileExists(atPath: unencryptedLockboxFilePath)
     }
@@ -278,13 +285,8 @@ struct LockerRoomStore: LockerRoomStoring {
         return lockboxFileSize(name: name, lockboxFileURL: lockboxFileURL)
     }
     
-    private func lockboxEncryptedSize(name: String) -> Int {
-        let lockboxFileURL = lockerRoomURLProvider.urlForEncryptedLockboxFile(name: name)
-        return lockboxFileSize(name: name, lockboxFileURL: lockboxFileURL)
-    }
-    
     private func lockboxFileSize(name: String, lockboxFileURL: URL) -> Int {
-        let lockboxFilePath = lockboxFileURL.path()
+        let lockboxFilePath = lockboxFileURL.path(percentEncoded:false)
         do {
             let fileAttributes = try fileManager.attributesOfItem(atPath: lockboxFilePath)
             if let size = fileAttributes[.size] as? Int {
@@ -306,7 +308,7 @@ struct LockerRoomStore: LockerRoomStoring {
         }
         
         let keyURL = lockerRoomURLProvider.urlForKey(name: name)
-        let keyPath = keyURL.path()
+        let keyPath = keyURL.path(percentEncoded:false)
         
         guard fileManager.fileExists(atPath: keyPath) else {
             print("[Error] Locker room store failed to remove key \(name) at non-existing path \(keyPath)")
@@ -324,7 +326,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     func readLockboxKey(name: String) -> LockboxKey? {
         let keyURL = lockerRoomURLProvider.urlForKey(name: name)
-        let keyPath = keyURL.path()
+        let keyPath = keyURL.path(percentEncoded:false)
         
         guard fileManager.fileExists(atPath: keyPath) else {
             print("[Error] Locker room store failed to read key \(name) at non-existing path \(keyPath)")
@@ -332,7 +334,7 @@ struct LockerRoomStore: LockerRoomStoring {
         }
         
         let keyFileURL = lockerRoomURLProvider.urlForKeyFile(name: name)
-        let keyFilePath = keyFileURL.path()
+        let keyFilePath = keyFileURL.path(percentEncoded:false)
         
         guard fileManager.fileExists(atPath: keyFilePath) else {
             print("[Error] Locker room store failed to read key \(name) at non-existing file path \(keyFilePath)")
@@ -356,7 +358,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     func writeLockboxKey(_ key: LockboxKey?, name: String) -> Bool {
         let keyFileURL = lockerRoomURLProvider.urlForKeyFile(name: name)
-        let keyFilePath = keyFileURL.path()
+        let keyFilePath = keyFileURL.path(percentEncoded:false)
         
         guard let key else {
             do {
@@ -371,7 +373,7 @@ struct LockerRoomStore: LockerRoomStoring {
         do {
             let keyPlistData = try encoder.encode(key)
             let keyURL = lockerRoomURLProvider.urlForKey(name: name)
-            let keyPath = keyURL.path()
+            let keyPath = keyURL.path(percentEncoded:false)
             
             if !fileManager.fileExists(atPath: keyPath) {
                 do {
@@ -397,7 +399,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     func lockboxKeyExists(name: String) -> Bool {
         let keyURL = lockerRoomURLProvider.urlForKey(name: name)
-        let keyPath = keyURL.path()
+        let keyPath = keyURL.path(percentEncoded:false)
         return fileManager.fileExists(atPath: keyPath)
     }
     
@@ -407,25 +409,24 @@ struct LockerRoomStore: LockerRoomStoring {
         do {
             let keyURLs = try fileManager.contentsOfDirectory(at: baseKeysURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]).filter { keyURL in
                 var isDirectory: ObjCBool = false
-                let keyPath = keyURL.path()
+                let keyPath = keyURL.path(percentEncoded:false)
                 if fileManager.fileExists(atPath: keyPath, isDirectory: &isDirectory) {
                     return isDirectory.boolValue
                 } else {
                     return false
                 }
             }
-            let keyNames = keyURLs.map { $0.lastPathComponent }
             
-            var keys = [LockboxKey]()
-            for keyName in keyNames {
+            return keyURLs.compactMap { keyURL -> LockboxKey? in
+                let keyName = keyURL.lastPathComponent
+                
                 guard let key = readLockboxKey(name: keyName) else {
                     print("[Error] Locker room store failed to read key \(keyName)")
-                    continue
+                    return nil
                 }
-                keys.append(key)
+                
+                return key
             }
-            
-            return keys
         } catch {
             print("[Warning] Locker room store failed to get key URLs with error \(error)")
             return [LockboxKey]()
