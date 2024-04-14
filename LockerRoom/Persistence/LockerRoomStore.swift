@@ -21,7 +21,7 @@ protocol LockerRoomStoring {
     func writeEncryptedLockbox(_ lockbox: EncryptedLockbox?, name: String) -> Bool
     
     func lockboxExists(name: String) -> Bool
-    func lockboxMetadatas() -> [LockerRoomLockboxMetadata]
+    var lockboxMetadatas: [LockerRoomLockboxMetadata] { get }
     
     // Lockbox Keys
     func removeLockboxKey(name: String) -> Bool
@@ -30,8 +30,8 @@ protocol LockerRoomStoring {
     func writeLockboxKey(_ key: LockboxKey?, name: String) -> Bool
     
     func lockboxKeyExists(name: String) -> Bool
-    func lockboxKeys() -> [LockboxKey]
-    func lockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata]
+    var lockboxKeys: [LockboxKey] { get }
+    var lockboxKeyMetadatas: [LockerRoomLockboxKeyMetadata] { get }
 }
 
 struct LockerRoomStore: LockerRoomStoring {
@@ -231,7 +231,7 @@ struct LockerRoomStore: LockerRoomStoring {
         return fileManager.fileExists(atPath: lockboxPath)
     }
     
-    func lockboxMetadatas() -> [LockerRoomLockboxMetadata] {
+    var lockboxMetadatas: [LockerRoomLockboxMetadata] {
         let baseLockboxesURL = lockerRoomURLProvider.urlForLockboxes
         
         do {
@@ -401,7 +401,7 @@ struct LockerRoomStore: LockerRoomStoring {
         return fileManager.fileExists(atPath: keyPath)
     }
     
-    func lockboxKeys() -> [LockboxKey] {
+    var lockboxKeys: [LockboxKey] {
         let baseKeysURL = lockerRoomURLProvider.urlForKeys
         
         do {
@@ -432,8 +432,7 @@ struct LockerRoomStore: LockerRoomStoring {
         }
     }
     
-    func lockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata] {
-        let lockboxKeys = lockboxKeys()
+    var lockboxKeyMetadatas: [LockerRoomLockboxKeyMetadata] {
         return lockboxKeys.map { $0.metadata }
     }
 }

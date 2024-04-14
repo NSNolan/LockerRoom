@@ -17,8 +17,8 @@ class LockerRoomManager: ObservableObject {
     
     private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore()) {
         self.lockerRoomStore = lockerRoomStore
-        self.lockboxMetadatas = fetchLockboxMetadatas()
-        self.lockboxKeyMetadatas = fetchLockboxKeyMetadatas()
+        self.lockboxMetadatas = lockerRoomStore.lockboxMetadatas
+        self.lockboxKeyMetadatas = lockerRoomStore.lockboxKeyMetadatas
     }
     
     func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
@@ -27,7 +27,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxMetadatas = fetchLockboxMetadatas()
+        lockboxMetadatas = lockerRoomStore.lockboxMetadatas
         return unencryptedLockbox
     }
     
@@ -37,7 +37,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxMetadatas = fetchLockboxMetadatas()
+        lockboxMetadatas = lockerRoomStore.lockboxMetadatas
         return unencryptedLockbox
     }
     
@@ -47,7 +47,7 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxMetadatas = fetchLockboxMetadatas()
+        lockboxMetadatas = lockerRoomStore.lockboxMetadatas
         return true
     }
     
@@ -57,7 +57,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxMetadatas = fetchLockboxMetadatas()
+        lockboxMetadatas = lockerRoomStore.lockboxMetadatas
         return encryptedLockbox
     }
     
@@ -67,7 +67,7 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxMetadatas = fetchLockboxMetadatas()
+        lockboxMetadatas = lockerRoomStore.lockboxMetadatas
         return true
     }
     
@@ -86,7 +86,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxKeyMetadatas = fetchLockboxKeyMetadatas()
+        lockboxKeyMetadatas = lockerRoomStore.lockboxKeyMetadatas
         return lockboxKey
     }
     
@@ -96,19 +96,11 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxKeyMetadatas = fetchLockboxKeyMetadatas()
+        lockboxKeyMetadatas = lockerRoomStore.lockboxKeyMetadatas
         return true
     }
     
     var lockboxKeys: [LockboxKey] {
-        return lockerRoomStore.lockboxKeys()
-    }
-    
-    private func fetchLockboxMetadatas() -> [LockerRoomLockboxMetadata] {
-        return lockerRoomStore.lockboxMetadatas()
-    }
-    
-    private func fetchLockboxKeyMetadatas() -> [LockerRoomLockboxKeyMetadata] {
-        return lockerRoomStore.lockboxKeyMetadatas()
+        return lockerRoomStore.lockboxKeys
     }
 }
