@@ -131,21 +131,13 @@
 			path = Persistence;
 			sourceTree = "<group>";
 		};
-		BF0BCB682BC31B1500F91471 /* Support */ = {
-			isa = PBXGroup;
-			children = (
-				BF0BCB662BC31B0E00F91471 /* LICENSE */,
-			);
-			path = Support;
-			sourceTree = "<group>";
-		};
 		BF1DD0362BAC99BF001FA81F = {
 			isa = PBXGroup;
 			children = (
 				BF1DD0412BAC99BF001FA81F /* LockerRoom */,
 				BF1DD0532BAC99C0001FA81F /* LockerRoomTests */,
 				BF1DD05D2BAC99C0001FA81F /* LockerRoomUITests */,
-				BF0BCB682BC31B1500F91471 /* Support */,
+				BF0BCB662BC31B0E00F91471 /* LICENSE */,
 				BF0BCB642BC31B0400F91471 /* README.md */,
 				BF1DD0402BAC99BF001FA81F /* Products */,
 				BF1DD06E2BAC9B88001FA81F /* Frameworks */,
