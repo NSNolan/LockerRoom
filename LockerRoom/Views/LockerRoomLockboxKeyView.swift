@@ -14,7 +14,7 @@ enum LockerRoomLockboxKeyViewStyle {
 
 private class LockerRoomLockboxKeyConfiguration: ObservableObject {
     @Published var name = ""
-    @Published var slot = LockboxKey.Slot.cardAuthentication
+    @Published var slot = LockboxKey.Slot.pivAuthentication
     @Published var algorithm = LockboxKey.Algorithm.RSA2048
     @Published var pinPolicy = LockboxKey.PinPolicy.never
     @Published var touchPolicy = LockboxKey.TouchPolicy.never
@@ -67,6 +67,9 @@ private struct LockerRoomLockboxKeyEnrollView: View {
             Picker("", selection: $keyConfiguration.slot) {
                 ForEach(LockboxKey.Slot.allCases) { option in
                     Text(option.rawValue).tag(option)
+                    if option == .attestation {
+                        Divider() // Add divider to separate support slots from experimental slots
+                    }
                 }
             }
             .pickerStyle(.menu)

@@ -39,13 +39,25 @@ struct LockboxKeyGenerator {
                         }
                         try await session.authenticateWith(managementKey: managementKeyData, keyType: managementKeyType)
                         do {
-                            let publicKey = try await session.generateKeyInSlot(
-                                slot: slot.pivSlot,
-                                type: algorithm.pivKeyType,
-                                pinPolicy: pinPolicy.pivPinPolicy,
-                                touchPolicy: touchPolicy.pivTouchPolicy
-                            )
+                            let publicKey: SecKey
+                            if slot.isExperimental {
+                                publicKey = try await session.generateKeyInRawSlot(
+                                    connection: connection,
+                                    rawSlot: slot.rawSlot,
+                                    type: algorithm.pivKeyType,
+                                    pinPolicy: pinPolicy.pivPinPolicy,
+                                    touchPolicy: touchPolicy.pivTouchPolicy
+                                )
+                            } else {
+                                publicKey = try await session.generateKeyInSlot(
+                                    slot: slot.pivSlot,
+                                    type: algorithm.pivKeyType,
+                                    pinPolicy: pinPolicy.pivPinPolicy,
+                                    touchPolicy: touchPolicy.pivTouchPolicy
+                                )
+                            }
                             print("[Default] Lockbox key generator generated public key \(publicKey) for slot \(slot) with algorithm \(algorithm) pin policy \(pinPolicy) touch policy \(touchPolicy)")
+                            
                             do {
                                 let serialNumber = try await session.getSerialNumber()
                                 print("[Default] Lockbox key generator received serial number \(serialNumber) for public key for slot \(slot) with algorithm \(algorithm) pin policy \(pinPolicy) touch policy \(touchPolicy)")

@@ -14,7 +14,35 @@ struct LockboxKey: Codable {
         case keyManagement = "Key Management (9D)"
         case cardAuthentication = "Card Authentication (9E)"
         case attestation = "Attestation (F9)"
-        case experimental = "Experimental (82)"
+        
+        case experimental82 = "Experimental (82)"
+        case experimental83 = "Experimental (83)"
+        case experimental84 = "Experimental (84)"
+        case experimental85 = "Experimental (85)"
+        case experimental86 = "Experimental (86)"
+        case experimental87 = "Experimental (87)"
+        case experimental88 = "Experimental (88)"
+        case experimental89 = "Experimental (89)"
+        case experimental8a = "Experimental (8a)"
+        case experimental8b = "Experimental (8b)"
+        case experimental8c = "Experimental (8c)"
+        case experimental8d = "Experimental (8d)"
+        case experimental8e = "Experimental (8e)"
+        case experimental8f = "Experimental (8f)"
+        case experimental90 = "Experimental (90)"
+        case experimental91 = "Experimental (91)"
+        case experimental92 = "Experimental (92)"
+        case experimental93 = "Experimental (93)"
+        case experimental94 = "Experimental (94)"
+        case experimental95 = "Experimental (95)"
+        
+        public var isExperimental: Bool {
+            return self == .experimental82 || self == .experimental83 || self == .experimental84 || self == .experimental85 ||
+                   self == .experimental86 || self == .experimental87 || self == .experimental88 || self == .experimental89 ||
+                   self == .experimental8a || self == .experimental8b || self == .experimental8c || self == .experimental8d ||
+                   self == .experimental8e || self == .experimental8f || self == .experimental90 || self == .experimental91 ||
+                   self == .experimental92 || self == .experimental92 || self == .experimental94 || self == .experimental95
+        }
     }
     
     enum Algorithm: String, CaseIterable, Codable {

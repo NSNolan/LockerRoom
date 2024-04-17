@@ -48,14 +48,28 @@ struct LockboxKeyCryptor {
                         return nil
                     }
                     
-                    let slot = lockboxKey.slot.pivSlot
+                    let slot = lockboxKey.slot
                     let algorithm = lockboxKey.algorithm.secKeyAlgorithm
                     do {
-                        let decryptedSymmetricKey = try await session.decryptWithKeyInSlot(slot: slot, algorithm: algorithm, encrypted: encryptedSymmetricKey)
-                        print("[Default] Lockbox key cryptor decrypted symmetric key \(decryptedSymmetricKey) using slot \(slot.rawValue) algorithm \(algorithm.rawValue)")
+                        let decryptedSymmetricKey: Data
+                        if lockboxKey.slot.isExperimental {
+                            decryptedSymmetricKey = try await session.decryptWithKeyInRawSlot(
+                                connection: connection,
+                                rawSlot: slot.rawSlot,
+                                algorithm: algorithm,
+                                encrypted: encryptedSymmetricKey
+                            )
+                        } else {
+                            decryptedSymmetricKey = try await session.decryptWithKeyInSlot(
+                                slot: slot.pivSlot,
+                                algorithm: algorithm,
+                                encrypted: encryptedSymmetricKey
+                            )
+                        }
+                        print("[Default] Lockbox key cryptor decrypted symmetric key \(decryptedSymmetricKey) using slot \(slot) algorithm \(algorithm.rawValue)")
                         return decryptedSymmetricKey
                     } catch {
-                        print("[Error] Lockbox key cryptor failed to decrypt using slot \(slot.rawValue) algorithm (algorithm.rawValue) with error \(error)")
+                        print("[Error] Lockbox key cryptor failed to decrypt using slot \(slot) algorithm (algorithm) with error \(error)")
                         return nil
                     }
                 } catch {
