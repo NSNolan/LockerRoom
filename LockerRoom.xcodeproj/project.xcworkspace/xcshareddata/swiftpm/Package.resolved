@@ -1,0 +1,24 @@
+{
+  "originHash" : "65baa95f4ee272c71458bd809e42112347b2173475a6bd48fd4962bc35a7a75c",
+  "pins" : [
+    {
+      "identity" : "gzip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jensutbult/Gzip",
+      "state" : {
+        "branch" : "main",
+        "revision" : "731037f6cc2be2ec01562f6597c1d0aa3fe6fd05"
+      }
+    },
+    {
+      "identity" : "yubikit-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Yubico/yubikit-swift/",
+      "state" : {
+        "branch" : "main",
+        "revision" : "573e913866ee0ba0a39b0c1f8f91d9d248690752"
+      }
+    }
+  ],
+  "version" : 3
+}
