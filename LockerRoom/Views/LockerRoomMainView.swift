@@ -41,9 +41,9 @@ struct LockerRoomMainView: View {
 private struct LockerRoomLockboxesView: View {
     @ObservedObject var lockerRoomManager: LockerRoomManager
     
-    @State private var lockboxMetadatas = [LockerRoomLockboxMetadata]()
-    @State private var selection: LockerRoomLockboxMetadata.ID? = nil
-    @State private var sortOrder = [KeyPathComparator(\LockerRoomLockboxMetadata.name)]
+    @State private var lockboxes = [LockerRoomLockbox]()
+    @State private var selection: LockerRoomLockbox.ID? = nil
+    @State private var sortOrder = [KeyPathComparator(\LockerRoomLockbox.name)]
     
     @State private var showUnencryptedLockboxAddView = false
     @State private var showUnencryptedLockboxView = false
@@ -54,9 +54,9 @@ private struct LockerRoomLockboxesView: View {
     
     var body: some View {
         VStack {
-            Table(lockboxMetadatas, selection: $selection, sortOrder: $sortOrder) {
-                TableColumn("") { lockboxMetadata in
-                    if lockboxMetadata.isEncrypted {
+            Table(lockboxes, selection: $selection, sortOrder: $sortOrder) {
+                TableColumn("") { lockbox in
+                    if lockbox.isEncrypted {
                         Image(systemName: "lock")
                     } else {
                         Image(systemName: "lock.open")
@@ -64,20 +64,20 @@ private struct LockerRoomLockboxesView: View {
                 }
                 .width(min: 0, ideal: 0, max: 0)
                 
-                TableColumn("Name") { lockboxMetadata in
+                TableColumn("Name") { lockbox in
                     HStack {
-                        Text(lockboxMetadata.name)
-                        ForEach(lockboxMetadata.encryptionKeyNames, id: \.self) { keyName in
+                        Text(lockbox.name)
+                        ForEach(lockbox.encryptionKeyNames, id: \.self) { keyName in
                             EncryptionKeyView(name: keyName)
                         }
                         Spacer()
                     }
                 }
             }
-            .contextMenu(forSelectionType: LockerRoomLockboxMetadata.ID.self) { metadataIDs in
-                selectedLockboxContextMenu(fromMetadataIDs: metadataIDs)
-            } primaryAction: { metadataIDs in
-                selectLockbox(fromMetadataIDs: metadataIDs)
+            .contextMenu(forSelectionType: LockerRoomLockbox.ID.self) { lockboxIDs in
+                selectedLockboxContextMenu(fromIDs: lockboxIDs)
+            } primaryAction: { lockboxIDs in
+                selectLockbox(fromIDs: lockboxIDs)
             }
             
             HStack {
@@ -92,15 +92,15 @@ private struct LockerRoomLockboxesView: View {
             .padding()
         }
         .onAppear() {
-            lockboxMetadatas = lockerRoomManager.lockboxMetadatas
-            lockboxMetadatas.sort(using: sortOrder)
+            lockboxes = lockerRoomManager.lockboxes
+            lockboxes.sort(using: sortOrder)
         }
-        .onChange(of: lockerRoomManager.lockboxMetadatas) {
-            lockboxMetadatas = lockerRoomManager.lockboxMetadatas
-            lockboxMetadatas.sort(using: sortOrder)
+        .onChange(of: lockerRoomManager.lockboxes) {
+            lockboxes = lockerRoomManager.lockboxes
+            lockboxes.sort(using: sortOrder)
         }
         .onChange(of: sortOrder) {
-            lockboxMetadatas.sort(using: sortOrder)
+            lockboxes.sort(using: sortOrder)
         }
         .sheet(isPresented: $showUnencryptedLockboxAddView) {
             LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxAddView, unencryptedLockbox: $selectedUnencryptedLockbox, viewStyle: .add)
@@ -114,11 +114,11 @@ private struct LockerRoomLockboxesView: View {
     }
     
     @ViewBuilder
-    private func selectedLockboxContextMenu(fromMetadataIDs metadataIDs: Set<LockerRoomLockboxMetadata.ID>) -> some View {
-        if let metadata = selectedLockboxMetadata(fromMetadataIDs: metadataIDs) {
-            if !metadata.isEncrypted {
+    private func selectedLockboxContextMenu(fromIDs lockboxIDs: Set<LockerRoomLockbox.ID>) -> some View {
+        if let lockbox = selectedLockbox(fromIDs: lockboxIDs) {
+            if !lockbox.isEncrypted {
                 Button("Delete") {
-                    guard lockerRoomManager.removeUnencryptedLockbox(name: metadata.name) else {
+                    guard lockerRoomManager.removeUnencryptedLockbox(name: lockbox.name) else {
                         print("[Error] LockerRoom failed to remove unencrypted lockbox")
                         return
                     }
@@ -129,34 +129,34 @@ private struct LockerRoomLockboxesView: View {
         }
     }
     
-    private func selectLockbox(fromMetadataIDs metadataIDs: Set<LockerRoomLockboxMetadata.ID>) {
-        if let metadata = selectedLockboxMetadata(fromMetadataIDs: metadataIDs) {
+    private func selectLockbox(fromIDs lockboxIDs: Set<LockerRoomLockbox.ID>) {
+        if let lockbox = selectedLockbox(fromIDs: lockboxIDs) {
             let lockerRoomStore = lockerRoomManager.lockerRoomStore
-            if metadata.isEncrypted {
-                selectedEncryptedLockbox = EncryptedLockbox.create(from: metadata, lockerRoomStore: lockerRoomStore)
+            if lockbox.isEncrypted {
+                selectedEncryptedLockbox = EncryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore)
                 showEncryptedLockboxView = true
             } else {
-                selectedUnencryptedLockbox = UnencryptedLockbox.create(from: metadata, lockerRoomStore: lockerRoomStore)
+                selectedUnencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore)
                 showUnencryptedLockboxView = true
             }
         }
     }
         
-    private func selectedLockboxMetadata(fromMetadataIDs metadataIDs: Set<LockerRoomLockboxMetadata.ID>) -> LockerRoomLockboxMetadata? {
-        guard let metadataID = metadataIDs.first, let metadata = lockboxMetadatas.first(where: { $0.id == metadataID }) else { // TODO: Is this really the best way to get the lockbox I just selected...
-            print("[Error] LockerRoom failed to find selected lockbox metadata")
+    private func selectedLockbox(fromIDs lockboxIDs: Set<LockerRoomLockbox.ID>) -> LockerRoomLockbox? {
+        guard let lockboxID = lockboxIDs.first, let lockbox = lockboxes.first(where: { $0.id == lockboxID }) else { // TODO: Is this really the best way to get the lockbox I just selected...
+            print("[Error] LockerRoom failed to find selected lockbox")
             return nil
         }
-        return metadata
+        return lockbox
     }
 }
 
 private struct LockerRoomKeysView: View {
     @ObservedObject var lockerRoomManager: LockerRoomManager
     
-    @State private var lockboxKeyMetadatas = [LockerRoomLockboxKeyMetadata]()
-    @State private var selection: LockerRoomLockboxKeyMetadata.ID? = nil
-    @State private var sortOrder = [KeyPathComparator(\LockerRoomLockboxKeyMetadata.name)]
+    @State private var enrolledKeys = [LockerRoomEnrolledKey]()
+    @State private var selection: LockerRoomEnrolledKey.ID? = nil
+    @State private var sortOrder = [KeyPathComparator(\LockerRoomEnrolledKey.name)]
     
     @State private var showLockboKeyAddView = false
     
@@ -164,10 +164,10 @@ private struct LockerRoomKeysView: View {
     
     var body: some View {
         VStack {
-            Table(lockboxKeyMetadatas, selection: $selection, sortOrder: $sortOrder) {
+            Table(enrolledKeys, selection: $selection, sortOrder: $sortOrder) {
                 TableColumn("Name", value: \.name)
-                TableColumn("Serial Number") { lockboxKeyMetadata in
-                    Text("\(String(lockboxKeyMetadata.serialNumber))")
+                TableColumn("Serial Number") { enrolledKey in
+                    Text("\(String(enrolledKey.serialNumber))")
                 }
                 TableColumn("Slot", value: \.slot.rawValue)
                 TableColumn("Algorithm", value: \.algorithm.rawValue)
@@ -187,15 +187,15 @@ private struct LockerRoomKeysView: View {
             .padding()
         }
         .onAppear() {
-            lockboxKeyMetadatas = lockerRoomManager.lockboxKeyMetadatas
-            lockboxKeyMetadatas.sort(using: sortOrder)
+            enrolledKeys = lockerRoomManager.enrolledKeys
+            enrolledKeys.sort(using: sortOrder)
         }
-        .onChange(of: lockerRoomManager.lockboxKeyMetadatas) {
-            lockboxKeyMetadatas = lockerRoomManager.lockboxKeyMetadatas
-            lockboxKeyMetadatas.sort(using: sortOrder)
+        .onChange(of: lockerRoomManager.enrolledKeys) {
+            enrolledKeys = lockerRoomManager.enrolledKeys
+            enrolledKeys.sort(using: sortOrder)
         }
         .onChange(of: sortOrder) {
-            lockboxKeyMetadatas.sort(using: sortOrder)
+            enrolledKeys.sort(using: sortOrder)
         }
         .sheet(isPresented: $showLockboKeyAddView) {
             LockerRoomLockboxKeyView(showView: $showLockboKeyAddView, viewStyle: .enroll)

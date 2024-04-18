@@ -12,7 +12,7 @@ There are two top-level views in Locker Room: **Lockboxes** and **Keys**. These 
 And the **Keys** view shows the list of enrolled keys:
 ![](Images/Locker-Room-Keys.png)
 
-While the **Lockboxes** view is selected, the plus button in the bottom-right corner will prompt the user to add a new lockbox:
+While the **Lockboxes** view is selected, the plus button in the bottom-right corner will prompt the user to create a new lockbox:
 ![](Images/Locker-Room-Add-Lockbox.png)
 
 And while the **Keys** view is selected, the same plus button will instead prompt the user to enroll a new key using an external hardware device:
@@ -44,7 +44,7 @@ When a lockbox is decrypted, the serial number of the external hardware device i
 - Locker Room does not run in a sandbox because creating a disk image with `hdiutil` will fail.
 - There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
 - Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
-- The entire encrypted lockbox content is read into memory when creating its lockbox metadata for UI presentation.
+- The entire encrypted lockbox content is read into memory when creating its UI presentation.
 - Disk image routines are tightly coupled within `UnencryptedLockbox` create and destory functions.
 
 

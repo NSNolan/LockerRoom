@@ -1,5 +1,5 @@
 //
-//  LockerRoomLockboxKeyMetadata.swift
+//  LockerRoomEnrolledKey.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 3/26/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LockerRoomLockboxKeyMetadata: Identifiable, Equatable {
+struct LockerRoomEnrolledKey: Identifiable, Equatable {
     let id = UUID()
     let name: String
     let serialNumber: UInt32
@@ -43,8 +43,8 @@ extension LockboxKey.TouchPolicy: Identifiable {
 }
 
 extension LockboxKey {
-    var metadata: LockerRoomLockboxKeyMetadata {
-        return LockerRoomLockboxKeyMetadata(
+    var lockerRoomEnrolledKey: LockerRoomEnrolledKey {
+        return LockerRoomEnrolledKey(
             name: name,
             serialNumber: serialNumber,
             slot: slot,

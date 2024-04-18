@@ -21,7 +21,7 @@ protocol LockerRoomStoring {
     func writeEncryptedLockbox(_ lockbox: EncryptedLockbox?, name: String) -> Bool
     
     func lockboxExists(name: String) -> Bool
-    var lockboxMetadatas: [LockerRoomLockboxMetadata] { get }
+    var lockerRoomLockboxes: [LockerRoomLockbox] { get }
     
     // Lockbox Keys
     func removeLockboxKey(name: String) -> Bool
@@ -31,7 +31,7 @@ protocol LockerRoomStoring {
     
     func lockboxKeyExists(name: String) -> Bool
     var lockboxKeys: [LockboxKey] { get }
-    var lockboxKeyMetadatas: [LockerRoomLockboxKeyMetadata] { get }
+    var lockerRoomEnrolledKeys: [LockerRoomEnrolledKey] { get }
 }
 
 struct LockerRoomStore: LockerRoomStoring {
@@ -231,7 +231,7 @@ struct LockerRoomStore: LockerRoomStoring {
         return fileManager.fileExists(atPath: lockboxPath)
     }
     
-    var lockboxMetadatas: [LockerRoomLockboxMetadata] {
+    var lockerRoomLockboxes: [LockerRoomLockbox] {
         let baseLockboxesURL = lockerRoomURLProvider.urlForLockboxes
         
         do {
@@ -245,13 +245,13 @@ struct LockerRoomStore: LockerRoomStoring {
                 }
             }
             
-            return lockboxURLs.compactMap { lockboxURL -> LockerRoomLockboxMetadata? in
+            return lockboxURLs.compactMap { lockboxURL -> LockerRoomLockbox? in
                 let lockboxName = lockboxURL.lastPathComponent
                 let isEncrypted = isLockboxEncrypted(name: lockboxName)
                 let size: Int
                 let encryptionKeyNames: [String]
                 if isEncrypted {
-                    guard let encryptedLockbox = readEncryptedLockbox(name: lockboxName) else { // TODO: The entire encrypted lockbox content is read into memory when creating the lockbox metadata.
+                    guard let encryptedLockbox = readEncryptedLockbox(name: lockboxName) else { // TODO: The entire encrypted lockbox content is read into memory when creating lockboxes for the UI.
                         print("[Error] Locker room store failed to read unencrypted lockbox \(lockboxName)")
                         return nil
                     }
@@ -262,11 +262,11 @@ struct LockerRoomStore: LockerRoomStoring {
                     encryptionKeyNames = [String]()
                 }
 
-                return LockerRoomLockboxMetadata(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted, encryptionKeyNames: encryptionKeyNames)
+                return LockerRoomLockbox(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted, encryptionKeyNames: encryptionKeyNames)
             }
         } catch {
             print("[Warning] Locker room store failed to get lockbox URLs with error \(error)")
-            return [LockerRoomLockboxMetadata]()
+            return [LockerRoomLockbox]()
         }
     }
     
@@ -433,7 +433,7 @@ struct LockerRoomStore: LockerRoomStoring {
         }
     }
     
-    var lockboxKeyMetadatas: [LockerRoomLockboxKeyMetadata] {
-        return lockboxKeys.map { $0.metadata }
+    var lockerRoomEnrolledKeys: [LockerRoomEnrolledKey] {
+        return lockboxKeys.map { $0.lockerRoomEnrolledKey }
     }
 }

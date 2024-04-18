@@ -29,8 +29,8 @@
 		BF1DD08F2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD08E2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift */; };
 		BF1DD0912BB1C823001FA81F /* LockerRoomStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0902BB1C823001FA81F /* LockerRoomStore.swift */; };
 		BF1DD0952BB1CAB9001FA81F /* LockerRoomURLProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0942BB1CAB9001FA81F /* LockerRoomURLProvider.swift */; };
-		BF1DD0992BB3035E001FA81F /* LockerRoomLockboxMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0982BB3035E001FA81F /* LockerRoomLockboxMetadata.swift */; };
-		BF475F5D2BB3B45E003A0E05 /* LockerRoomLockboxKeyMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F5C2BB3B45E003A0E05 /* LockerRoomLockboxKeyMetadata.swift */; };
+		BF1DD0992BB3035E001FA81F /* LockerRoomLockbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0982BB3035E001FA81F /* LockerRoomLockbox.swift */; };
+		BF475F5D2BB3B45E003A0E05 /* LockerRoomEnrolledKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F5C2BB3B45E003A0E05 /* LockerRoomEnrolledKey.swift */; };
 		BF475F5F2BB3BB92003A0E05 /* LockerRoomLockboxKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F5E2BB3BB92003A0E05 /* LockerRoomLockboxKeyView.swift */; };
 		BF475F612BB3BED1003A0E05 /* LockboxKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F602BB3BED1003A0E05 /* LockboxKey.swift */; };
 		BF475F642BB493AF003A0E05 /* LockboxKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F632BB493AF003A0E05 /* LockboxKeyGenerator.swift */; };
@@ -81,8 +81,8 @@
 		BF1DD08E2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomEncryptedLockboxView.swift; sourceTree = "<group>"; };
 		BF1DD0902BB1C823001FA81F /* LockerRoomStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomStore.swift; sourceTree = "<group>"; };
 		BF1DD0942BB1CAB9001FA81F /* LockerRoomURLProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomURLProvider.swift; sourceTree = "<group>"; };
-		BF1DD0982BB3035E001FA81F /* LockerRoomLockboxMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockboxMetadata.swift; sourceTree = "<group>"; };
-		BF475F5C2BB3B45E003A0E05 /* LockerRoomLockboxKeyMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockboxKeyMetadata.swift; sourceTree = "<group>"; };
+		BF1DD0982BB3035E001FA81F /* LockerRoomLockbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockbox.swift; sourceTree = "<group>"; };
+		BF475F5C2BB3B45E003A0E05 /* LockerRoomEnrolledKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomEnrolledKey.swift; sourceTree = "<group>"; };
 		BF475F5E2BB3BB92003A0E05 /* LockerRoomLockboxKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockboxKeyView.swift; sourceTree = "<group>"; };
 		BF475F602BB3BED1003A0E05 /* LockboxKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxKey.swift; sourceTree = "<group>"; };
 		BF475F632BB493AF003A0E05 /* LockboxKeyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxKeyGenerator.swift; sourceTree = "<group>"; };
@@ -241,8 +241,8 @@
 		BF1DD0972BB30339001FA81F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				BF1DD0982BB3035E001FA81F /* LockerRoomLockboxMetadata.swift */,
-				BF475F5C2BB3B45E003A0E05 /* LockerRoomLockboxKeyMetadata.swift */,
+				BF1DD0982BB3035E001FA81F /* LockerRoomLockbox.swift */,
+				BF475F5C2BB3B45E003A0E05 /* LockerRoomEnrolledKey.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -397,11 +397,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF1DD0952BB1CAB9001FA81F /* LockerRoomURLProvider.swift in Sources */,
-				BF475F5D2BB3B45E003A0E05 /* LockerRoomLockboxKeyMetadata.swift in Sources */,
+				BF475F5D2BB3B45E003A0E05 /* LockerRoomEnrolledKey.swift in Sources */,
 				BF0BCB5F2BB8C9A500F91471 /* Lockbox.swift in Sources */,
 				BF1DD0742BAF4D48001FA81F /* LockerRoomMainView.swift in Sources */,
 				BF475F672BB49FC3003A0E05 /* LockerRoomDiskImage.swift in Sources */,
-				BF1DD0992BB3035E001FA81F /* LockerRoomLockboxMetadata.swift in Sources */,
+				BF1DD0992BB3035E001FA81F /* LockerRoomLockbox.swift in Sources */,
 				BF1DD0852BAF88DA001FA81F /* EncryptedLockbox.swift in Sources */,
 				BF1DD0432BAC99BF001FA81F /* LockerRoomApp.swift in Sources */,
 				BF475F642BB493AF003A0E05 /* LockboxKeyGenerator.swift in Sources */,

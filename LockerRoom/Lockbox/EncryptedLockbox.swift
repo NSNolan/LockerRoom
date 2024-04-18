@@ -46,12 +46,12 @@ class EncryptedLockbox: Lockbox, Codable {
         return lockbox
     }
     
-    static func create(from encryptedLockboxMetadata: LockerRoomLockboxMetadata, lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
-        let isEncrypted = encryptedLockboxMetadata.isEncrypted
-        let name = encryptedLockboxMetadata.name
+    static func create(from lockbox: LockerRoomLockbox, lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
+        let isEncrypted = lockbox.isEncrypted
+        let name = lockbox.name
         
         guard isEncrypted else {
-            print("[Error] Encrypted lockback failed to create \(name) with unencrypted lockbox metadata")
+            print("[Error] Encrypted lockback failed to create \(name) from unencrypted lockbox")
             return nil
         }
         

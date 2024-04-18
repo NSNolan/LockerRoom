@@ -86,14 +86,14 @@ struct UnencryptedLockbox: Lockbox {
         }
     }
     
-    static func create(from unencryptedLockboxMetadata: LockerRoomLockboxMetadata, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
+    static func create(from lockbox: LockerRoomLockbox, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
         let diskImage = LockerRoomDiskImage()
-        let isEncrypted = unencryptedLockboxMetadata.isEncrypted
-        let name = unencryptedLockboxMetadata.name
-        let size = unencryptedLockboxMetadata.size
+        let isEncrypted = lockbox.isEncrypted
+        let name = lockbox.name
+        let size = lockbox.size
         
         guard !isEncrypted else {
-            print("[Error] Unencrypted lockback failed to create \(name) with encrypted lockbox metadata")
+            print("[Error] Unencrypted lockback failed to create \(name) from encrypted lockbox")
             return nil
         }
         

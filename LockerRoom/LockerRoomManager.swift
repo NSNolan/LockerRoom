@@ -10,15 +10,15 @@ import Foundation
 class LockerRoomManager: ObservableObject {
     internal let lockerRoomStore: LockerRoomStoring
     
-    @Published var lockboxMetadatas = [LockerRoomLockboxMetadata]()
-    @Published var lockboxKeyMetadatas = [LockerRoomLockboxKeyMetadata]()
+    @Published var lockboxes = [LockerRoomLockbox]()
+    @Published var enrolledKeys = [LockerRoomEnrolledKey]()
     
     static let shared = LockerRoomManager()
     
     private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore()) {
         self.lockerRoomStore = lockerRoomStore
-        self.lockboxMetadatas = lockerRoomStore.lockboxMetadatas
-        self.lockboxKeyMetadatas = lockerRoomStore.lockboxKeyMetadatas
+        self.lockboxes = lockerRoomStore.lockerRoomLockboxes
+        self.enrolledKeys = lockerRoomStore.lockerRoomEnrolledKeys
     }
     
     func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
@@ -27,7 +27,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxMetadatas = lockerRoomStore.lockboxMetadatas
+        lockboxes = lockerRoomStore.lockerRoomLockboxes
         return unencryptedLockbox
     }
     
@@ -37,7 +37,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxMetadatas = lockerRoomStore.lockboxMetadatas
+        lockboxes = lockerRoomStore.lockerRoomLockboxes
         return unencryptedLockbox
     }
     
@@ -47,7 +47,7 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxMetadatas = lockerRoomStore.lockboxMetadatas
+        lockboxes = lockerRoomStore.lockerRoomLockboxes
         return true
     }
     
@@ -57,7 +57,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxMetadatas = lockerRoomStore.lockboxMetadatas
+        lockboxes = lockerRoomStore.lockerRoomLockboxes
         return encryptedLockbox
     }
     
@@ -67,7 +67,7 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxMetadatas = lockerRoomStore.lockboxMetadatas
+        lockboxes = lockerRoomStore.lockerRoomLockboxes
         return true
     }
     
@@ -86,7 +86,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxKeyMetadatas = lockerRoomStore.lockboxKeyMetadatas
+        enrolledKeys = lockerRoomStore.lockerRoomEnrolledKeys
         return lockboxKey
     }
     
@@ -96,7 +96,7 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxKeyMetadatas = lockerRoomStore.lockboxKeyMetadatas
+        enrolledKeys = lockerRoomStore.lockerRoomEnrolledKeys
         return true
     }
     
