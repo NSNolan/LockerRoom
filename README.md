@@ -45,7 +45,7 @@ When a lockbox is decrypted, the serial number of the external hardware device i
 - There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
 - Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
 - The entire encrypted lockbox content is read into memory when creating its lockbox metadata for UI presentation.
-- Disk image routines are tightly coupled within `UnencryptedLockbox` create and destory function.
+- Disk image routines are tightly coupled within `UnencryptedLockbox` create and destory functions.
 
 
 ### Future Enhancements
