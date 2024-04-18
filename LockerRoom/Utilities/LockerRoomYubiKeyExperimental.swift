@@ -11,8 +11,8 @@ import CryptoTokenKit
 import YubiKit
 
 // This code has been taken and modified from the YubiKey SDK to support key generation
-// and message decryption using non-Standard PIV Slots. The YubiKey SDK does not have PIVSlot
-// representations for the 20 retired slots (82-65) availabe on YubiKey. This is accomplished by
+// and message decryption using non-standard PIV Slots. The YubiKey SDK does not have `PIVSlot`
+// representations for the 20 retired slots (82-95) availabe on YubiKey. This is accomplished by
 // sending a ADPU command with the raw slot value.
 
 extension PIVSession {
@@ -34,8 +34,8 @@ extension PIVSession {
             touchPolicy != .`defaultPolicy` ? TKBERTLVRecord(tag: Self.tagTouchpolicy, value: touchPolicy.rawValue.data) : nil
         ].compactMap { $0 }
         
-        let tlvContainer = TKBERTLVRecord(tag: 0xac, records: records)
-        let apdu = APDU(cla: 0, ins: Self.insGenerateAsymetric, p1: 0, p2: rawSlot, command: tlvContainer.data)
+        let command = TKBERTLVRecord(tag: 0xac, records: records).data
+        let apdu = APDU(cla: 0, ins: Self.insGenerateAsymetric, p1: 0, p2: rawSlot, command: command)
         let result = try await connection.send(apdu: apdu)
         
         guard let records = TKBERTLVRecord.sequenceOfRecords(from: result),

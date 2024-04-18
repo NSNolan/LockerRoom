@@ -22,7 +22,7 @@ When a new lockbox is created it starts off unencrypted and a user can add files
 
 To enroll a key the user must first switch to the **Keys** view and then click the plus button. A key name, PIV slot, algorithm, PIN policy, touch policy and the PIV management key must be provided when generating the public-private key pair on the external hardware device. After the key details are configured, Locker Room will wait for the external hardware device to become present. Once present the key enrollment process will complete. The public key is stored for future encryption and the private key always remains on the external hardware device for future decryption. Newly enrolled keys will not be used to retroactively encrypt previously encrypted lockboxes and therefore the corresponding external hardware device cannot be used to decrypt previously encrypted lockboxes.
 
-A user can choose to encrypt a lockbox directly after it is created or they can choose to encrypt it later. Double-clicking an unencrypted lockbox from the list of lockboxes will prompt the user to encrypt it. And double-clicking an encrypted lockbox will prompt the user to decrypt it. Encryption does not require an external hardware device to be present because only previously enrolled keys are used. Decryption does require an external hardware device to be present because the private key stored on the external hardware device is required for decryption. After an encrypted lockbox is selected for decryption, Locker Room will wait for an external hardware device to become present. If the lockbox was encrypted using an enrolled key corresponding to the presented external hardware device then the decryption process will complete.
+A user can choose to encrypt a lockbox directly after it is created or they can choose to encrypt it later. Double-clicking an unencrypted lockbox from the list of lockboxes will prompt the user to encrypt it. And double-clicking an encrypted lockbox will prompt the user to decrypt it. Encryption does not require an external hardware device to be present because only previously enrolled keys are used. Decryption does require an external hardware device to be present because the private key stored on the external hardware device is needed for decryption. After an encrypted lockbox is selected for decryption, Locker Room will wait for an external hardware device to become present. If the lockbox was encrypted using an enrolled key corresponding to the presented external hardware device then the decryption process will complete.
 
 ### Technical Details
 
@@ -32,7 +32,7 @@ An enrolled key is logically a public key and serial number that maps to an exte
 
 When a lockbox is encrypted, a 256-bit symmetric key is generated. This symmetric key is used to encrypt the lockbox. The symmetric key is also encrypted by all of the enrolled keys and stored on disk along with the encrypted lockbox. If multiple keys are enrolled then multiple copies of the symmetric key are encrypted and stored on disk. But there is only ever one copy of the encrypted lockbox.
 
-When a lockbox is decrypted, the serial number of the external hardware device is used to map back to an encrypted symmetric key stored on disk. The private key stored on the external hardware device is then used to decrypt the encrypted symmetric key. Finally the now decrypted symmetric key is used to decrypt the lockbox. The symmetric key is thrown away and never used for future encryption.
+When a lockbox is decrypted, the serial number of the external hardware device is used to map back to an encrypted symmetric key stored on disk. The private key stored on the external hardware device is then used to decrypt the encrypted symmetric key. Finally the now decrypted symmetric key is used to decrypt the encrypted lockbox. The symmetric key is thrown away and never used for future encryption.
 
 ### Known Issues
 
@@ -45,6 +45,7 @@ When a lockbox is decrypted, the serial number of the external hardware device i
 - There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
 - Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
 - The entire encrypted lockbox content is read into memory when creating its lockbox metadata for UI presentation.
+- Disk image routines are tightly coupled within `UnencryptedLockbox` create and destory function.
 
 
 ### Future Enhancements
