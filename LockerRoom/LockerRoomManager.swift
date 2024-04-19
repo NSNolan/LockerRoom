@@ -61,7 +61,7 @@ class LockerRoomManager: ObservableObject {
         return encryptedLockbox
     }
     
-    func removeEncryptedLockbox(name: String) -> Bool {        
+    func removeEncryptedLockbox(name: String) -> Bool {
         guard EncryptedLockbox.destroy(name: name, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Locker room manager failed to remove encrypted lockbox \(name)")
             return false

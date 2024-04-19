@@ -34,7 +34,7 @@ struct UnencryptedLockbox {
                 return nil
             }
             
-            guard lockerRoomStore.addLockbox(name: name, size: size) else {
+            guard lockerRoomStore.addUnencryptedLockbox(name: name, size: size) else {
                 print("[Error] Unencrypted lockbox failed to add \(name)")
                 return nil
             }
