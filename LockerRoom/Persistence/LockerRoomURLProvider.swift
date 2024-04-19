@@ -13,8 +13,9 @@ protocol LockerRoomURLProviding {
     var urlForKeys: URL { get }
     
     func urlForLockbox(name: String) -> URL
-    func urlForUnencryptedLockboxFile(name: String) -> URL
-    func urlForEncryptedLockboxFile(name: String) -> URL
+    func urlForLockboxMetadata(name: String) -> URL
+    func urlForLockboxUnencryptedContent(name: String) -> URL
+    func urlForLockboxEncryptedContent(name: String) -> URL
     
     func urlForKey(name: String) -> URL
     func urlForKeyFile(name: String) -> URL
@@ -23,8 +24,9 @@ protocol LockerRoomURLProviding {
 }
 
 struct LockerRoomURLProvider: LockerRoomURLProviding {
-    private static let unencryptedLockboxFileName = "UnencryptedContent.dmg"
-    private static let encryptedLockboxFileName = "EncryptedLockbox.plist"
+    private static let metadataFileName = "Metadata.plist"
+    private static let unencryptedContentFileName = "Content.dmg"
+    private static let encryptedContentFileName = "Content.enc"
     private static let lockboxKeyFileName = "LockboxKey.plist"
     
     private static let lockboxesPathComponent = "Lockboxes"
@@ -63,12 +65,16 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
         urlForLockboxes.appending(component: name)
     }
     
-    func urlForUnencryptedLockboxFile(name: String) -> URL {
-        urlForLockbox(name: name).appending(component: LockerRoomURLProvider.unencryptedLockboxFileName)
+    func urlForLockboxMetadata(name: String) -> URL {
+        urlForLockbox(name: name).appending(component: LockerRoomURLProvider.metadataFileName)
     }
     
-    func urlForEncryptedLockboxFile(name: String) -> URL {
-        urlForLockbox(name: name).appending(component: LockerRoomURLProvider.encryptedLockboxFileName)
+    func urlForLockboxUnencryptedContent(name: String) -> URL {
+        urlForLockbox(name: name).appending(component: LockerRoomURLProvider.unencryptedContentFileName)
+    }
+    
+    func urlForLockboxEncryptedContent(name: String) -> URL {
+        urlForLockbox(name: name).appending(component: LockerRoomURLProvider.encryptedContentFileName)
     }
     
     func urlForKey(name: String) -> URL {

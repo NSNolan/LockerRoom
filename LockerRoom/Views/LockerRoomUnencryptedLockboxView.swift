@@ -125,7 +125,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                 Image(systemName: "lock.open")
                 
                 if let unencryptedLockbox {
-                    Text("Secure Lockbox \(unencryptedLockbox.name)")
+                    Text("Secure Lockbox \(unencryptedLockbox.metadata.name)")
                         .padding()
                 } else {
                     Text("Missing Lockbox to Secure")
@@ -181,7 +181,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
         
         print("[Default] LockerRoom encrypted a symmetric key")
         
-        let name = unencryptedLockbox.name
+        let name = unencryptedLockbox.metadata.name
         
         guard let encryptedContent = LockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             print("[Error] LockerRoom failed to encrypt an unencrypted lockbox \(name)")
@@ -195,7 +195,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
         }
         print("[Default] LockerRoom removed an unencrypted lockbox \(name)")
         
-        guard lockerRoomManager.addEncryptedLockbox(name: name, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys) != nil else {
+        guard lockerRoomManager.addEncryptedLockbox(name: name, size: unencryptedLockbox.metadata.size, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys) != nil else {
             print("[Error] LockerRoom failed to add an encrypted lockbox \(name)")
             return
         }
@@ -209,7 +209,7 @@ private struct LockerRoomUnencryptedLockboxEncryptingView: View {
     
     var body: some View {
         if let unencryptedLockbox {
-            Text("Encrypting \(unencryptedLockbox.name)")
+            Text("Encrypting \(unencryptedLockbox.metadata.name)")
                 .padding()
         } else {
             Text("Missing Lockbox to Encrypt")

@@ -7,26 +7,23 @@
 
 import Foundation
 
-// An `UnencryptedLockbox` is not `Codable` because its on-disk representation is a disk image file.
-// Instead of being persisted as JSON or Plist encoded data to disk this object needs to be persisted as data
-// that maintains the functionality of a disk image. Meaning that when this object is written as data to a file,
-// the subsequent file can be used to attach as a disk image and mount a volume. The name of the `UnencryptedLockbox`
-// is preserved by using the directory name that holds the disk image file and the size is calculated using
-// the file itself.
-struct UnencryptedLockbox: Lockbox {
-    let name: String
-    let size: Int
-    let isEncrypted: Bool
-    let unencryptedContent: Data
+struct UnencryptedLockbox {
     
-    private init(name: String, size: Int, unencryptedContent: Data) {
-        self.name = name
-        self.size = size
-        self.isEncrypted = false
-        self.unencryptedContent = unencryptedContent
+    struct Metadata: LockboxMetadata {
+        let name: String
+        let size: Int
+        let isEncrypted: Bool
     }
     
-    static func create(name: String, size: Int = 0, unencryptedContent: Data = Data(), lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
+    let content: Data
+    let metadata: Metadata
+    
+    private init(name: String, size: Int, content: Data) {
+        self.content = content
+        self.metadata = Metadata(name: name, size: size, isEncrypted: false)
+    }
+    
+    static func create(name: String, size: Int, unencryptedContent: Data = Data(), lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
         let diskImage = LockerRoomDiskImage() // TODO: It is very awkward that the disk image routines create, attach and detach are called within create/destroy
         
         if unencryptedContent.isEmpty {
@@ -37,17 +34,17 @@ struct UnencryptedLockbox: Lockbox {
                 return nil
             }
             
-            guard lockerRoomStore.addLockbox(name: name) else {
+            guard lockerRoomStore.addLockbox(name: name, size: size) else {
                 print("[Error] Unencrypted lockbox failed to add \(name)")
                 return nil
             }
-
+            
             guard diskImage.create(name: name, size: size) else {
                 print("[Error] Unencrypted lockbox failed to attach to disk image \(name)")
                 return nil
             }
             
-            guard let newUnencryptedContent = lockerRoomStore.readUnencryptedLockbox(name: name) else {
+            guard let newUnencryptedContent = lockerRoomStore.readUnencryptedLockboxContent(name: name) else {
                 print("[Error] Unencrypted lockbox failed to read \(name) for new content")
                 return nil
             }
@@ -57,23 +54,24 @@ struct UnencryptedLockbox: Lockbox {
                 return nil
             }
             
-            return UnencryptedLockbox(name: name, size: size, unencryptedContent: newUnencryptedContent)
+            return UnencryptedLockbox(name: name, size: size, content: newUnencryptedContent)
         } else {
             print("[Default] Unencrypted lockbox creating \(name) from existing content")
-            
-            let unencryptedContentSize = unencryptedContent.count / (1024 * 1024) // Convert to MBs
-            guard unencryptedContentSize > 0 else {
-                print("[Error] Unencrypted lockbox failed to create from emtpy sized lockbox \(name)")
-                return nil
-            }
             
             guard !lockerRoomStore.lockboxExists(name: name) else {
                 print("[Error] Unencrypted lockback failed to add \(name) at existing path")
                 return nil
             }
             
-            guard lockerRoomStore.writeUnencryptedLockbox(unencryptedContent, name: name) else {
-                print("[Error] Unencrypted lockbox failed to add \(name) from data \(unencryptedContent)")
+            guard size > 0 else {
+                print("[Error] Unencrypted lockbox failed to create from emtpy sized lockbox \(name)")
+                return nil
+            }
+            
+            let lockbox = UnencryptedLockbox(name: name, size: size, content: unencryptedContent)
+            
+            guard lockerRoomStore.writeUnencryptedLockbox(lockbox, name: name) else {
+                print("[Error] Unencrypted lockbox failed to write \(name)")
                 return nil
             }
             
@@ -82,7 +80,7 @@ struct UnencryptedLockbox: Lockbox {
                 return nil
             }
             
-            return UnencryptedLockbox(name: name, size: unencryptedContentSize, unencryptedContent: unencryptedContent)
+            return lockbox
         }
     }
     
@@ -90,21 +88,25 @@ struct UnencryptedLockbox: Lockbox {
         let diskImage = LockerRoomDiskImage()
         let isEncrypted = lockbox.isEncrypted
         let name = lockbox.name
-        let size = lockbox.size
         
         guard !isEncrypted else {
             print("[Error] Unencrypted lockback failed to create \(name) from encrypted lockbox")
             return nil
         }
         
-        guard let unencryptedContent = lockerRoomStore.readUnencryptedLockbox(name: name) else {
+        guard let unencryptedContent = lockerRoomStore.readUnencryptedLockboxContent(name: name) else {
             print("[Error] Unencrypted lockbox failed to read \(name) for unencrypted content")
+            return nil
+        }
+        
+        guard let metadata = lockerRoomStore.readUnencryptedLockboxMetadata(name: name) else {
+            print("[Error] Unencrypted lockbox failed to read metadata \(name)")
             return nil
         }
         
         _ = diskImage.attach(name: name) // Not fatal
         
-        return UnencryptedLockbox(name: name, size: size, unencryptedContent: unencryptedContent)
+        return UnencryptedLockbox(name: name, size: metadata.size, content: unencryptedContent)
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {

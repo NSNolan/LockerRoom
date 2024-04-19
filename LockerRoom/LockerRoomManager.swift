@@ -31,8 +31,8 @@ class LockerRoomManager: ObservableObject {
         return unencryptedLockbox
     }
     
-    func addUnencryptedLockbox(name: String, unencryptedContent: Data) -> UnencryptedLockbox? {
-        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, unencryptedContent: unencryptedContent, lockerRoomStore: lockerRoomStore) else {
+    func addUnencryptedLockbox(name: String, size: Int, unencryptedContent: Data) -> UnencryptedLockbox? {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, unencryptedContent: unencryptedContent, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Locker room manager failed to add unencrypted lockbox \(name) with data")
             return nil
         }
@@ -51,8 +51,8 @@ class LockerRoomManager: ObservableObject {
         return true
     }
     
-    func addEncryptedLockbox(name: String, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey]) -> EncryptedLockbox? {
-        guard let encryptedLockbox = EncryptedLockbox.create(name: name, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys, lockerRoomStore: lockerRoomStore) else {
+    func addEncryptedLockbox(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey]) -> EncryptedLockbox? {
+        guard let encryptedLockbox = EncryptedLockbox.create(name: name, size: size, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Locker room manager failed to add encrypted lockbox \(name) with data")
             return nil
         }

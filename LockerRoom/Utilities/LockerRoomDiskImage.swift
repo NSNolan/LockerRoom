@@ -17,7 +17,7 @@ struct LockerRoomDiskImage {
     }
     
     func create(name: String, size: Int) -> Bool {
-        let lockboxUnencryptedContentPath = lockerRoomURLProvider.urlForUnencryptedLockboxFile(name: name).path
+        let lockboxUnencryptedContentPath = lockerRoomURLProvider.urlForLockboxUnencryptedContent(name: name).path
         return hdiutil(
             arguments: [
                 "create",
@@ -32,7 +32,7 @@ struct LockerRoomDiskImage {
     }
     
     func attach(name: String) -> Bool {
-        let lockboxUnencryptedContentPath = lockerRoomURLProvider.urlForUnencryptedLockboxFile(name: name).path
+        let lockboxUnencryptedContentPath = lockerRoomURLProvider.urlForLockboxUnencryptedContent(name: name).path
         return hdiutil(
             arguments: [
                 "attach",

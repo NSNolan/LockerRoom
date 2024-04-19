@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF0BCB5F2BB8C9A500F91471 /* Lockbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BCB5E2BB8C9A500F91471 /* Lockbox.swift */; };
+		BF0BCB5F2BB8C9A500F91471 /* LockboxMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BCB5E2BB8C9A500F91471 /* LockboxMetadata.swift */; };
 		BF0BCB612BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BCB602BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift */; };
 		BF0BCB632BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BCB622BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift */; };
 		BF0BCB652BC31B0400F91471 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF0BCB642BC31B0400F91471 /* README.md */; };
@@ -56,7 +56,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		BF0BCB5E2BB8C9A500F91471 /* Lockbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lockbox.swift; sourceTree = "<group>"; };
+		BF0BCB5E2BB8C9A500F91471 /* LockboxMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxMetadata.swift; sourceTree = "<group>"; };
 		BF0BCB602BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomYubiKeyPrimitives.swift; sourceTree = "<group>"; };
 		BF0BCB622BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomSecKeyPrimitives.swift; sourceTree = "<group>"; };
 		BF0BCB642BC31B0400F91471 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -209,7 +209,7 @@
 		BF1DD0922BB1C82C001FA81F /* Lockbox */ = {
 			isa = PBXGroup;
 			children = (
-				BF0BCB5E2BB8C9A500F91471 /* Lockbox.swift */,
+				BF0BCB5E2BB8C9A500F91471 /* LockboxMetadata.swift */,
 				BF1DD0892BAF94F7001FA81F /* UnencryptedLockbox.swift */,
 				BF1DD0842BAF88DA001FA81F /* EncryptedLockbox.swift */,
 			);
@@ -398,7 +398,7 @@
 			files = (
 				BF1DD0952BB1CAB9001FA81F /* LockerRoomURLProvider.swift in Sources */,
 				BF475F5D2BB3B45E003A0E05 /* LockerRoomEnrolledKey.swift in Sources */,
-				BF0BCB5F2BB8C9A500F91471 /* Lockbox.swift in Sources */,
+				BF0BCB5F2BB8C9A500F91471 /* LockboxMetadata.swift in Sources */,
 				BF1DD0742BAF4D48001FA81F /* LockerRoomMainView.swift in Sources */,
 				BF475F672BB49FC3003A0E05 /* LockerRoomDiskImage.swift in Sources */,
 				BF1DD0992BB3035E001FA81F /* LockerRoomLockbox.swift in Sources */,

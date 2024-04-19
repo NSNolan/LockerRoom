@@ -41,7 +41,7 @@ struct LockboxKey: Codable {
                    self == .experimental86 || self == .experimental87 || self == .experimental88 || self == .experimental89 ||
                    self == .experimental8a || self == .experimental8b || self == .experimental8c || self == .experimental8d ||
                    self == .experimental8e || self == .experimental8f || self == .experimental90 || self == .experimental91 ||
-                   self == .experimental92 || self == .experimental92 || self == .experimental94 || self == .experimental95
+                   self == .experimental92 || self == .experimental93 || self == .experimental94 || self == .experimental95
         }
     }
     

@@ -44,7 +44,6 @@ When a lockbox is decrypted, the serial number of the external hardware device i
 - Locker Room does not run in a sandbox because creating a disk image with `hdiutil` will fail.
 - There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
 - Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
-- The entire encrypted lockbox content is read into memory when creating its UI presentation.
 - Disk image routines are tightly coupled within `UnencryptedLockbox` create and destory functions.
 
 

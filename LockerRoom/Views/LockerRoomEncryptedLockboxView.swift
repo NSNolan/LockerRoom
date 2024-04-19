@@ -48,7 +48,7 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                 Image(systemName: "lock")
                 
                 if let encryptedLockbox {
-                    Text("Open Lockbox \(encryptedLockbox.name)")
+                    Text("Open Lockbox \(encryptedLockbox.metadata.name)")
                         .padding()
                 } else {
                     Text("Missing Lockbox to Open")
@@ -83,8 +83,8 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
             return
         }
         
-        let name = encryptedLockbox.name
-        let encryptedSymmetricKeysBySerialNumber = encryptedLockbox.encryptedSymmetricKeysBySerialNumber
+        let name = encryptedLockbox.metadata.name
+        let encryptedSymmetricKeysBySerialNumber = encryptedLockbox.metadata.encryptedSymmetricKeysBySerialNumber
         
         guard !encryptedSymmetricKeysBySerialNumber.isEmpty else {
             print("[Error] LockerRoom is missing encrypted symmetric keys to decrypt an encrypted lockbox \(name)")
@@ -117,7 +117,7 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
             }
             print("[Default] LockerRoom removed an encrypted lockbox \(name)")
             
-            guard lockerRoomManager.addUnencryptedLockbox(name: name, unencryptedContent: content) != nil else {
+            guard lockerRoomManager.addUnencryptedLockbox(name: name, size: encryptedLockbox.metadata.size, unencryptedContent: content) != nil else {
                 print("[Error] LockerRoom failed to add an unencrypted lockbox \(name) with content")
                 return
             }
@@ -133,7 +133,7 @@ private struct LockerRoomEncryptedLockboxWaitingForKeyView: View {
     
     var body: some View {
         if let encryptedLockbox {
-            Text("Insert YubiKit to Decrypt \(encryptedLockbox.name)")
+            Text("Insert YubiKit to Decrypt \(encryptedLockbox.metadata.name)")
                 .padding()
         } else {
             Text("Missing Lockbox to Decrypt")
@@ -159,7 +159,7 @@ private struct LockerRoomEncryptedLockboxDecryptingView: View {
     
     var body: some View {
         if let encryptedLockbox {
-            Text("Decrypting \(encryptedLockbox.name)")
+            Text("Decrypting \(encryptedLockbox.metadata.name)")
                 .padding()
         } else {
             Text("Missing Lockbox to Decrypt")

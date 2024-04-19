@@ -7,36 +7,42 @@
 
 import Foundation
 
-class EncryptedLockbox: Lockbox, Codable {
-    let name: String
-    let size: Int
-    let isEncrypted: Bool
-    let encryptedContent: Data
-    let encryptedSymmetricKeysBySerialNumber: [UInt32:Data]
-    let encryptionLockboxKeys: [LockboxKey]
-        
-    private init(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey]) {
-        self.name = name
-        self.size = size
-        self.isEncrypted = true
-        self.encryptedContent = encryptedContent
-        self.encryptedSymmetricKeysBySerialNumber = encryptedSymmetricKeysBySerialNumber
-        self.encryptionLockboxKeys = encryptionLockboxKeys
+struct EncryptedLockbox {
+    
+    struct Metadata: LockboxMetadata {
+        let name: String
+        let size: Int
+        let isEncrypted: Bool
+        let encryptedSymmetricKeysBySerialNumber: [UInt32:Data]
+        let encryptionLockboxKeys: [LockboxKey]
     }
     
-    static func create(name: String, size: Int = 0, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
+    let content: Data
+    let metadata: Metadata
+        
+    private init(name: String, size: Int, content: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey]) {
+        self.content = content
+        self.metadata = Metadata(
+            name: name,
+            size: size,
+            isEncrypted: true,
+            encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
+            encryptionLockboxKeys: encryptionLockboxKeys
+        )
+    }
+    
+    static func create(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
         guard !lockerRoomStore.lockboxExists(name: name) else {
             print("[Error] Encrypted lockbox failed to add \(name) at existing path")
             return nil
         }
         
-        let actualSize = size > 0 ? size : (encryptedContent.count / (1024 * 1024)) // Convert to MBs
-        guard actualSize > 0 else {
+        guard size > 0 else {
             print("[Error] Encrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil
         }
         
-        let lockbox = EncryptedLockbox(name: name, size: actualSize, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        let lockbox = EncryptedLockbox(name: name, size: size, content: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
         
         guard lockerRoomStore.writeEncryptedLockbox(lockbox, name: name) else {
             print("[Error] Encrypted lockbox failed to write \(name)")
@@ -55,12 +61,21 @@ class EncryptedLockbox: Lockbox, Codable {
             return nil
         }
         
-        guard let encryptedLockbox = lockerRoomStore.readEncryptedLockbox(name: name) else {
+        guard let encryptedContent = lockerRoomStore.readEncryptedLockboxContent(name: name) else {
             print("[Error] Encrypted lockbox failed to read \(name)")
             return nil
         }
+        
+        guard let metadata = lockerRoomStore.readEncryptedLockboxMetadata(name: name) else {
+            print("[Error] Encrypted lockbox failed to read metadata \(name)")
+            return nil
+        }
+        
+        let size = metadata.size
+        let encryptedSymmetricKeysBySerialNumber = metadata.encryptedSymmetricKeysBySerialNumber
+        let encryptionLockboxKeys = metadata.encryptionLockboxKeys
 
-        return encryptedLockbox
+        return EncryptedLockbox(name: name, size: size, content: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {
