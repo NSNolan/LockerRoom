@@ -127,6 +127,8 @@
 		BF0BCB5B2BB8940400F91471 /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
+				BF1DD0922BB1C82C001FA81F /* Lockbox */,
+				BF0BCB562BB653A300F91471 /* Lockbox Key */,
 				BF1DD0902BB1C823001FA81F /* LockerRoomStore.swift */,
 				BF1DD0942BB1CAB9001FA81F /* LockerRoomURLProvider.swift */,
 			);
@@ -162,10 +164,8 @@
 				BF1DD0422BAC99BF001FA81F /* LockerRoomApp.swift */,
 				BF1DD0752BAF5DCB001FA81F /* LockerRoomManager.swift */,
 				BF1DD0932BB1C850001FA81F /* Views */,
-				BF1DD0922BB1C82C001FA81F /* Lockbox */,
-				BF0BCB562BB653A300F91471 /* Lockbox Key */,
-				BF1DD0962BB1FAC1001FA81F /* Cryptors */,
 				BF0BCB5B2BB8940400F91471 /* Persistence */,
+				BF1DD0962BB1FAC1001FA81F /* Cryptors */,
 				BF475F652BB49F87003A0E05 /* Utilities */,
 				BF1DD0462BAC99C0001FA81F /* Assets.xcassets */,
 				BF1DD0482BAC99C0001FA81F /* LockerRoom.entitlements */,
