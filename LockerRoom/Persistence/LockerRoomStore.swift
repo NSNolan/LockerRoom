@@ -23,7 +23,8 @@ protocol LockerRoomStoring {
     func writeEncryptedLockbox(_ lockbox: EncryptedLockbox, name: String) -> Bool
     
     func lockboxExists(name: String) -> Bool
-    var lockerRoomLockboxes: [LockerRoomLockbox] { get }
+    var unencryptedLockboxMetdatas: [UnencryptedLockbox.Metadata] { get }
+    var encryptedLockboxMetadatas: [EncryptedLockbox.Metadata] { get }
     
     // Lockbox Keys
     func removeLockboxKey(name: String) -> Bool
@@ -33,7 +34,6 @@ protocol LockerRoomStoring {
     
     func lockboxKeyExists(name: String) -> Bool
     var lockboxKeys: [LockboxKey] { get }
-    var lockerRoomEnrolledKeys: [LockerRoomEnrolledKey] { get }
 }
 
 struct LockerRoomStore: LockerRoomStoring {
@@ -319,48 +319,52 @@ struct LockerRoomStore: LockerRoomStoring {
         return fileManager.fileExists(atPath: lockboxPath)
     }
     
-    var lockerRoomLockboxes: [LockerRoomLockbox] {
+    var unencryptedLockboxMetdatas: [UnencryptedLockbox.Metadata] {
+        return lockboxNames(wantsEncrypted: false).compactMap { lockboxName in
+            guard let metadata = readUnencryptedLockboxMetadata(name: lockboxName) else {
+                print("[Error] Locker room store failed to read unencrypted lockbox metadata \(lockboxName)")
+                return nil
+            }
+            return metadata
+        }
+    }
+    
+    var encryptedLockboxMetadatas: [EncryptedLockbox.Metadata] {
+        return lockboxNames(wantsEncrypted: true).compactMap { lockboxName in
+            guard let metadata = readEncryptedLockboxMetadata(name: lockboxName) else {
+                print("[Error] Locker room store failed to read encrypted lockbox metadata \(lockboxName)")
+                return nil
+            }
+            return metadata
+        }
+    }
+    
+    private func lockboxNames(wantsEncrypted: Bool) -> [String] {
         let baseLockboxesURL = lockerRoomURLProvider.urlForLockboxes
         
         do {
             let lockboxURLs = try fileManager.contentsOfDirectory(at: baseLockboxesURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]).filter { lockboxURL in
                 var isDirectory: ObjCBool = false
                 let lockboxPath = lockboxURL.path(percentEncoded:false)
-                if fileManager.fileExists(atPath: lockboxPath, isDirectory: &isDirectory) {
-                    return isDirectory.boolValue
-                } else {
+                
+                guard fileManager.fileExists(atPath: lockboxPath, isDirectory: &isDirectory) else {
                     return false
                 }
+                return isDirectory.boolValue
             }
             
-            return lockboxURLs.compactMap { lockboxURL -> LockerRoomLockbox? in
+            return lockboxURLs.compactMap { lockboxURL -> String? in
                 let lockboxName = lockboxURL.lastPathComponent
                 let isEncrypted = isLockboxEncrypted(name: lockboxName)
-                let size: Int
-                let encryptionKeyNames: [String]
-                if isEncrypted {
-                    guard let lockboxMetadata = readEncryptedLockboxMetadata(name: lockboxName) else {
-                        print("[Error] Locker room store failed to read encrypted lockbox metadata \(lockboxName)")
-                        return nil
-                    }
-                    
-                    size = lockboxMetadata.size
-                    encryptionKeyNames = lockboxMetadata.encryptionLockboxKeys.map { $0.name }
-                } else {
-                    guard let lockboxMetadata = readUnencryptedLockboxMetadata(name: lockboxName) else {
-                        print("[Error] Locker room store failed to read unencrypted lockbox metadata \(lockboxName)")
-                        return nil
-                    }
-                    
-                    size = lockboxMetadata.size
-                    encryptionKeyNames = [String]()
+                
+                guard isEncrypted == wantsEncrypted else {
+                    return nil
                 }
-
-                return LockerRoomLockbox(name: lockboxName, size: size, url: lockboxURL, isEncrypted: isEncrypted, encryptionKeyNames: encryptionKeyNames)
+                return lockboxName
             }
         } catch {
             print("[Warning] Locker room store failed to get lockbox URLs with error \(error)")
-            return [LockerRoomLockbox]()
+            return [String]()
         }
     }
     
@@ -483,11 +487,11 @@ struct LockerRoomStore: LockerRoomStoring {
             let keyURLs = try fileManager.contentsOfDirectory(at: baseKeysURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]).filter { keyURL in
                 var isDirectory: ObjCBool = false
                 let keyPath = keyURL.path(percentEncoded:false)
-                if fileManager.fileExists(atPath: keyPath, isDirectory: &isDirectory) {
-                    return isDirectory.boolValue
-                } else {
+                
+                guard fileManager.fileExists(atPath: keyPath, isDirectory: &isDirectory) else {
                     return false
                 }
+                return isDirectory.boolValue
             }
             
             return keyURLs.compactMap { keyURL -> LockboxKey? in
@@ -497,16 +501,11 @@ struct LockerRoomStore: LockerRoomStoring {
                     print("[Error] Locker room store failed to read key \(keyName)")
                     return nil
                 }
-                
                 return key
             }
         } catch {
             print("[Warning] Locker room store failed to get key URLs with error \(error)")
             return [LockboxKey]()
         }
-    }
-    
-    var lockerRoomEnrolledKeys: [LockerRoomEnrolledKey] {
-        return lockboxKeys.map { $0.lockerRoomEnrolledKey }
     }
 }

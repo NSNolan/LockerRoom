@@ -17,8 +17,8 @@ class LockerRoomManager: ObservableObject {
     
     private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore()) {
         self.lockerRoomStore = lockerRoomStore
-        self.lockboxes = lockerRoomStore.lockerRoomLockboxes
-        self.enrolledKeys = lockerRoomStore.lockerRoomEnrolledKeys
+        self.lockboxes = lockerRoomStore.lockboxes
+        self.enrolledKeys = lockerRoomStore.enrolledKeys
     }
     
     func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
@@ -27,7 +27,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxes = lockerRoomStore.lockerRoomLockboxes
+        lockboxes = lockerRoomStore.lockboxes
         return unencryptedLockbox
     }
     
@@ -37,7 +37,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxes = lockerRoomStore.lockerRoomLockboxes
+        lockboxes = lockerRoomStore.lockboxes
         return unencryptedLockbox
     }
     
@@ -47,7 +47,7 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxes = lockerRoomStore.lockerRoomLockboxes
+        lockboxes = lockerRoomStore.lockboxes
         return true
     }
     
@@ -57,7 +57,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        lockboxes = lockerRoomStore.lockerRoomLockboxes
+        lockboxes = lockerRoomStore.lockboxes
         return encryptedLockbox
     }
     
@@ -67,7 +67,7 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        lockboxes = lockerRoomStore.lockerRoomLockboxes
+        lockboxes = lockerRoomStore.lockboxes
         return true
     }
     
@@ -86,7 +86,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        enrolledKeys = lockerRoomStore.lockerRoomEnrolledKeys
+        enrolledKeys = lockerRoomStore.enrolledKeys
         return lockboxKey
     }
     
@@ -96,11 +96,23 @@ class LockerRoomManager: ObservableObject {
             return false
         }
         
-        enrolledKeys = lockerRoomStore.lockerRoomEnrolledKeys
+        enrolledKeys = lockerRoomStore.enrolledKeys
         return true
     }
     
     var lockboxKeys: [LockboxKey] {
         return lockerRoomStore.lockboxKeys
+    }
+}
+
+extension LockerRoomStoring {
+    var lockboxes: [LockerRoomLockbox] {
+        let unencryptedLockboxes = unencryptedLockboxMetdatas.map { $0.lockerRoomLockbox }
+        let encryptedLockboxes = encryptedLockboxMetadatas.map { $0.lockerRoomLockbox }
+        return unencryptedLockboxes + encryptedLockboxes
+    }
+    
+    var enrolledKeys: [LockerRoomEnrolledKey] {
+        return lockboxKeys.map{ $0.lockerRoomEnrolledKey }
     }
 }
