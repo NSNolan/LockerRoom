@@ -17,6 +17,19 @@ struct LockerRoomDiskImage {
     }
     
     func create(name: String, size: Int) -> Bool {
+        let fileManager = FileManager.default
+        let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
+        let lockboxPath = lockboxURL.path(percentEncoded:false)
+        
+        if !fileManager.fileExists(atPath: lockboxPath) {
+            do {
+                try fileManager.createDirectory(atPath: lockboxPath, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("[Error] Disk image operation for \(name) failed to create lockbox directory at path \(lockboxPath) with error \(error)")
+                return false
+            }
+        }
+        
         let lockboxUnencryptedContentPath = lockerRoomURLProvider.urlForLockboxUnencryptedContent(name: name).path
         return hdiutil(
             arguments: [

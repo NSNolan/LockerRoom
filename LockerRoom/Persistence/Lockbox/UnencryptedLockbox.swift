@@ -34,13 +34,8 @@ struct UnencryptedLockbox {
                 return nil
             }
             
-            guard lockerRoomStore.addUnencryptedLockbox(name: name, size: size) else {
-                print("[Error] Unencrypted lockbox failed to add \(name)")
-                return nil
-            }
-            
             guard diskImage.create(name: name, size: size) else {
-                print("[Error] Unencrypted lockbox failed to attach to disk image \(name)")
+                print("[Error] Unencrypted lockbox failed to create disk image \(name)")
                 return nil
             }
             
@@ -49,12 +44,19 @@ struct UnencryptedLockbox {
                 return nil
             }
             
+            let lockbox = UnencryptedLockbox(name: name, size: size, content: newUnencryptedContent)
+            
+            guard lockerRoomStore.writeUnencryptedLockbox(lockbox, name: name) else {
+                print("[Error] Unencrypted lockbox failed to write \(name) for new content")
+                return nil
+            }
+            
             guard diskImage.attach(name: name) else {
                 print("[Error] Unencrypted lockbox failed to attach \(name) as disk image")
                 return nil
             }
             
-            return UnencryptedLockbox(name: name, size: size, content: newUnencryptedContent)
+            return lockbox
         } else {
             print("[Default] Unencrypted lockbox creating \(name) from existing content")
             
