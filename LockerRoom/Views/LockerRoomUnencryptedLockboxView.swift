@@ -95,6 +95,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
                     return
                 }
                 print("[Default] LockerRoom created a new unencrypted lockbox \(name) of size \(size)MB")
+                
                 self.unencryptedLockbox = unencryptedLockbox
                 viewStyle = .encrypt
             }
@@ -136,10 +137,14 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
             HStack {
                 Button("Encrypt") {
                     viewStyle = .encrypting
-                    Task {
-                        encrypt()
+                    
+                    guard let unencryptedLockbox else {
+                        print("[Error] LockerRoom is missing an unencrypted lockbox to encrypt")
                         showView = false
+                        return
                     }
+                    lockerRoomManager.encrypt(lockbox: unencryptedLockbox)
+                    showView = false
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
@@ -152,54 +157,6 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                 .keyboardShortcut(.escape)
             }
         }
-    }
-    
-    private func encrypt() {
-        guard let unencryptedLockbox else {
-            print("[Error] LockerRoom is missing an unencrypted lockbox to encrypt")
-            return
-        }
-        
-        let symmetricKeyData = LockboxKeyGenerator.generateSymmetricKeyData()
-        
-        var encryptedSymmetricKeysBySerialNumber = [UInt32:Data]()
-        var encryptionLockboxKeys = [LockboxKey]()
-        
-        for lockboxKey in lockerRoomManager.lockboxKeys {
-            guard let encryptedSymmetricKeyData = LockboxKeyCryptor.encrypt(symmetricKeyData: symmetricKeyData, lockboxKey: lockboxKey) else {
-                print("[Error] LockerRoom failed to encrypt a symmetric key with lockbox key \(lockboxKey.name)")
-                continue
-            }
-            encryptedSymmetricKeysBySerialNumber[lockboxKey.serialNumber] = encryptedSymmetricKeyData
-            encryptionLockboxKeys.append(lockboxKey)
-        }
-        
-        guard !encryptedSymmetricKeysBySerialNumber.isEmpty else {
-            print("[Error] LockerRoom failed to encrypt a symmetric key")
-            return
-        }
-        
-        print("[Default] LockerRoom encrypted a symmetric key")
-        
-        let name = unencryptedLockbox.metadata.name
-        
-        guard let encryptedContent = LockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
-            print("[Error] LockerRoom failed to encrypt an unencrypted lockbox \(name)")
-            return
-        }
-        print("[Default] LockerRoom encrypted an unencrypted lockbox \(name)")
-        
-        guard lockerRoomManager.removeUnencryptedLockbox(name: name) else { // TODO: Unencrypted lockbox is removed before encrypted lockbox is added. May cause data loss.
-            print("[Error] LockerRoom failed to removed an unencrypted lockbox \(name)")
-            return
-        }
-        print("[Default] LockerRoom removed an unencrypted lockbox \(name)")
-        
-        guard lockerRoomManager.addEncryptedLockbox(name: name, size: unencryptedLockbox.metadata.size, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys) != nil else {
-            print("[Error] LockerRoom failed to add an encrypted lockbox \(name)")
-            return
-        }
-        print("[Default] LockerRoom added an encrypted lockbox \(name)")
     }
 }
 
