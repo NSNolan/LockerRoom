@@ -163,7 +163,7 @@ class LockerRoomManager: ObservableObject {
         }
         print("[Default] Locker room manager encrypted an unencrypted lockbox \(name)")
         
-        guard removeUnencryptedLockbox(name: name) else { // TODO: Unencrypted lockbox is removed before encrypted lockbox is added. May cause data loss.
+        guard removeUnencryptedLockbox(name: name) else {
             print("[Error] Locker room manager failed to removed an unencrypted lockbox \(name)")
             return
         }
@@ -214,7 +214,7 @@ class LockerRoomManager: ObservableObject {
         }
         print("[Default] Locker room manager decrypted an encrypted lockbox \(name)")
         
-        guard removeEncryptedLockbox(name: name) else { // TODO: Encrypted lockbox is removed before unencrypted lockbox is added. May cause data loss.
+        guard removeEncryptedLockbox(name: name) else {
             print("[Error] Locker room manager failed to remove an encrypted lockbox \(name)")
             return
         }
