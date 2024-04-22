@@ -8,15 +8,20 @@
 import Foundation
 
 class LockerRoomManager: ObservableObject {
-    internal let lockerRoomStore: LockerRoomStoring
+    private let lockerRoomStore: LockerRoomStoring
+    private let lockerRoomDiskImage: LockerRoomDiskImaging
     
     @Published var lockboxes = [LockerRoomLockbox]()
     @Published var enrolledKeys = [LockerRoomEnrolledKey]()
     
     static let shared = LockerRoomManager()
     
-    private init(lockerRoomStore: LockerRoomStoring = LockerRoomStore()) {
+    private init(
+        lockerRoomStore: LockerRoomStoring = LockerRoomStore(),
+        lockerRoomDiskImage: LockerRoomDiskImaging = LockerRoomDiskImage()
+    ) {
         self.lockerRoomStore = lockerRoomStore
+        self.lockerRoomDiskImage = lockerRoomDiskImage
         self.lockboxes = lockerRoomStore.lockboxes
         self.enrolledKeys = lockerRoomStore.enrolledKeys
     }
@@ -27,7 +32,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        guard LockerRoomDiskImage().attach(name: name) else {
+        guard lockerRoomDiskImage.attach(name: name) else {
             print("[Error] Locker room manager failed to attach lockbox \(name) as disk image")
             return nil
         }
@@ -42,7 +47,7 @@ class LockerRoomManager: ObservableObject {
             return nil
         }
         
-        guard LockerRoomDiskImage().attach(name: name) else {
+        guard lockerRoomDiskImage.attach(name: name) else {
             print("[Error] Locker room manager failed to attach lockbox \(name) as disk image")
             return nil
         }
@@ -83,16 +88,28 @@ class LockerRoomManager: ObservableObject {
     
     func addLockboxKey(
         name: String,
-        serialNumber: UInt32,
         slot: LockboxKey.Slot,
         algorithm: LockboxKey.Algorithm,
         pinPolicy: LockboxKey.PinPolicy,
         touchPolicy: LockboxKey.TouchPolicy,
-        managementKeyString: String,
-        publicKey: SecKey
-    ) -> LockboxKey? {
+        managementKeyString: String
+    ) async -> LockboxKey? {
+        guard let result = await LockboxKeyGenerator.generatePublicKeyDataFromDevice(
+            slot: slot,
+            algorithm: algorithm,
+            pinPolicy: pinPolicy,
+            touchPolicy: touchPolicy,
+            managementKeyString: managementKeyString
+        ) else {
+            print("[Error] Locker room manager failed to generate public key from data for key \(name)")
+            return nil
+        }
+        
+        let publicKey = result.publicKey
+        let serialNumber = result.serialNumber
+        
         guard let lockboxKey = LockboxKey.create(name: name, serialNumber: serialNumber, slot: slot, algorithm: algorithm, pinPolicy: pinPolicy, touchPolicy: touchPolicy, managementKeyString: managementKeyString, publicKey: publicKey, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Locker room manager failed to add key \(name)")
+            print("[Error] Locker room manager failed to add key \(name) with serial number \(serialNumber)")
             return nil
         }
         
@@ -111,7 +128,7 @@ class LockerRoomManager: ObservableObject {
     }
     
     func encrypt(lockbox: LockerRoomLockbox) {
-        _ = LockerRoomDiskImage().detach(name: lockbox.name) // Non-fatal; it may already be detached
+        _ = lockerRoomDiskImage.detach(name: lockbox.name) // Non-fatal; it may already be detached
         
         guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore) else {
             print("[Default] Locker room manager failed to created unencrypted lockbox \(lockbox.name)")

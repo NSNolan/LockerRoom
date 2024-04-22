@@ -7,7 +7,13 @@
 
 import Foundation
 
-struct LockerRoomDiskImage {
+protocol LockerRoomDiskImaging {
+    func create(name: String, size: Int) -> Bool
+    func attach(name: String) -> Bool
+    func detach(name: String) -> Bool
+}
+
+struct LockerRoomDiskImage: LockerRoomDiskImaging {
     static let hdiutilLaunchPath = "/usr/bin/hdiutil"
     
     internal var lockerRoomURLProvider: LockerRoomURLProviding

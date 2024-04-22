@@ -153,31 +153,15 @@ private struct LockerRoomLockboxKeyEnrollView: View {
         let touchPolicy = keyConfiguration.touchPolicy
         let managementKeyString = keyConfiguration.managementKeyString
         
-        guard let result = await LockboxKeyGenerator.generatePublicKeyDataFromDevice(
+        guard await lockerRoomManager.addLockboxKey(
+            name: name,
             slot: slot,
             algorithm: algorithm,
             pinPolicy: pinPolicy,
             touchPolicy: touchPolicy,
             managementKeyString: managementKeyString
-        ) else {
-            print("[Error] LockerRoom failed to generate public key from data with configuration: \(keyConfiguration)")
-            return
-        }
-        
-        let publicKey = result.publicKey
-        let serialNumber = result.serialNumber
-        
-        guard lockerRoomManager.addLockboxKey(
-            name: name,
-            serialNumber: serialNumber,
-            slot: slot,
-            algorithm: algorithm,
-            pinPolicy: pinPolicy,
-            touchPolicy: touchPolicy,
-            managementKeyString: managementKeyString,
-            publicKey: publicKey
         ) != nil else {
-            print("[Error] LockerRoom failed to create a new lockbox key \(name) serial number \(serialNumber) slot \(slot) algorithm \(algorithm) pin policy \(pinPolicy) touch policy \(touchPolicy) management key string \(managementKeyString) public key \(publicKey)")
+            print("[Error] LockerRoom failed to create a new lockbox key \(name) slot \(slot) algorithm \(algorithm) pin policy \(pinPolicy) touch policy \(touchPolicy) management key string \(managementKeyString)")
             return
         }
         
