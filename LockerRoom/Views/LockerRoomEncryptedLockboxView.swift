@@ -15,7 +15,7 @@ enum LockerRoomEncryptedLockboxViewStyle {
 
 struct LockerRoomEncryptedLockboxView: View {
     @Binding var showView: Bool
-    @Binding var encryptedLockbox: EncryptedLockbox?
+    @Binding var lockbox: LockerRoomLockbox?
     
     @State var viewStyle: LockerRoomEncryptedLockboxViewStyle
             
@@ -23,11 +23,11 @@ struct LockerRoomEncryptedLockboxView: View {
         VStack {
             switch viewStyle {
             case .decrypt:
-                LockerRoomEncryptedLockboxDecryptView(showView: $showView, encryptedLockbox: $encryptedLockbox, viewStyle: $viewStyle)
+                LockerRoomEncryptedLockboxDecryptView(showView: $showView, lockbox: $lockbox, viewStyle: $viewStyle)
             case .waitingForKey:
-                LockerRoomEncryptedLockboxWaitingForKeyView(showView: $showView, encryptedLockbox: $encryptedLockbox, viewStyle: $viewStyle)
+                LockerRoomEncryptedLockboxWaitingForKeyView(showView: $showView, lockbox: $lockbox)
             case .decrypting:
-                LockerRoomEncryptedLockboxDecryptingView(showView: $showView, encryptedLockbox: $encryptedLockbox)
+                LockerRoomEncryptedLockboxDecryptingView(showView: $showView, lockbox: $lockbox)
             }
         }
         .frame(width: 300)
@@ -37,7 +37,7 @@ struct LockerRoomEncryptedLockboxView: View {
 
 private struct LockerRoomEncryptedLockboxDecryptView: View {
     @Binding var showView: Bool
-    @Binding var encryptedLockbox: EncryptedLockbox?
+    @Binding var lockbox: LockerRoomLockbox?
     @Binding var viewStyle: LockerRoomEncryptedLockboxViewStyle
     
     let lockerRoomManager = LockerRoomManager.shared
@@ -47,8 +47,8 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
             VStack(spacing: -12) {
                 Image(systemName: "lock")
                 
-                if let encryptedLockbox {
-                    Text("Open Lockbox \(encryptedLockbox.metadata.name)")
+                if let lockbox {
+                    Text("Open Lockbox \(lockbox.name)")
                         .padding()
                 } else {
                     Text("Missing Lockbox to Open")
@@ -60,21 +60,21 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                 Button("Decrypt") {
                     viewStyle = .waitingForKey
                     
-                    guard let encryptedLockbox else {
+                    guard let lockbox else {
                         print("[Error] LockerRoom is missing an encrypted lockbox to decrypt")
                         showView = false
                         return
                     }
                     
                     Task {
-                        guard let symmetricKeyData = await lockerRoomManager.decryptKey(forLockbox: encryptedLockbox) else {
+                        guard let symmetricKeyData = await lockerRoomManager.decryptKey(forLockbox: lockbox) else {
                             print("[Error] LockerRoom failed to decrypt lockbox symmetric key")
                             showView = false
                             return
                         }
                         
                         viewStyle = .decrypting
-                        lockerRoomManager.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData)
+                        lockerRoomManager.decrypt(lockbox: lockbox, symmetricKeyData: symmetricKeyData)
                         showView = false
                     }
                 }
@@ -94,12 +94,11 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
 
 private struct LockerRoomEncryptedLockboxWaitingForKeyView: View {
     @Binding var showView: Bool
-    @Binding var encryptedLockbox: EncryptedLockbox?
-    @Binding var viewStyle: LockerRoomEncryptedLockboxViewStyle
+    @Binding var lockbox: LockerRoomLockbox?
     
     var body: some View {
-        if let encryptedLockbox {
-            Text("Insert YubiKit to Decrypt \(encryptedLockbox.metadata.name)")
+        if let lockbox {
+            Text("Insert YubiKit to Decrypt \(lockbox.name)")
                 .padding()
         } else {
             Text("Missing Lockbox to Decrypt")
@@ -121,11 +120,11 @@ private struct LockerRoomEncryptedLockboxWaitingForKeyView: View {
 
 private struct LockerRoomEncryptedLockboxDecryptingView: View {
     @Binding var showView: Bool
-    @Binding var encryptedLockbox: EncryptedLockbox?
+    @Binding var lockbox: LockerRoomLockbox?
     
     var body: some View {
-        if let encryptedLockbox {
-            Text("Decrypting \(encryptedLockbox.metadata.name)")
+        if let lockbox {
+            Text("Decrypting \(lockbox.name)")
                 .padding()
         } else {
             Text("Missing Lockbox to Decrypt")

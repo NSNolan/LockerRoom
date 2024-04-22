@@ -49,8 +49,7 @@ private struct LockerRoomLockboxesView: View {
     @State private var showUnencryptedLockboxView = false
     @State private var showEncryptedLockboxView = false
     
-    @State private var selectedUnencryptedLockbox: UnencryptedLockbox? = nil
-    @State private var selectedEncryptedLockbox: EncryptedLockbox? = nil
+    @State private var selectedLockbox: LockerRoomLockbox? = nil
     
     var body: some View {
         VStack {
@@ -77,7 +76,7 @@ private struct LockerRoomLockboxesView: View {
             .contextMenu(forSelectionType: LockerRoomLockbox.ID.self) { lockboxIDs in
                 selectedLockboxContextMenu(fromIDs: lockboxIDs)
             } primaryAction: { lockboxIDs in
-                selectLockbox(fromIDs: lockboxIDs)
+                openLockbox(fromIDs: lockboxIDs)
             }
             
             HStack {
@@ -103,13 +102,13 @@ private struct LockerRoomLockboxesView: View {
             lockboxes.sort(using: sortOrder)
         }
         .sheet(isPresented: $showUnencryptedLockboxAddView) {
-            LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxAddView, unencryptedLockbox: $selectedUnencryptedLockbox, viewStyle: .add)
+            LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxAddView, lockbox: $selectedLockbox, viewStyle: .add)
         }
         .sheet(isPresented: $showUnencryptedLockboxView) {
-            LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxView, unencryptedLockbox: $selectedUnencryptedLockbox, viewStyle: .encrypt)
+            LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxView, lockbox: $selectedLockbox, viewStyle: .encrypt)
         }
         .sheet(isPresented: $showEncryptedLockboxView) {
-            LockerRoomEncryptedLockboxView(showView: $showEncryptedLockboxView, encryptedLockbox: $selectedEncryptedLockbox, viewStyle: .decrypt)
+            LockerRoomEncryptedLockboxView(showView: $showEncryptedLockboxView, lockbox: $selectedLockbox, viewStyle: .decrypt)
         }
     }
     
@@ -129,14 +128,13 @@ private struct LockerRoomLockboxesView: View {
         }
     }
     
-    private func selectLockbox(fromIDs lockboxIDs: Set<LockerRoomLockbox.ID>) {
+    private func openLockbox(fromIDs lockboxIDs: Set<LockerRoomLockbox.ID>) {
         if let lockbox = selectedLockbox(fromIDs: lockboxIDs) {
-            let lockerRoomStore = lockerRoomManager.lockerRoomStore
+            selectedLockbox = lockbox
+            
             if lockbox.isEncrypted {
-                selectedEncryptedLockbox = EncryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore)
                 showEncryptedLockboxView = true
             } else {
-                selectedUnencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore)
                 showUnencryptedLockboxView = true
             }
         }

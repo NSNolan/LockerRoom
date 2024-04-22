@@ -36,16 +36,13 @@ When a lockbox is decrypted, the serial number of the external hardware device i
 
 ### Known Issues
 
-- When a lockbox is encrypted Locker Room first tries to unmount and detach the corresponding disk image. This will cause any newly added files to be lost unless the disk image is manually unmounted and detached prior to encryption.
 - Enrolling a key will overwrite an existing private key in the specified slot on the external hardware device.
 - There is no way to enter a pin if the pin policy of the enrolled key is set to anything besides `Never`.
 - When a lockbox is encrypted, the unencrypted content is deleted before the encrypted content is saved. This may lead to data loss. The same is also true of the decryption process.
-- When a lockbox is encrypted, the entire contents are read into memory. This is not a feasible implementation for large lockboxes. The same is also true of the decryption process.
+- When a lockbox is created, encrypted or decrypted the entire contents are read into memory. This is not a feasible implementation for large lockboxes.
 - Locker Room does not run in a sandbox because creating a disk image with `hdiutil` will fail.
 - There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
 - Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
-- Disk image routines are tightly coupled within `UnencryptedLockbox` create and destory functions.
-
 
 ### Future Enhancements
 

@@ -68,7 +68,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
                 ForEach(LockboxKey.Slot.allCases) { option in
                     Text(option.rawValue).tag(option)
                     if option == .attestation {
-                        Divider() // Add divider to separate support slots from experimental slots
+                        Divider() // Add divider to separate supported slots from experimental slots
                     }
                 }
             }

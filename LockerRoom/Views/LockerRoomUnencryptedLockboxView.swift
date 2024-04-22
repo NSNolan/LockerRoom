@@ -20,7 +20,7 @@ private class LockerRoomUnencryptedLockboxConfiguration: ObservableObject {
 
 struct LockerRoomUnencryptedLockboxView: View {
     @Binding var showView: Bool
-    @Binding var unencryptedLockbox: UnencryptedLockbox?
+    @Binding var lockbox: LockerRoomLockbox?
 
     @State var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     
@@ -28,11 +28,11 @@ struct LockerRoomUnencryptedLockboxView: View {
         VStack {
             switch viewStyle {
             case .add:
-                LockerRoomUnencryptedLockboxAddView(showView: $showView, unencryptedLockbox: $unencryptedLockbox, viewStyle: $viewStyle)
+                LockerRoomUnencryptedLockboxAddView(showView: $showView, lockbox: $lockbox, viewStyle: $viewStyle)
             case .encrypt:
-                LockerRoomUnencryptedLockboxEncryptView(showView: $showView, unencryptedLockbox: $unencryptedLockbox, viewStyle: $viewStyle)
+                LockerRoomUnencryptedLockboxEncryptView(showView: $showView, lockbox: $lockbox, viewStyle: $viewStyle)
             case .encrypting:
-                LockerRoomUnencryptedLockboxEncryptingView(showView: $showView, unencryptedLockbox: $unencryptedLockbox)
+                LockerRoomUnencryptedLockboxEncryptingView(showView: $showView, lockbox: $lockbox)
             }
         }
         .frame(width: 300)
@@ -42,7 +42,7 @@ struct LockerRoomUnencryptedLockboxView: View {
 
 private struct LockerRoomUnencryptedLockboxAddView: View {
     @Binding var showView: Bool
-    @Binding var unencryptedLockbox: UnencryptedLockbox?
+    @Binding var lockbox: LockerRoomLockbox?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     
     @StateObject var unencryptedLockboxConfiguration = LockerRoomUnencryptedLockboxConfiguration()
@@ -89,14 +89,14 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
                     return
                 }
                 
-                guard let unencryptedLockbox = lockerRoomManager.addUnencryptedLockbox(name: name, size: size) else {
+                guard let newUnencryptedLockbox = lockerRoomManager.addUnencryptedLockbox(name: name, size: size) else {
                     print("[Error] LockerRoom failed to create a new unencrypted lockbox \(name) of size \(size)MB")
                     showView = false
                     return
                 }
                 print("[Default] LockerRoom created a new unencrypted lockbox \(name) of size \(size)MB")
                 
-                self.unencryptedLockbox = unencryptedLockbox
+                self.lockbox = newUnencryptedLockbox.metadata.lockerRoomLockbox
                 viewStyle = .encrypt
             }
             .buttonStyle(.borderedProminent)
@@ -115,7 +115,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
 
 private struct LockerRoomUnencryptedLockboxEncryptView: View {
     @Binding var showView: Bool
-    @Binding var unencryptedLockbox: UnencryptedLockbox?
+    @Binding var lockbox: LockerRoomLockbox?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     
     let lockerRoomManager = LockerRoomManager.shared
@@ -125,8 +125,8 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
             VStack(spacing: -12) {
                 Image(systemName: "lock.open")
                 
-                if let unencryptedLockbox {
-                    Text("Secure Lockbox \(unencryptedLockbox.metadata.name)")
+                if let lockbox {
+                    Text("Secure Lockbox \(lockbox.name)")
                         .padding()
                 } else {
                     Text("Missing Lockbox to Secure")
@@ -138,12 +138,13 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                 Button("Encrypt") {
                     viewStyle = .encrypting
                     
-                    guard let unencryptedLockbox else {
+                    guard let lockbox else {
                         print("[Error] LockerRoom is missing an unencrypted lockbox to encrypt")
                         showView = false
                         return
                     }
-                    lockerRoomManager.encrypt(lockbox: unencryptedLockbox)
+                    
+                    lockerRoomManager.encrypt(lockbox: lockbox)
                     showView = false
                 }
                 .buttonStyle(.borderedProminent)
@@ -157,16 +158,27 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                 .keyboardShortcut(.escape)
             }
         }
+        .onAppear {
+            guard let name = lockbox?.name else {
+                print("[Error] LockerRoom is missing an lockbox to attach as disk image")
+                return
+            }
+            
+            guard LockerRoomDiskImage().attach(name: name) else {
+                print("[Error] LockerRoom failed to attach lockbox \(name) as disk image")
+                return
+            }
+        }
     }
 }
 
 private struct LockerRoomUnencryptedLockboxEncryptingView: View {
     @Binding var showView: Bool
-    @Binding var unencryptedLockbox: UnencryptedLockbox?
+    @Binding var lockbox: LockerRoomLockbox?
     
     var body: some View {
-        if let unencryptedLockbox {
-            Text("Encrypting \(unencryptedLockbox.metadata.name)")
+        if let lockbox {
+            Text("Encrypting \(lockbox.name)")
                 .padding()
         } else {
             Text("Missing Lockbox to Encrypt")
