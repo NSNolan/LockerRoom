@@ -43,40 +43,45 @@ struct LockboxCryptor {
             if encrypt {
                 bufferSize = chunkSize
             } else {
-                var lengthBuffer = [UInt8](repeating: 0, count: 8)
-                let lengthBytesRead = inputStream.read(&lengthBuffer, maxLength: 8)
-                guard lengthBytesRead != 0 else {
-                    guard inputStream.streamStatus == .atEnd else {
-                        print("[Error] Lockbox cryptor read zero length bytes without reaching EOF with stream status \(inputStream.streamStatus)")
+                var chunkSizeBuffer = [UInt8](repeating: 0, count: 8)
+                let chunkSizeBytesRead = inputStream.read(&chunkSizeBuffer, maxLength: 8)
+                guard chunkSizeBytesRead > 0 else {
+                    if chunkSizeBytesRead == 0 {
+                        guard inputStream.streamStatus == .atEnd else {
+                            print("[Error] Lockbox cryptor read zero bytes without reaching EOF with stream status \(inputStream.streamStatus) with error \(String(describing: inputStream.streamError))")
+                            return false
+                        }
+                        break
+                    } else {
+                        print("[Error] Lockbox cryptor failed to read chunk size with error \(String(describing: inputStream.streamError))")
                         return false
                     }
-                    break
                 }
                 
-                bufferSize = lengthBuffer.withUnsafeBytes { $0.load(as: Int.self) }
+                bufferSize = chunkSizeBuffer.withUnsafeBytes { $0.load(as: Int.self) }
             }
             
             var buffer = [UInt8](repeating: 0, count: bufferSize)
             
             let bytesRead = inputStream.read(&buffer, maxLength: buffer.count)
-            guard bytesRead != 0 else {
-                guard inputStream.streamStatus == .atEnd else {
-                    print("[Error] Lockbox cryptor read zero bytes without reaching EOF with stream status \(inputStream.streamStatus)")
+            guard bytesRead > 0 else {
+                if bytesRead == 0 {
+                    guard inputStream.streamStatus == .atEnd else {
+                        print("[Error] Lockbox cryptor read zero bytes without reaching EOF with stream status \(inputStream.streamStatus) with error \(String(describing: inputStream.streamError))")
+                        return false
+                    }
+                    break
+                } else {
+                    print("[Error] Lockbox cryptor failed to read with error \(String(describing: inputStream.streamError))")
                     return false
                 }
-                break
             }
             
-            guard bytesRead > 0 else {
-                print("[Error] Lockbox cryptor failed to read with error \(String(describing: inputStream.streamError))")
-                return false
-            }
-            
-            let dataChunk = Data(buffer[..<bytesRead])
+            let chunk = Data(buffer[..<bytesRead])
             
             let processedData: Data
             if encrypt {
-                guard let encryptedContent = Self.encrypt(unencryptedContent: dataChunk, symmetricKeyData: symmetricKeyData) else {
+                guard let encryptedContent = Self.encrypt(unencryptedContent: chunk, symmetricKeyData: symmetricKeyData) else {
                     print("[Error] Lockbox cryptor failed to process unencrypted lockbox content")
                     return false
                 }
@@ -86,7 +91,7 @@ struct LockboxCryptor {
                 
                 processedData = lengthData + encryptedContent
             } else {
-                guard let decryptedContent = Self.decrypt(encryptedContent: dataChunk, symmetricKeyData: symmetricKeyData) else {
+                guard let decryptedContent = Self.decrypt(encryptedContent: chunk, symmetricKeyData: symmetricKeyData) else {
                     print("[Error] Lockbox cryptor failed to process encrypted lockbox content")
                     return false
                 }
@@ -94,11 +99,11 @@ struct LockboxCryptor {
                 processedData = decryptedContent
             }
             
-            var unsafeBytesFailure = false
+            var unsafeBytesWriteFailure = false
             processedData.withUnsafeBytes { rawBufferPointer in
                 guard let baseAddress = rawBufferPointer.baseAddress else {
                     print("[Error] Lockbox cryptor failed to get base address of the raw buffer")
-                    unsafeBytesFailure = true
+                    unsafeBytesWriteFailure = true
                     return
                 }
                 
@@ -109,14 +114,14 @@ struct LockboxCryptor {
                     let bytesWritten = outputStream.write(remainingBytes, maxLength: totalBytesToWrite - totalBytesWritten)
                     guard bytesWritten > 0 else {
                         print("[Error] Lockbox cryptor failed to write with error \(String(describing: outputStream.streamError))")
-                        unsafeBytesFailure = true
+                        unsafeBytesWriteFailure = true
                         return
                     }
                     totalBytesWritten += bytesWritten
                 }
             }
             
-            if unsafeBytesFailure {
+            if unsafeBytesWriteFailure {
                 return false
             }
         }

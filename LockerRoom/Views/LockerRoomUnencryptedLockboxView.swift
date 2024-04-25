@@ -144,7 +144,12 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                         return
                     }
                     
-                    lockerRoomManager.encrypt(lockbox: lockbox)
+                    guard lockerRoomManager.encrypt(lockbox: lockbox) else {
+                        print("[Error] LockerRoom is failed to encrypt an unencrypted lockbox")
+                        showView = false
+                        return
+                    }
+                    
                     showView = false
                 }
                 .buttonStyle(.borderedProminent)
