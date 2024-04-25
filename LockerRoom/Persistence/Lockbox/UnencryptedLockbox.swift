@@ -20,9 +20,9 @@ struct UnencryptedLockbox {
     let outputStream: OutputStream
     
     private init(name: String, size: Int, inputStream: InputStream, outputStream: OutputStream) {
+        self.metadata = Metadata(name: name, size: size, isEncrypted: false)
         self.inputStream = inputStream
         self.outputStream = outputStream
-        self.metadata = Metadata(name: name, size: size, isEncrypted: false)
     }
     
     static func create(name: String, size: Int, lockerRoomDiskImage: LockerRoomDiskImaging, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
