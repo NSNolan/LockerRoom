@@ -25,7 +25,7 @@ struct LockerRoomDiskImage: LockerRoomDiskImaging {
     func create(name: String, size: Int) -> Bool {
         let fileManager = FileManager.default
         let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
-        let lockboxPath = lockboxURL.path(percentEncoded:false)
+        let lockboxPath = lockboxURL.path(percentEncoded: false)
         
         if !fileManager.fileExists(atPath: lockboxPath) {
             do {

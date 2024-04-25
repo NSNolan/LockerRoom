@@ -10,9 +10,122 @@ import Foundation
 import CryptoKit
 
 struct LockboxCryptor {
-    static func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Data? {
+    private static let chunkSize = 256 * 1024 // 256 KB
+    
+    static func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Bool {
+        return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: true)
+    }
+    
+    static func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) -> Bool {
+        return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: false)
+    }
+    
+    static private func processLockbox(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data, encrypt: Bool) -> Bool {
+        defer {
+            inputStream.close()
+            outputStream.close()
+        }
+        
+        inputStream.open()
+        guard inputStream.streamStatus == .open else {
+            print("[Error] Lockbox cryptor failed to open input stream with error \(String(describing: inputStream.streamError))")
+            return false
+        }
+        
+        outputStream.open()
+        guard outputStream.streamStatus == .open else {
+            print("[Error] Lockbox cryptor failed to open output stream with error \(String(describing: outputStream.streamError))")
+            return false
+        }
+        
+        while inputStream.hasBytesAvailable {
+            let bufferSize: Int
+            if encrypt {
+                bufferSize = chunkSize
+            } else {
+                var lengthBuffer = [UInt8](repeating: 0, count: 8)
+                let lengthBytesRead = inputStream.read(&lengthBuffer, maxLength: 8)
+                guard lengthBytesRead != 0 else {
+                    guard inputStream.streamStatus == .atEnd else {
+                        print("[Error] Lockbox cryptor read zero length bytes without reaching EOF with stream status \(inputStream.streamStatus)")
+                        return false
+                    }
+                    break
+                }
+                
+                bufferSize = lengthBuffer.withUnsafeBytes { $0.load(as: Int.self) }
+            }
+            
+            var buffer = [UInt8](repeating: 0, count: bufferSize)
+            
+            let bytesRead = inputStream.read(&buffer, maxLength: buffer.count)
+            guard bytesRead != 0 else {
+                guard inputStream.streamStatus == .atEnd else {
+                    print("[Error] Lockbox cryptor read zero bytes without reaching EOF with stream status \(inputStream.streamStatus)")
+                    return false
+                }
+                break
+            }
+            
+            guard bytesRead > 0 else {
+                print("[Error] Lockbox cryptor failed to read with error \(String(describing: inputStream.streamError))")
+                return false
+            }
+            
+            let dataChunk = Data(buffer[..<bytesRead])
+            
+            let processedData: Data
+            if encrypt {
+                guard let encryptedContent = Self.encrypt(unencryptedContent: dataChunk, symmetricKeyData: symmetricKeyData) else {
+                    print("[Error] Lockbox cryptor failed to process unencrypted lockbox content")
+                    return false
+                }
+                
+                let length = Int64(encryptedContent.count)
+                let lengthData = withUnsafeBytes(of: length) { Data($0) }
+                
+                processedData = lengthData + encryptedContent
+            } else {
+                guard let decryptedContent = Self.decrypt(encryptedContent: dataChunk, symmetricKeyData: symmetricKeyData) else {
+                    print("[Error] Lockbox cryptor failed to process encrypted lockbox content")
+                    return false
+                }
+                
+                processedData = decryptedContent
+            }
+            
+            var unsafeBytesFailure = false
+            processedData.withUnsafeBytes { rawBufferPointer in
+                guard let baseAddress = rawBufferPointer.baseAddress else {
+                    print("[Error] Lockbox cryptor failed to get base address of the raw buffer")
+                    unsafeBytesFailure = true
+                    return
+                }
+                
+                var totalBytesWritten = 0
+                let totalBytesToWrite = processedData.count
+                while totalBytesWritten < totalBytesToWrite {
+                    let remainingBytes = baseAddress.assumingMemoryBound(to: UInt8.self).advanced(by: totalBytesWritten)
+                    let bytesWritten = outputStream.write(remainingBytes, maxLength: totalBytesToWrite - totalBytesWritten)
+                    guard bytesWritten > 0 else {
+                        print("[Error] Lockbox cryptor failed to write with error \(String(describing: outputStream.streamError))")
+                        unsafeBytesFailure = true
+                        return
+                    }
+                    totalBytesWritten += bytesWritten
+                }
+            }
+            
+            if unsafeBytesFailure {
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    private static func encrypt(unencryptedContent: Data, symmetricKeyData: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
-        let unencryptedContent = lockbox.content
         guard !unencryptedContent.isEmpty else {
             print("[Error] Lockbox cryptor failed to read unencrypted lockbox content")
             return nil
@@ -32,9 +145,8 @@ struct LockboxCryptor {
         }
     }
 
-    static func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) -> Data? {
+    private static func decrypt(encryptedContent: Data, symmetricKeyData: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
-        let encryptedContent = lockbox.content
         guard !encryptedContent.isEmpty else {
             print("[Error] Lockbox cryptor failed to read encrypted lockbox content")
             return nil

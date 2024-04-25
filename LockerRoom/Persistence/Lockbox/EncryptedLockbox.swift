@@ -17,11 +17,13 @@ struct EncryptedLockbox {
         let encryptionLockboxKeys: [LockboxKey]
     }
     
-    let content: Data
+    let inputStream: InputStream
+    let outputStream: OutputStream
     let metadata: Metadata
         
-    private init(name: String, size: Int, content: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey]) {
-        self.content = content
+    private init(inputStream: InputStream, outputStream: OutputStream, name: String, size: Int, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey]) {
+        self.inputStream = inputStream
+        self.outputStream = outputStream
         self.metadata = Metadata(
             name: name,
             size: size,
@@ -31,7 +33,7 @@ struct EncryptedLockbox {
         )
     }
     
-    static func create(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
+    static func create(name: String, size: Int, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
         guard !lockerRoomStore.lockboxExists(name: name) else {
             print("[Error] Encrypted lockbox failed to add \(name) at existing path")
             return nil
@@ -42,10 +44,15 @@ struct EncryptedLockbox {
             return nil
         }
         
-        let lockbox = EncryptedLockbox(name: name, size: size, content: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        guard let streams = streams(forName: name, lockerRoomStore: lockerRoomStore) else {
+            print("[Error] Encrypted lockbox failed to create input/output streams for \(name)")
+            return nil
+        }
         
-        guard lockerRoomStore.writeEncryptedLockbox(lockbox, name: name) else {
-            print("[Error] Encrypted lockbox failed to write \(name)")
+        let lockbox = EncryptedLockbox(inputStream: streams.input, outputStream: streams.output, name: name, size: size, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        
+        guard lockerRoomStore.writeEncryptedLockboxMetadata(lockbox.metadata) else {
+            print("[Error] Encrypted lockbox failed to write lockbox metadata for \(name)")
             return nil
         }
         
@@ -61,8 +68,8 @@ struct EncryptedLockbox {
             return nil
         }
         
-        guard let encryptedContent = lockerRoomStore.readEncryptedLockboxContent(name: name) else {
-            print("[Error] Encrypted lockbox failed to read \(name)")
+        guard let streams = streams(forName: name, lockerRoomStore: lockerRoomStore) else {
+            print("[Error] Encrypted lockbox failed to create input and output streams for lockbox \(name)")
             return nil
         }
         
@@ -75,7 +82,7 @@ struct EncryptedLockbox {
         let encryptedSymmetricKeysBySerialNumber = metadata.encryptedSymmetricKeysBySerialNumber
         let encryptionLockboxKeys = metadata.encryptionLockboxKeys
 
-        return EncryptedLockbox(name: name, size: size, content: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        return EncryptedLockbox(inputStream: streams.input, outputStream: streams.output, name: name, size: size, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {
@@ -85,5 +92,25 @@ struct EncryptedLockbox {
         }
         
         return true
+    }
+    
+    private static func streams(forName name: String, lockerRoomStore: LockerRoomStoring) -> (input: InputStream, output: OutputStream)? {
+        let inputURL = lockerRoomStore.lockerRoomURLProvider.urlForLockboxEncryptedContent(name: name)
+        let inputPath = inputURL.path(percentEncoded: false)
+        
+        guard let inputStream = InputStream(fileAtPath: inputPath) else {
+            print("[Error] Encrypted lockbox failed to create input stream at path \(name)")
+            return nil
+        }
+        
+        let outputURL = lockerRoomStore.lockerRoomURLProvider.urlForLockboxUnencryptedContent(name: name)
+        let outputPath = outputURL.path(percentEncoded: false)
+        
+        guard let outputStream = OutputStream(toFileAtPath: outputPath, append: false) else {
+            print("[Error] Encrypted lockbox failed to create output stream at path \(name)")
+            return nil
+        }
+        
+        return (inputStream, outputStream)
     }
 }

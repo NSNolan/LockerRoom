@@ -27,23 +27,8 @@ class LockerRoomManager: ObservableObject {
     }
     
     func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
-        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomStore: lockerRoomStore) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomDiskImage: lockerRoomDiskImage, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Locker room manager failed to add unencrypted lockbox \(name)")
-            return nil
-        }
-        
-        guard lockerRoomDiskImage.attach(name: name) else {
-            print("[Error] Locker room manager failed to attach lockbox \(name) as disk image")
-            return nil
-        }
-        
-        lockboxes = lockerRoomStore.lockboxes
-        return unencryptedLockbox
-    }
-    
-    func addUnencryptedLockbox(name: String, size: Int, unencryptedContent: Data) -> UnencryptedLockbox? {
-        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, unencryptedContent: unencryptedContent, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Locker room manager failed to add unencrypted lockbox \(name) with data")
             return nil
         }
         
@@ -64,16 +49,6 @@ class LockerRoomManager: ObservableObject {
         
         lockboxes = lockerRoomStore.lockboxes
         return true
-    }
-    
-    func addEncryptedLockbox(name: String, size: Int, encryptedContent: Data, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey]) -> EncryptedLockbox? {
-        guard let encryptedLockbox = EncryptedLockbox.create(name: name, size: size, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Locker room manager failed to add encrypted lockbox \(name) with data")
-            return nil
-        }
-        
-        lockboxes = lockerRoomStore.lockboxes
-        return encryptedLockbox
     }
     
     func removeEncryptedLockbox(name: String) -> Bool {
@@ -157,23 +132,26 @@ class LockerRoomManager: ObservableObject {
         }
         print("[Default] Locker room manager encrypted a symmetric key for \(name)")
         
-        guard let encryptedContent = LockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard LockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             print("[Error] Locker room manager failed to encrypt an unencrypted lockbox \(name)")
             return
         }
         print("[Default] Locker room manager encrypted an unencrypted lockbox \(name)")
         
-        guard removeUnencryptedLockbox(name: name) else {
-            print("[Error] Locker room manager failed to removed an unencrypted lockbox \(name)")
+        guard lockerRoomStore.removeUnencryptedContent(name: name) else {
+            print("[Error] Locker room manager failed to removed unencrypted lockbox content \(name)")
             return
         }
-        print("[Default] Locker room manager removed an unencrypted lockbox \(name)")
+        print("[Default] Locker room manager removed unencrypted lockbox content \(name)")
         
-        guard addEncryptedLockbox(name: name, size: size, encryptedContent: encryptedContent, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys) != nil else {
-            print("[Error] Locker room manager failed to add an encrypted lockbox \(name)")
+        let encryptedLockboxMetdata = EncryptedLockbox.Metadata(name: name, size: size, isEncrypted: true, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        guard lockerRoomStore.writeEncryptedLockboxMetadata(encryptedLockboxMetdata) else {
+            print("[Error] Locker room manager failed to write encrypted lockbox metadata \(encryptedLockboxMetdata)")
             return
         }
-        print("[Default] Locker room manager added an encrypted lockbox \(name)")
+        print("[Default] Locker room manager wrote encrypted lockbox metadata \(encryptedLockboxMetdata)")
+        
+        lockboxes = lockerRoomStore.lockboxes
     }
     
     func decryptKey(forLockbox lockbox: LockerRoomLockbox) async -> Data? {
@@ -208,23 +186,31 @@ class LockerRoomManager: ObservableObject {
         let name = encryptedLockbox.metadata.name
         let size = encryptedLockbox.metadata.size
         
-        guard let content = LockboxCryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard LockboxCryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             print("[Error] Locker room manager failed to decrypt an encrypted lockbox \(name)")
             return
         }
         print("[Default] Locker room manager decrypted an encrypted lockbox \(name)")
         
-        guard removeEncryptedLockbox(name: name) else {
-            print("[Error] Locker room manager failed to remove an encrypted lockbox \(name)")
+        guard lockerRoomStore.removeEncryptedContent(name: name) else {
+            print("[Error] Locker room manager failed to removed encrypted lockbox content \(name)")
             return
         }
-        print("[Default] Locker room manager removed an encrypted lockbox \(name)")
+        print("[Default] Locker room manager removed encrypted lockbox content \(name)")
         
-        guard addUnencryptedLockbox(name: name, size: size, unencryptedContent: content) != nil else {
-            print("[Error] Locker room manager failed to add an unencrypted lockbox \(name)")
+        let unencryptedLockboxMetdata = UnencryptedLockbox.Metadata(name: name, size: size, isEncrypted: false)
+        guard lockerRoomStore.writeUnencryptedLockboxMetadata(unencryptedLockboxMetdata) else {
+            print("[Error] Locker room manager failed to write unencrypted lockbox metadata \(unencryptedLockboxMetdata)")
             return
         }
-        print("[Default] Locker room manager added an unencrypted lockbox \(name)")
+        print("[Default] Locker room manager wrote unencrypted lockbox metadata \(unencryptedLockboxMetdata)")
+        
+        guard lockerRoomDiskImage.attach(name: name) else {
+            print("[Error] Locker room manager failed to attach lockbox \(name) as disk image")
+            return
+        }
+        
+        lockboxes = lockerRoomStore.lockboxes
     }
 }
 
