@@ -34,6 +34,12 @@ When a lockbox is encrypted, a 256-bit symmetric key is generated. This symmetri
 
 When a lockbox is decrypted, the serial number of the external hardware device is used to map back to an encrypted symmetric key stored on disk. The private key stored on the external hardware device is then used to decrypt the encrypted symmetric key. Finally the now decrypted symmetric key is used to decrypt the encrypted lockbox. The symmetric key is thrown away and never used for future encryption.
 
+### Experimental Details
+
+The YubiKey SDK allows for using the following PIV slots: PIV Authentication (9a), Digital Signature (9c), Key Management (9d), Card Authentication (9e) and Attestation (f9). These slots have canonical usages and do not typically store a raw RSA or ECC private key for encryption and decryption. Even though there is no direct support via the YubiKey SDK, there does exists 20 retired key management slots (82-95) capable of storing a raw key. Locker Room allows a user to enroll a key using one of these unsupported slots so the user does not have to reserve or misuse one of the supported slots for a Locker Room private key.
+
+Using an unsupported slot is achieved by sending an [ADPU command](https://docs.yubico.com/yesdk/users-manual/yubikey-reference/apdu.html) directly to the external hardware device. This bypasses the limitations of the YubiKey SDK and encodes the unsupported slot into the command's raw data.
+
 ### Known Issues
 
 - Enrolling a key will overwrite an existing private key in the specified slot on the external hardware device.

@@ -149,7 +149,7 @@ struct LockboxCryptor {
             return nil
         }
     }
-
+    
     private static func decrypt(encryptedContent: Data, symmetricKeyData: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
         guard !encryptedContent.isEmpty else {
