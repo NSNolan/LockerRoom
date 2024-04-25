@@ -17,13 +17,11 @@ struct EncryptedLockbox {
         let encryptionLockboxKeys: [LockboxKey]
     }
     
+    let metadata: Metadata
     let inputStream: InputStream
     let outputStream: OutputStream
-    let metadata: Metadata
         
-    private init(inputStream: InputStream, outputStream: OutputStream, name: String, size: Int, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey]) {
-        self.inputStream = inputStream
-        self.outputStream = outputStream
+    private init(name: String, size: Int, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], inputStream: InputStream, outputStream: OutputStream) {
         self.metadata = Metadata(
             name: name,
             size: size,
@@ -31,6 +29,8 @@ struct EncryptedLockbox {
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
             encryptionLockboxKeys: encryptionLockboxKeys
         )
+        self.inputStream = inputStream
+        self.outputStream = outputStream
     }
     
     static func create(name: String, size: Int, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
@@ -49,7 +49,7 @@ struct EncryptedLockbox {
             return nil
         }
         
-        let lockbox = EncryptedLockbox(inputStream: streams.input, outputStream: streams.output, name: name, size: size, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        let lockbox = EncryptedLockbox(name: name, size: size, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys, inputStream: streams.input, outputStream: streams.output)
         
         guard lockerRoomStore.writeEncryptedLockboxMetadata(lockbox.metadata) else {
             print("[Error] Encrypted lockbox failed to write lockbox metadata for \(name)")
@@ -82,7 +82,7 @@ struct EncryptedLockbox {
         let encryptedSymmetricKeysBySerialNumber = metadata.encryptedSymmetricKeysBySerialNumber
         let encryptionLockboxKeys = metadata.encryptionLockboxKeys
 
-        return EncryptedLockbox(inputStream: streams.input, outputStream: streams.output, name: name, size: size, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        return EncryptedLockbox(name: name, size: size, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys, inputStream: streams.input, outputStream: streams.output)
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {

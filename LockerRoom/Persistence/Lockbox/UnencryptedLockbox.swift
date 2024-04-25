@@ -15,11 +15,11 @@ struct UnencryptedLockbox {
         let isEncrypted: Bool
     }
     
+    let metadata: Metadata
     let inputStream: InputStream
     let outputStream: OutputStream
-    let metadata: Metadata
     
-    private init(inputStream: InputStream, outputStream: OutputStream, name: String, size: Int) {
+    private init(name: String, size: Int, inputStream: InputStream, outputStream: OutputStream) {
         self.inputStream = inputStream
         self.outputStream = outputStream
         self.metadata = Metadata(name: name, size: size, isEncrypted: false)
@@ -43,7 +43,7 @@ struct UnencryptedLockbox {
             return nil
         }
         
-        let lockbox = UnencryptedLockbox(inputStream: streams.input, outputStream: streams.output, name: name, size: size)
+        let lockbox = UnencryptedLockbox(name: name, size: size, inputStream: streams.input, outputStream: streams.output)
         
         guard lockerRoomStore.writeUnencryptedLockboxMetadata(lockbox.metadata) else {
             print("[Error] Unencrypted lockbox failed to write lockbox metadata for \(name)")
@@ -72,7 +72,7 @@ struct UnencryptedLockbox {
             return nil
         }
         
-        return UnencryptedLockbox(inputStream: streams.input, outputStream: streams.output, name: name, size: metadata.size)
+        return UnencryptedLockbox(name: name, size: metadata.size, inputStream: streams.input, outputStream: streams.output)
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {
