@@ -57,11 +57,12 @@ Enrolling a key with an unsupported PIV slot is achieved by sending a [ADPU comm
 - Decrypting lockbox view does not appear after a YubiKey is detected.
 - There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
 - Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
+- Enrolled keys cannot be deleted within Locker Room. But can be removed using the filesystem.
 
 ### Future Enhancements
 
 - Add unit tests.
-- Allow key deletion within Locker Room but only after there are no more encrypted lockbox it can decrypt. Keys can be removed using the filesystem and there is currently no way to remove the corresponding private key on the external hardware device. Yubico [changelogs](https://github.com/Yubico/yubico-piv-tool/blob/master/debian/changelog) suggest that YubiKey firmware 5.7.0 will add support for deleting keys.
+- Allow enrolled key deletion within Locker Room but only after there are no more encrypted lockbox it can decrypt. Keys can be removed using the filesystem and there is currently no way to remove the corresponding private key on the external hardware device. Yubico [changelogs](https://github.com/Yubico/yubico-piv-tool/blob/master/debian/changelog) suggest that YubiKey firmware 5.7.0 will add support for deleting keys.
 - Add UI error messages for failures.
 - Write application log messages to the Unified Logging System.
 - Select which enrolled keys are used to encrypt a lockbox instead of using all enrolled key by default.
