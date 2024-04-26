@@ -30,15 +30,23 @@ A lockbox is logically a disk image. While a lockbox is unencrypted the disk ima
 
 An enrolled key is logically a public key and serial number that maps to an external hardware device containing the corresponding private key. The type of public-private key pair is determined by the configuration details used when the key is enrolled.
 
-When a lockbox is encrypted, a 256-bit symmetric key is generated. This symmetric key is used to encrypt the lockbox. The symmetric key is also encrypted by all of the enrolled keys and stored on disk along with the encrypted lockbox. If multiple keys are enrolled then multiple copies of the symmetric key are encrypted and stored on disk. But there is only ever one copy of the encrypted lockbox.
+#### Encryption
 
-When a lockbox is decrypted, the serial number of the external hardware device is used to map back to an encrypted symmetric key stored on disk. The private key stored on the external hardware device is then used to decrypt the encrypted symmetric key. Finally the now decrypted symmetric key is used to decrypt the encrypted lockbox. The symmetric key is thrown away and never used for future encryption.
+When a lockbox is encrypted, a 256-bit symmetric cryptographic key is generated. This symmetric key is used to encrypt the lockbox with the AES GCM algorithm. The lockbox content is streamed into memory in 256KB chunks and each chunk is independently encrypted with a nonce and authentication tag. The subsequent cipher text, nonce, authentication tag and total length of the prior three components are encoded into the output stream of the encrypted lockbox. 
+
+The symmetric cryptographic key used to encrypt the lockbox is also encrypted by all of the enrolled keys using the algorithm specified during key enrollment. These encrpyted symmetrics keys are stored on disk along side the encrypted lockbox. If multiple keys are enrolled then multiple copies of the symmetric key are encrypted and stored on disk. But there is only ever one copy of the encrypted lockbox.
+
+#### Decryption
+
+When a lockbox is decrypted, the serial number of the presented external hardware device is used to map back to the corresponding encrypted symmetric key stored on disk. The private key stored on the external hardware device is then used to decrypt the matching encrypted symmetric key using the algorithm specified during key enrollment.
+
+The now decrypted symmetric key is used to decrypt the encrypted lockbox with the AES GCM algorithm. The encrypted lockbox content is streamed into memory in chuncks, where the chunck size is read directly from the input stream and each chunk is independently decrypted with a nonce and authentication tag. After decryption, all symmetric cryptographic keys are thrown away and never used for future encryption.
 
 ### Experimental Details
 
-The YubiKey SDK allows for using the following PIV slots: PIV Authentication (9a), Digital Signature (9c), Key Management (9d), Card Authentication (9e) and Attestation (f9). These slots have canonical usages and do not typically store a raw RSA or ECC private key for encryption and decryption. Even though there is no direct support via the YubiKey SDK, there does exists 20 retired key management slots (82-95) capable of storing a raw key. Locker Room allows a user to enroll a key using one of these unsupported slots so the user does not have to reserve or misuse one of the supported slots for a Locker Room private key.
+The YubiKey SDK allows for using the following PIV slots: PIV Authentication (9a), Digital Signature (9c), Key Management (9d), Card Authentication (9e) and Attestation (f9). These slots have canonical usages and do not typically store a raw RSA or ECC private key for encryption and decryption. Even though there is no direct support via the YubiKey SDK, there does exists 20 retired key management slots (82-95) capable of storing a raw private key. Locker Room allows a user to enroll a key using one of these unsupported PIV slots so the user does not have to reserve or misuse one of the supported slots for a Locker Room private key.
 
-Enrolling a key with an unsupported slot is achieved by sending an [ADPU command](https://docs.yubico.com/yesdk/users-manual/yubikey-reference/apdu.html) directly to the external hardware device. This bypasses the limitations of the YubiKey SDK and encodes the unsupported slot into the command's raw data.
+Enrolling a key with an unsupported PIV slot is achieved by sending a [ADPU commands](https://docs.yubico.com/yesdk/users-manual/yubikey-reference/apdu.html) directly to the external hardware device. This bypasses the limitations of the YubiKey SDK and encodes the unsupported slot into the command's raw data.
 
 ### Known Issues
 
