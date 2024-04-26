@@ -11,6 +11,7 @@ enum LockerRoomEncryptedLockboxViewStyle {
     case decrypt
     case waitingForKey
     case decrypting
+    case error
 }
 
 struct LockerRoomEncryptedLockboxView: View {
@@ -18,16 +19,19 @@ struct LockerRoomEncryptedLockboxView: View {
     @Binding var lockbox: LockerRoomLockbox?
     
     @State var viewStyle: LockerRoomEncryptedLockboxViewStyle
+    @State var error: LockerRoomError? = nil
             
     var body: some View {
         VStack {
             switch viewStyle {
             case .decrypt:
-                LockerRoomEncryptedLockboxDecryptView(showView: $showView, lockbox: $lockbox, viewStyle: $viewStyle)
+                LockerRoomEncryptedLockboxDecryptView(showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
             case .waitingForKey:
                 LockerRoomEncryptedLockboxWaitingForKeyView(showView: $showView, lockbox: $lockbox)
             case .decrypting:
                 LockerRoomEncryptedLockboxDecryptingView(showView: $showView, lockbox: $lockbox)
+            case .error:
+                LockerRoomErrorView(showView: $showView, error: $error)
             }
         }
         .frame(width: 300)
@@ -38,6 +42,7 @@ struct LockerRoomEncryptedLockboxView: View {
 private struct LockerRoomEncryptedLockboxDecryptView: View {
     @Binding var showView: Bool
     @Binding var lockbox: LockerRoomLockbox?
+    @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomEncryptedLockboxViewStyle
     
     let lockerRoomManager = LockerRoomManager.shared
@@ -49,6 +54,7 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                 
                 if let lockbox {
                     Text("Open Lockbox \(lockbox.name)")
+                        .bold()
                         .padding()
                 } else {
                     Text("Missing Lockbox to Open")
@@ -62,7 +68,8 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                     
                     guard let lockbox else {
                         print("[Error] LockerRoom is missing an encrypted lockbox to decrypt")
-                        showView = false
+                        error = .missingLockbox
+                        viewStyle = .error
                         return
                     }
                     
@@ -71,7 +78,8 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                         
                         guard let symmetricKeyData = await lockerRoomManager.decryptKey(forLockbox: lockbox) else {
                             print("[Error] LockerRoom failed to decrypt lockbox symmetric key for encrypted lockbox \(name)")
-                            showView = false
+                            error = .failedToDecryptLockboxSymmetricKey
+                            viewStyle = .error
                             return
                         }
                         
@@ -79,7 +87,8 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                         
                         guard lockerRoomManager.decrypt(lockbox: lockbox, symmetricKeyData: symmetricKeyData) else {
                             print("[Error] LockerRoom is failed to decrypt an encrypted lockbox \(name)")
-                            showView = false
+                            error = .failedToDecryptLockbox
+                            viewStyle = .error
                             return
                         }
                         

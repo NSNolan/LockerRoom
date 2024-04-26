@@ -30,6 +30,8 @@
 		BF1DD0912BB1C823001FA81F /* LockerRoomStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0902BB1C823001FA81F /* LockerRoomStore.swift */; };
 		BF1DD0952BB1CAB9001FA81F /* LockerRoomURLProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0942BB1CAB9001FA81F /* LockerRoomURLProvider.swift */; };
 		BF1DD0992BB3035E001FA81F /* LockerRoomLockbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0982BB3035E001FA81F /* LockerRoomLockbox.swift */; };
+		BF288E642BDB62D000ADEA03 /* LockerRoomErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF288E632BDB62D000ADEA03 /* LockerRoomErrorView.swift */; };
+		BF288E662BDB632F00ADEA03 /* LockerRoomError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF288E652BDB632F00ADEA03 /* LockerRoomError.swift */; };
 		BF475F5D2BB3B45E003A0E05 /* LockerRoomEnrolledKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F5C2BB3B45E003A0E05 /* LockerRoomEnrolledKey.swift */; };
 		BF475F5F2BB3BB92003A0E05 /* LockerRoomLockboxKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F5E2BB3BB92003A0E05 /* LockerRoomLockboxKeyView.swift */; };
 		BF475F612BB3BED1003A0E05 /* LockboxKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F602BB3BED1003A0E05 /* LockboxKey.swift */; };
@@ -82,6 +84,8 @@
 		BF1DD0902BB1C823001FA81F /* LockerRoomStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomStore.swift; sourceTree = "<group>"; };
 		BF1DD0942BB1CAB9001FA81F /* LockerRoomURLProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomURLProvider.swift; sourceTree = "<group>"; };
 		BF1DD0982BB3035E001FA81F /* LockerRoomLockbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockbox.swift; sourceTree = "<group>"; };
+		BF288E632BDB62D000ADEA03 /* LockerRoomErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomErrorView.swift; sourceTree = "<group>"; };
+		BF288E652BDB632F00ADEA03 /* LockerRoomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomError.swift; sourceTree = "<group>"; };
 		BF475F5C2BB3B45E003A0E05 /* LockerRoomEnrolledKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomEnrolledKey.swift; sourceTree = "<group>"; };
 		BF475F5E2BB3BB92003A0E05 /* LockerRoomLockboxKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockboxKeyView.swift; sourceTree = "<group>"; };
 		BF475F602BB3BED1003A0E05 /* LockboxKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxKey.swift; sourceTree = "<group>"; };
@@ -223,6 +227,7 @@
 				BF1DD0872BAF91BF001FA81F /* LockerRoomUnencryptedLockboxView.swift */,
 				BF1DD08E2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift */,
 				BF475F5E2BB3BB92003A0E05 /* LockerRoomLockboxKeyView.swift */,
+				BF288E632BDB62D000ADEA03 /* LockerRoomErrorView.swift */,
 				BF1DD0972BB30339001FA81F /* Models */,
 			);
 			path = Views;
@@ -243,6 +248,7 @@
 			children = (
 				BF1DD0982BB3035E001FA81F /* LockerRoomLockbox.swift */,
 				BF475F5C2BB3B45E003A0E05 /* LockerRoomEnrolledKey.swift */,
+				BF288E652BDB632F00ADEA03 /* LockerRoomError.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -416,7 +422,9 @@
 				BF5FBFF52BD002360054ED10 /* LockerRoomYubiKeyExperimental.swift in Sources */,
 				BF0BCB612BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift in Sources */,
 				BF1DD0722BACAB48001FA81F /* LockboxKeyCryptor.swift in Sources */,
+				BF288E642BDB62D000ADEA03 /* LockerRoomErrorView.swift in Sources */,
 				BF1DD0882BAF91BF001FA81F /* LockerRoomUnencryptedLockboxView.swift in Sources */,
+				BF288E662BDB632F00ADEA03 /* LockerRoomError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

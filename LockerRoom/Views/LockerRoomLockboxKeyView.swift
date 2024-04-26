@@ -10,6 +10,7 @@ import SwiftUI
 enum LockerRoomLockboxKeyViewStyle {
     case enroll
     case waitingForKey
+    case error
 }
 
 private class LockerRoomLockboxKeyConfiguration: ObservableObject {
@@ -25,14 +26,17 @@ struct LockerRoomLockboxKeyView: View {
     @Binding var showView: Bool
     
     @State var viewStyle: LockerRoomLockboxKeyViewStyle
+    @State var error: LockerRoomError? = nil
     
     var body: some View {
         VStack {
             switch viewStyle {
             case .enroll:
-                LockerRoomLockboxKeyEnrollView(showView: $showView, viewStyle: $viewStyle)
+                LockerRoomLockboxKeyEnrollView(showView: $showView, error: $error, viewStyle: $viewStyle)
             case .waitingForKey:
                 LockerRoomLockboxKeyWaitingForKeyView(showView: $showView, viewStyle: $viewStyle)
+            case .error:
+                LockerRoomErrorView(showView: $showView, error: $error)
             }
         }
         .frame(width: 300)
@@ -42,6 +46,7 @@ struct LockerRoomLockboxKeyView: View {
 
 private struct LockerRoomLockboxKeyEnrollView: View {
     @Binding var showView: Bool
+    @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomLockboxKeyViewStyle
     
     @StateObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
@@ -50,6 +55,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
     
     var body: some View {
         Text("Enroll a New Key")
+            .bold()
         
         VStack {
             HStack {
@@ -133,7 +139,11 @@ private struct LockerRoomLockboxKeyEnrollView: View {
             Button("Enroll") {
                 viewStyle = .waitingForKey
                 Task {
-                    await enroll()
+                    guard await enroll() else {
+                        error = .failedToCreateLockboxKey
+                        viewStyle = .error
+                        return
+                    }
                     showView = false
                 }
             }
@@ -150,7 +160,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
         }
     }
     
-    private func enroll() async {
+    private func enroll() async -> Bool {
         let name = keyConfiguration.name
         let slot = keyConfiguration.slot
         let algorithm = keyConfiguration.algorithm
@@ -167,10 +177,11 @@ private struct LockerRoomLockboxKeyEnrollView: View {
             managementKeyString: managementKeyString
         ) != nil else {
             print("[Error] LockerRoom failed to create a new lockbox key \(name) slot \(slot) algorithm \(algorithm) pin policy \(pinPolicy) touch policy \(touchPolicy) management key string \(managementKeyString)")
-            return
+            return false
         }
         
         print("[Default] LockerRoom added a lockbox key \(name)")
+        return true
     }
 }
 

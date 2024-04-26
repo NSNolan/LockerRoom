@@ -16,6 +16,8 @@ enum LockerRoomMainViewStyle: String, CaseIterable, Identifiable {
 
 struct LockerRoomMainView: View {
     @State private var viewStyle: LockerRoomMainViewStyle = .lockboxes
+    @State private var showErrorView = false
+    @State var error: LockerRoomError? = nil
     
     @StateObject var lockerRoomManager = LockerRoomManager.shared
 
@@ -23,7 +25,7 @@ struct LockerRoomMainView: View {
         VStack {
             switch viewStyle {
             case .lockboxes:
-                LockerRoomLockboxesView(lockerRoomManager: lockerRoomManager)
+                LockerRoomLockboxesView(showErrorView: $showErrorView, error: $error, lockerRoomManager: lockerRoomManager)
             case .keys:
                 LockerRoomKeysView(lockerRoomManager: lockerRoomManager)
             }
@@ -35,10 +37,16 @@ struct LockerRoomMainView: View {
                 }
             }
         }
+        .sheet(isPresented: $showErrorView) {
+            LockerRoomErrorView(showView: $showErrorView, error: $error)
+        }
     }
 }
 
 private struct LockerRoomLockboxesView: View {
+    @Binding var showErrorView: Bool
+    @Binding var error: LockerRoomError?
+    
     @ObservedObject var lockerRoomManager: LockerRoomManager
     
     @State private var lockboxes = [LockerRoomLockbox]()
@@ -122,11 +130,11 @@ private struct LockerRoomLockboxesView: View {
                     
                     guard lockerRoomManager.removeUnencryptedLockbox(name: name) else {
                         print("[Error] LockerRoom failed to remove unencrypted lockbox \(name)")
+                        error = .failedToRemoveLockbox
+                        showErrorView = true
                         return
                     }
                 }
-            } else {
-                EmptyView()
             }
         }
     }
@@ -146,6 +154,8 @@ private struct LockerRoomLockboxesView: View {
     private func selectedLockbox(fromIDs lockboxIDs: Set<LockerRoomLockbox.ID>) -> LockerRoomLockbox? {
         guard let lockboxID = lockboxIDs.first, let lockbox = lockboxes.first(where: { $0.id == lockboxID }) else { // TODO: Is this really the best way to get the lockbox I just selected...
             print("[Error] LockerRoom failed to find selected lockbox")
+            error = .failedToFindSelectedLockbox
+            showErrorView = true
             return nil
         }
         return lockbox
