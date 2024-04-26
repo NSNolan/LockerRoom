@@ -139,7 +139,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                     }
                     
                     guard lockerRoomManager.encrypt(lockbox: lockbox) else {
-                        print("[Error] LockerRoom is failed to encrypt an unencrypted lockbox")
+                        print("[Error] LockerRoom is failed to encrypt an unencrypted lockbox \(lockbox.name)")
                         showView = false
                         return
                     }

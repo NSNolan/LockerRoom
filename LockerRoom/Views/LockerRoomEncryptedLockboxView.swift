@@ -67,8 +67,10 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                     }
                     
                     Task {
+                        let name = lockbox.name
+                        
                         guard let symmetricKeyData = await lockerRoomManager.decryptKey(forLockbox: lockbox) else {
-                            print("[Error] LockerRoom failed to decrypt lockbox symmetric key")
+                            print("[Error] LockerRoom failed to decrypt lockbox symmetric key for encrypted lockbox \(name)")
                             showView = false
                             return
                         }
@@ -76,7 +78,7 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                         viewStyle = .decrypting
                         
                         guard lockerRoomManager.decrypt(lockbox: lockbox, symmetricKeyData: symmetricKeyData) else {
-                            print("[Error] LockerRoom is failed to decrypt an encrypted lockbox")
+                            print("[Error] LockerRoom is failed to decrypt an encrypted lockbox \(name)")
                             showView = false
                             return
                         }

@@ -117,8 +117,11 @@ private struct LockerRoomLockboxesView: View {
         if let lockbox = selectedLockbox(fromIDs: lockboxIDs) {
             if !lockbox.isEncrypted {
                 Button("Delete") {
-                    guard lockerRoomManager.removeUnencryptedLockbox(name: lockbox.name) else {
-                        print("[Error] LockerRoom failed to remove unencrypted lockbox")
+                    let name = lockbox.name
+                    _ = LockerRoomDiskImage().detach(name: name)
+                    
+                    guard lockerRoomManager.removeUnencryptedLockbox(name: name) else {
+                        print("[Error] LockerRoom failed to remove unencrypted lockbox \(name)")
                         return
                     }
                 }
