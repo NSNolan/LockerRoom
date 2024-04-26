@@ -18,7 +18,7 @@ private class LockerRoomLockboxKeyConfiguration: ObservableObject {
     @Published var algorithm = LockboxKey.Algorithm.RSA2048
     @Published var pinPolicy = LockboxKey.PinPolicy.never
     @Published var touchPolicy = LockboxKey.TouchPolicy.never
-    @Published var managementKeyString = "010203040506070801020304050607080102030405060708"
+    @Published var managementKeyString = "010203040506070801020304050607080102030405060708" // Default management key
 }
 
 struct LockerRoomLockboxKeyView: View {
@@ -57,6 +57,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
                 Spacer()
             }
             TextField("", text: $keyConfiguration.name)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
         }
         
         VStack {
@@ -121,10 +122,13 @@ private struct LockerRoomLockboxKeyEnrollView: View {
                 Spacer()
             }
             TextField("", text: $keyConfiguration.managementKeyString)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
         }
         
         HStack {
             Spacer()
+            
+            let enrollDisabled = (keyConfiguration.name.isEmpty || keyConfiguration.managementKeyString.isEmpty)
             
             Button("Enroll") {
                 viewStyle = .waitingForKey
@@ -133,6 +137,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
                     showView = false
                 }
             }
+            .disabled(enrollDisabled)
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
             .tint(.blue)

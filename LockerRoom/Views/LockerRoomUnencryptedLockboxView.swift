@@ -59,6 +59,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
                 Spacer()
             }
             TextField("", text: $unencryptedLockboxConfiguration.name)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
         }
         .padding()
         
@@ -68,26 +69,18 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
                 Spacer()
             }
             TextField("", value: $unencryptedLockboxConfiguration.size, format: .number)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
         }
         .padding()
         
         HStack {
             Spacer()
             
+            let addDisabled = (unencryptedLockboxConfiguration.name.isEmpty || unencryptedLockboxConfiguration.size <= 0)
+            
             Button("Add") {
                 let name = unencryptedLockboxConfiguration.name
-                guard !name.isEmpty else {
-                    print("[Error] LockerRoom cannot add a new decrypted lockbox with missing name")
-                    showView = false
-                    return
-                }
-                
                 let size = unencryptedLockboxConfiguration.size
-                guard size > 0 else {
-                    print("[Error] LockerRoom cannot add a new decrypted lockbox \(name) of size \(size)MB")
-                    showView = false
-                    return
-                }
                 
                 guard let newUnencryptedLockbox = lockerRoomManager.addUnencryptedLockbox(name: name, size: size) else {
                     print("[Error] LockerRoom failed to create a new unencrypted lockbox \(name) of size \(size)MB")
@@ -99,6 +92,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
                 self.lockbox = newUnencryptedLockbox.metadata.lockerRoomLockbox
                 viewStyle = .encrypt
             }
+            .disabled(addDisabled)
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
             .tint(.blue)
