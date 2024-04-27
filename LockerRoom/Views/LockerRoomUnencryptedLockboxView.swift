@@ -61,32 +61,23 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
             .bold()
             .padding()
         
-        VStack {
-            HStack {
-                Text("Name")
-                Spacer()
-            }
+        VStack(alignment: .leading) {
+            Text("Name")
             TextField("", text: $unencryptedLockboxConfiguration.name)
+                .padding(.bottom)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-        }
-        .padding()
-        
-        VStack {
-            HStack {
-                Text("Size (MB)")
-                Spacer()
-            }
+            
+            Text("Size (MB)")
             TextField("", value: $unencryptedLockboxConfiguration.size, format: .number)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
         }
-        .padding()
         
         HStack {
             Spacer()
             
-            let addDisabled = (unencryptedLockboxConfiguration.name.isEmpty || unencryptedLockboxConfiguration.size <= 0)
+            let createDisabled = (unencryptedLockboxConfiguration.name.isEmpty || unencryptedLockboxConfiguration.size <= 0)
             
-            Button("Add") {
+            Button("Create") {
                 let name = unencryptedLockboxConfiguration.name
                 let size = unencryptedLockboxConfiguration.size
                 
@@ -101,7 +92,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
                 self.lockbox = newUnencryptedLockbox.metadata.lockerRoomLockbox
                 viewStyle = .encrypt
             }
-            .disabled(addDisabled)
+            .disabled(createDisabled)
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
             .tint(.blue)
@@ -112,7 +103,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
             .buttonStyle(.bordered)
             .keyboardShortcut(.escape)
         }
-        .padding()
+        .padding([.top, .bottom])
     }
 }
 

@@ -53,26 +53,20 @@ private struct LockerRoomLockboxKeyEnrollView: View {
     
     @ObservedObject var lockerRoomManager: LockerRoomManager
     
+    @State private var advancedOptions = false
+    
     @StateObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
     
     var body: some View {
         Text("Enroll a New Key")
             .bold()
         
-        VStack {
-            HStack {
-                Text("Name")
-                Spacer()
-            }
+        VStack(alignment: .leading) {
+            Text("Name")
             TextField("", text: $keyConfiguration.name)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-        }
-        
-        VStack {
-            HStack {
-                Text("Slot")
-                Spacer()
-            }
+            
+            Text("Slot")
             Picker("", selection: $keyConfiguration.slot) {
                 ForEach(LockboxKey.Slot.allCases) { option in
                     Text(option.rawValue).tag(option)
@@ -82,83 +76,56 @@ private struct LockerRoomLockboxKeyEnrollView: View {
                 }
             }
             .pickerStyle(.menu)
-            .frame(alignment: .leading)
+        }
+        
+        if advancedOptions {
+            LockerRoomLockboxKeyEnrollAdvancedOptionsView(keyConfiguration: keyConfiguration)
         }
         
         VStack {
             HStack {
-                Text("Algorithm")
                 Spacer()
-            }
-            Picker("", selection: $keyConfiguration.algorithm) {
-                ForEach(LockboxKey.Algorithm.allCases) { option in
-                    Text(option.rawValue).tag(option)
-                }
-            }
-            .pickerStyle(.segmented)
-        }
-        
-        VStack {
-            HStack {
-                Text("Pin Policy")
-                Spacer()
-            }
-            Picker("", selection: $keyConfiguration.pinPolicy) {
-                ForEach(LockboxKey.PinPolicy.allCases) { option in
-                    Text(option.rawValue).tag(option)
-                }
-            }
-            .pickerStyle(.segmented)
-        }
-        
-        VStack {
-            HStack {
-                Text("Touch Policy")
-                Spacer()
-            }
-            Picker("", selection: $keyConfiguration.touchPolicy) {
-                ForEach(LockboxKey.TouchPolicy.allCases) { option in
-                    Text(option.rawValue).tag(option)
-                }
-            }
-            .pickerStyle(.segmented)
-        }
-        
-        VStack {
-            HStack {
-                Text("PIV Management Key")
-                Spacer()
-            }
-            TextField("", text: $keyConfiguration.managementKeyString)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-        }
-        
-        HStack {
-            Spacer()
-            
-            let enrollDisabled = (keyConfiguration.name.isEmpty || keyConfiguration.managementKeyString.isEmpty)
-            
-            Button("Enroll") {
-                viewStyle = .waitingForKey
-                Task {
-                    guard await enroll() else {
-                        error = .failedToCreateLockboxKey
-                        viewStyle = .error
-                        return
+                
+                let enrollDisabled = (keyConfiguration.name.isEmpty || keyConfiguration.managementKeyString.isEmpty)
+                
+                Button("Enroll") {
+                    viewStyle = .waitingForKey
+                    Task {
+                        guard await enroll() else {
+                            error = .failedToCreateLockboxKey
+                            viewStyle = .error
+                            return
+                        }
+                        showView = false
                     }
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(enrollDisabled)
+                .keyboardShortcut(.defaultAction)
+                .tint(.blue)
+                
+                Button("Close") {
                     showView = false
                 }
+                .buttonStyle(.bordered)
+                .keyboardShortcut(.escape)
             }
-            .disabled(enrollDisabled)
-            .buttonStyle(.borderedProminent)
-            .keyboardShortcut(.defaultAction)
-            .tint(.blue)
+            .padding(.top)
             
-            Button("Close") {
-                showView = false
+            Button(action: {
+                withAnimation {
+                    advancedOptions.toggle()
+                }
+            }) {
+                if advancedOptions {
+                    Image(systemName: "chevron.up")
+                    Text("Hide Advanced Options")
+                } else {
+                    Text("Show Advanced Options")
+                    Image(systemName: "chevron.down")
+                }
             }
-            .buttonStyle(.bordered)
-            .keyboardShortcut(.escape)
+            .buttonStyle(BorderlessButtonStyle())
         }
     }
     
@@ -184,6 +151,42 @@ private struct LockerRoomLockboxKeyEnrollView: View {
         
         print("[Default] LockerRoom added a lockbox key \(name)")
         return true
+    }
+}
+
+private struct LockerRoomLockboxKeyEnrollAdvancedOptionsView: View {
+    @ObservedObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Algorithm")
+            Picker("", selection: $keyConfiguration.algorithm) {
+                ForEach(LockboxKey.Algorithm.allCases) { option in
+                    Text(option.rawValue).tag(option)
+                }
+            }
+            .pickerStyle(.segmented)
+        
+            Text("Pin Policy")
+            Picker("", selection: $keyConfiguration.pinPolicy) {
+                ForEach(LockboxKey.PinPolicy.allCases) { option in
+                    Text(option.rawValue).tag(option)
+                }
+            }
+            .pickerStyle(.segmented)
+            
+            Text("Touch Policy")
+            Picker("", selection: $keyConfiguration.touchPolicy) {
+                ForEach(LockboxKey.TouchPolicy.allCases) { option in
+                    Text(option.rawValue).tag(option)
+                }
+            }
+            .pickerStyle(.segmented)
+
+            Text("PIV Management Key")
+            TextField("", text: $keyConfiguration.managementKeyString)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+        }
     }
 }
 
