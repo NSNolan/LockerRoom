@@ -9,18 +9,23 @@ import Foundation
 
 import CryptoKit
 
-struct LockboxCryptor {
+protocol LockboxCrypting {
+    func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Bool
+    func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) -> Bool
+}
+
+struct LockboxCryptor: LockboxCrypting {
     private static let chunkSize = 256 * 1024 // 256 KB
     
-    static func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Bool {
+    func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Bool {
         return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: true)
     }
     
-    static func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) -> Bool {
+    func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) -> Bool {
         return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: false)
     }
     
-    static private func processLockbox(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data, encrypt: Bool) -> Bool {
+    private func processLockbox(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data, encrypt: Bool) -> Bool {
         defer {
             inputStream.close()
             outputStream.close()
@@ -41,7 +46,7 @@ struct LockboxCryptor {
         while inputStream.hasBytesAvailable {
             let bufferSize: Int
             if encrypt {
-                bufferSize = chunkSize
+                bufferSize = Self.chunkSize
             } else {
                 var chunkSizeBuffer = [UInt8](repeating: 0, count: 8)
                 let chunkSizeBytesRead = inputStream.read(&chunkSizeBuffer, maxLength: 8)
@@ -81,7 +86,7 @@ struct LockboxCryptor {
             
             let processedData: Data
             if encrypt {
-                guard let encryptedContent = Self.encrypt(unencryptedContent: chunk, symmetricKeyData: symmetricKeyData) else {
+                guard let encryptedContent = self.encrypt(unencryptedContent: chunk, symmetricKeyData: symmetricKeyData) else {
                     print("[Error] Lockbox cryptor failed to process unencrypted lockbox content")
                     return false
                 }
@@ -91,7 +96,7 @@ struct LockboxCryptor {
                 
                 processedData = lengthData + encryptedContent
             } else {
-                guard let decryptedContent = Self.decrypt(encryptedContent: chunk, symmetricKeyData: symmetricKeyData) else {
+                guard let decryptedContent = self.decrypt(encryptedContent: chunk, symmetricKeyData: symmetricKeyData) else {
                     print("[Error] Lockbox cryptor failed to process encrypted lockbox content")
                     return false
                 }
@@ -129,7 +134,7 @@ struct LockboxCryptor {
         return true
     }
     
-    private static func encrypt(unencryptedContent: Data, symmetricKeyData: Data) -> Data? {
+    private func encrypt(unencryptedContent: Data, symmetricKeyData: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
         guard !unencryptedContent.isEmpty else {
             print("[Error] Lockbox cryptor failed to read unencrypted lockbox content")
@@ -150,7 +155,7 @@ struct LockboxCryptor {
         }
     }
     
-    private static func decrypt(encryptedContent: Data, symmetricKeyData: Data) -> Data? {
+    private func decrypt(encryptedContent: Data, symmetricKeyData: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
         guard !encryptedContent.isEmpty else {
             print("[Error] Lockbox cryptor failed to read encrypted lockbox content")

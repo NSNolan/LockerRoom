@@ -10,13 +10,24 @@ import Foundation
 import CryptoKit
 import YubiKit
 
-struct LockboxKeyGenerator {
-    static func generateSymmetricKeyData() -> Data {
+protocol LockboxKeyGenerating {
+    func generateSymmetricKeyData() -> Data
+    func generatePublicKeyDataFromDevice(
+        slot: LockboxKey.Slot,
+        algorithm: LockboxKey.Algorithm,
+        pinPolicy: LockboxKey.PinPolicy,
+        touchPolicy: LockboxKey.TouchPolicy,
+        managementKeyString: String
+    ) async -> (publicKey: SecKey, serialNumber: UInt32)?
+}
+
+struct LockboxKeyGenerator: LockboxKeyGenerating {
+    func generateSymmetricKeyData() -> Data {
         let symmetricKey = SymmetricKey(size: .bits256)
         return symmetricKey.withUnsafeBytes { Data($0) }
     }
     
-    static func generatePublicKeyDataFromDevice(
+    func generatePublicKeyDataFromDevice(
         slot: LockboxKey.Slot,
         algorithm: LockboxKey.Algorithm,
         pinPolicy: LockboxKey.PinPolicy,

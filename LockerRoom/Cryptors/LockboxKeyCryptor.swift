@@ -9,8 +9,13 @@ import Foundation
 
 import YubiKit
 
-struct LockboxKeyCryptor {
-    static func encrypt(symmetricKeyData: Data, lockboxKey: LockboxKey) -> Data? {
+protocol LockboxKeyCrypting {
+    func encrypt(symmetricKeyData: Data, lockboxKey: LockboxKey) -> Data?
+    func decrypt(encryptedSymmetricKeysBySerialNumber: [UInt32:Data], lockboxKeysBySerialNumber:[UInt32:LockboxKey]) async -> Data?
+}
+
+struct LockboxKeyCryptor: LockboxKeyCrypting {
+    func encrypt(symmetricKeyData: Data, lockboxKey: LockboxKey) -> Data? {
         guard let publicKey = lockboxKey.publicKey else {
             print("[Error] Lockbox key cryptor failed to copy public key from lockbox key \(lockboxKey)")
             return nil
@@ -31,7 +36,7 @@ struct LockboxKeyCryptor {
         }
     }
     
-    static func decrypt(encryptedSymmetricKeysBySerialNumber: [UInt32:Data], lockboxKeysBySerialNumber:[UInt32:LockboxKey]) async -> Data? {
+    func decrypt(encryptedSymmetricKeysBySerialNumber: [UInt32:Data], lockboxKeysBySerialNumber:[UInt32:LockboxKey]) async -> Data? {
         do {
             let connection = try await ConnectionHelper.anyWiredConnection()
             defer { Task { await connection.close(error: nil) } }

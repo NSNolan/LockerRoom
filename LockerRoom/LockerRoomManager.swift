@@ -8,8 +8,11 @@
 import Foundation
 
 class LockerRoomManager: ObservableObject {
-    private let lockerRoomStore: LockerRoomStoring
+    private let lockboxCryptor: LockboxCrypting
+    private let lockboxKeyCryptor: LockboxKeyCrypting
+    private let lockboxKeyGenerator: LockboxKeyGenerating
     private let lockerRoomDiskImage: LockerRoomDiskImaging
+    private let lockerRoomStore: LockerRoomStoring
     
     @Published var lockboxes = [LockerRoomLockbox]()
     @Published var enrolledKeys = [LockerRoomEnrolledKey]()
@@ -17,11 +20,18 @@ class LockerRoomManager: ObservableObject {
     static let shared = LockerRoomManager()
     
     private init(
-        lockerRoomStore: LockerRoomStoring = LockerRoomStore(),
-        lockerRoomDiskImage: LockerRoomDiskImaging = LockerRoomDiskImage()
+        lockboxCryptor: LockboxCrypting = LockboxCryptor(),
+        lockboxKeyCryptor: LockboxKeyCrypting = LockboxKeyCryptor(),
+        lockboxKeyGenerator: LockboxKeyGenerating = LockboxKeyGenerator(),
+        lockerRoomDiskImage: LockerRoomDiskImaging = LockerRoomDiskImage(),
+        lockerRoomStore: LockerRoomStoring = LockerRoomStore()
     ) {
-        self.lockerRoomStore = lockerRoomStore
+        self.lockboxCryptor = lockboxCryptor
+        self.lockboxKeyCryptor = lockboxKeyCryptor
+        self.lockboxKeyGenerator = lockboxKeyGenerator
         self.lockerRoomDiskImage = lockerRoomDiskImage
+        self.lockerRoomStore = lockerRoomStore
+        
         self.lockboxes = lockerRoomStore.lockboxes
         self.enrolledKeys = lockerRoomStore.enrolledKeys
     }
@@ -69,7 +79,7 @@ class LockerRoomManager: ObservableObject {
         touchPolicy: LockboxKey.TouchPolicy,
         managementKeyString: String
     ) async -> LockboxKey? {
-        guard let result = await LockboxKeyGenerator.generatePublicKeyDataFromDevice(
+        guard let result = await lockboxKeyGenerator.generatePublicKeyDataFromDevice(
             slot: slot,
             algorithm: algorithm,
             pinPolicy: pinPolicy,
@@ -112,13 +122,13 @@ class LockerRoomManager: ObservableObject {
         
         let name = unencryptedLockbox.metadata.name
         let size = unencryptedLockbox.metadata.size
-        let symmetricKeyData = LockboxKeyGenerator.generateSymmetricKeyData()
+        let symmetricKeyData = lockboxKeyGenerator.generateSymmetricKeyData()
         
         var encryptedSymmetricKeysBySerialNumber = [UInt32:Data]()
         var encryptionLockboxKeys = [LockboxKey]()
         
         for lockboxKey in lockerRoomStore.lockboxKeys {
-            guard let encryptedSymmetricKeyData = LockboxKeyCryptor.encrypt(symmetricKeyData: symmetricKeyData, lockboxKey: lockboxKey) else {
+            guard let encryptedSymmetricKeyData = lockboxKeyCryptor.encrypt(symmetricKeyData: symmetricKeyData, lockboxKey: lockboxKey) else {
                 print("[Error] Locker room manager failed to encrypt a symmetric key with lockbox key \(lockboxKey.name) for \(name)")
                 continue
             }
@@ -132,7 +142,7 @@ class LockerRoomManager: ObservableObject {
         }
         print("[Default] Locker room manager encrypted a symmetric key for \(name)")
         
-        guard LockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard lockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             print("[Error] Locker room manager failed to encrypt an unencrypted lockbox \(name)")
             return false
         }
@@ -169,7 +179,7 @@ class LockerRoomManager: ObservableObject {
             lockboxKeysBySerialNumber[lockboxKey.serialNumber] = lockboxKey
         }
         
-        guard let symmetricKeyData = await LockboxKeyCryptor.decrypt(encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, lockboxKeysBySerialNumber: lockboxKeysBySerialNumber) else {
+        guard let symmetricKeyData = await lockboxKeyCryptor.decrypt(encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, lockboxKeysBySerialNumber: lockboxKeysBySerialNumber) else {
             print("[Error] Locker room manager failed to decrypt an encrypted symmetric key for \(name)")
             return nil
         }
@@ -187,7 +197,7 @@ class LockerRoomManager: ObservableObject {
         let name = encryptedLockbox.metadata.name
         let size = encryptedLockbox.metadata.size
         
-        guard LockboxCryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard lockboxCryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             print("[Error] Locker room manager failed to decrypt an encrypted lockbox \(name)")
             return false
         }
