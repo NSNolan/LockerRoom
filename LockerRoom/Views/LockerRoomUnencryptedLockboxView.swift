@@ -22,6 +22,8 @@ private class LockerRoomUnencryptedLockboxConfiguration: ObservableObject {
 struct LockerRoomUnencryptedLockboxView: View {
     @Binding var showView: Bool
     @Binding var lockbox: LockerRoomLockbox?
+    
+    @ObservedObject var lockerRoomManager: LockerRoomManager
 
     @State var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     @State var error: LockerRoomError? = nil
@@ -30,9 +32,9 @@ struct LockerRoomUnencryptedLockboxView: View {
         VStack {
             switch viewStyle {
             case .add:
-                LockerRoomUnencryptedLockboxAddView(showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
+                LockerRoomUnencryptedLockboxAddView(showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle, lockerRoomManager: lockerRoomManager)
             case .encrypt:
-                LockerRoomUnencryptedLockboxEncryptView(showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
+                LockerRoomUnencryptedLockboxEncryptView(showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle, lockerRoomManager: lockerRoomManager)
             case .encrypting:
                 LockerRoomUnencryptedLockboxEncryptingView(showView: $showView, lockbox: $lockbox)
             case .error:
@@ -50,9 +52,9 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
     @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     
-    @StateObject var unencryptedLockboxConfiguration = LockerRoomUnencryptedLockboxConfiguration()
+    @ObservedObject var lockerRoomManager: LockerRoomManager
     
-    let lockerRoomManager = LockerRoomManager.shared
+    @StateObject var unencryptedLockboxConfiguration = LockerRoomUnencryptedLockboxConfiguration()
     
     var body: some View {
         Text("Create a New Lockbox")
@@ -120,7 +122,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
     @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     
-    let lockerRoomManager = LockerRoomManager.shared
+    @ObservedObject var lockerRoomManager: LockerRoomManager
     
     var body: some View {
         VStack(spacing: 0) {

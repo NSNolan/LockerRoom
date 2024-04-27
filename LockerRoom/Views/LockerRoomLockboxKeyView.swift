@@ -25,6 +25,8 @@ private class LockerRoomLockboxKeyConfiguration: ObservableObject {
 struct LockerRoomLockboxKeyView: View {
     @Binding var showView: Bool
     
+    @ObservedObject var lockerRoomManager: LockerRoomManager
+    
     @State var viewStyle: LockerRoomLockboxKeyViewStyle
     @State var error: LockerRoomError? = nil
     
@@ -32,7 +34,7 @@ struct LockerRoomLockboxKeyView: View {
         VStack {
             switch viewStyle {
             case .enroll:
-                LockerRoomLockboxKeyEnrollView(showView: $showView, error: $error, viewStyle: $viewStyle)
+                LockerRoomLockboxKeyEnrollView(showView: $showView, error: $error, viewStyle: $viewStyle, lockerRoomManager: lockerRoomManager)
             case .waitingForKey:
                 LockerRoomLockboxKeyWaitingForKeyView(showView: $showView, viewStyle: $viewStyle)
             case .error:
@@ -49,9 +51,9 @@ private struct LockerRoomLockboxKeyEnrollView: View {
     @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomLockboxKeyViewStyle
     
-    @StateObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
+    @ObservedObject var lockerRoomManager: LockerRoomManager
     
-    let lockerRoomManager = LockerRoomManager.shared
+    @StateObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
     
     var body: some View {
         Text("Enroll a New Key")

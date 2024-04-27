@@ -110,13 +110,13 @@ private struct LockerRoomLockboxesView: View {
             lockboxes.sort(using: sortOrder)
         }
         .sheet(isPresented: $showUnencryptedLockboxAddView) {
-            LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxAddView, lockbox: $selectedLockbox, viewStyle: .add)
+            LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxAddView, lockbox: $selectedLockbox, lockerRoomManager: lockerRoomManager, viewStyle: .add)
         }
         .sheet(isPresented: $showUnencryptedLockboxView) {
-            LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxView, lockbox: $selectedLockbox, viewStyle: .encrypt)
+            LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxView, lockbox: $selectedLockbox, lockerRoomManager: lockerRoomManager, viewStyle: .encrypt)
         }
         .sheet(isPresented: $showEncryptedLockboxView) {
-            LockerRoomEncryptedLockboxView(showView: $showEncryptedLockboxView, lockbox: $selectedLockbox, viewStyle: .decrypt)
+            LockerRoomEncryptedLockboxView(showView: $showEncryptedLockboxView, lockbox: $selectedLockbox, lockerRoomManager: lockerRoomManager, viewStyle: .decrypt)
         }
     }
     
@@ -209,7 +209,7 @@ private struct LockerRoomKeysView: View {
             enrolledKeys.sort(using: sortOrder)
         }
         .sheet(isPresented: $showLockboKeyAddView) {
-            LockerRoomLockboxKeyView(showView: $showLockboKeyAddView, viewStyle: .enroll)
+            LockerRoomLockboxKeyView(showView: $showLockboKeyAddView, lockerRoomManager: lockerRoomManager, viewStyle: .enroll)
         }
     }
 }
