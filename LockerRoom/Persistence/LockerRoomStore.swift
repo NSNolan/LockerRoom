@@ -42,7 +42,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     internal var lockerRoomURLProvider: LockerRoomURLProviding
         
-    init(lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()) {
+    init(lockerRoomURLProvider: LockerRoomURLProviding) {
         self.lockerRoomURLProvider = lockerRoomURLProvider
         encoder.outputFormat = .xml
     }

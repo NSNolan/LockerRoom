@@ -209,7 +209,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
             }
             
             let name = lockbox.name
-            guard LockerRoomDiskImage().attach(name: name) else {
+            guard lockerRoomManager.attachToDiskImage(name: name) else {
                 print("[Error] LockerRoom failed to attach lockbox \(name) as disk image")
                 error = .failedToAttachLockbox
                 viewStyle = .error

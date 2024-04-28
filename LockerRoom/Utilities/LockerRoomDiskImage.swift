@@ -18,7 +18,7 @@ struct LockerRoomDiskImage: LockerRoomDiskImaging {
     
     internal var lockerRoomURLProvider: LockerRoomURLProviding
     
-    init(lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()) {
+    init(lockerRoomURLProvider: LockerRoomURLProviding) {
         self.lockerRoomURLProvider = lockerRoomURLProvider
     }
     

@@ -23,17 +23,18 @@ class LockerRoomManager: ObservableObject {
         lockboxCryptor: LockboxCrypting = LockboxCryptor(),
         lockboxKeyCryptor: LockboxKeyCrypting = LockboxKeyCryptor(),
         lockboxKeyGenerator: LockboxKeyGenerating = LockboxKeyGenerator(),
-        lockerRoomDiskImage: LockerRoomDiskImaging = LockerRoomDiskImage(),
-        lockerRoomStore: LockerRoomStoring = LockerRoomStore()
+        lockerRoomDiskImage: LockerRoomDiskImaging? = nil,
+        lockerRoomStore: LockerRoomStoring? = nil,
+        lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()
     ) {
         self.lockboxCryptor = lockboxCryptor
         self.lockboxKeyCryptor = lockboxKeyCryptor
         self.lockboxKeyGenerator = lockboxKeyGenerator
-        self.lockerRoomDiskImage = lockerRoomDiskImage
-        self.lockerRoomStore = lockerRoomStore
+        self.lockerRoomDiskImage = lockerRoomDiskImage ?? LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
+        self.lockerRoomStore = lockerRoomStore ?? LockerRoomStore(lockerRoomURLProvider: lockerRoomURLProvider)
         
-        self.lockboxes = lockerRoomStore.lockboxes
-        self.enrolledKeys = lockerRoomStore.enrolledKeys
+        self.lockboxes = self.lockerRoomStore.lockboxes
+        self.enrolledKeys = self.lockerRoomStore.enrolledKeys
     }
     
     func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
@@ -223,6 +224,14 @@ class LockerRoomManager: ObservableObject {
         
         lockboxes = lockerRoomStore.lockboxes
         return true
+    }
+    
+    func attachToDiskImage(name: String) -> Bool {
+        return lockerRoomDiskImage.attach(name: name)
+    }
+    
+    func detachFromDiskImage(name: String) -> Bool {
+        return lockerRoomDiskImage.attach(name: name)
     }
 }
 
