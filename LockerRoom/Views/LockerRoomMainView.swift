@@ -32,8 +32,8 @@ struct LockerRoomMainView: View {
         }
         .toolbar {
             Picker("", selection: $viewStyle) {
-                ForEach(LockerRoomMainViewStyle.allCases) { option in
-                    Text(option.rawValue).tag(option)
+                ForEach(LockerRoomMainViewStyle.allCases) { style in
+                    Text(style.rawValue).tag(style)
                 }
             }
         }

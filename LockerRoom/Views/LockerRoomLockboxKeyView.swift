@@ -68,9 +68,9 @@ private struct LockerRoomLockboxKeyEnrollView: View {
             
             Text("Slot")
             Picker("", selection: $keyConfiguration.slot) {
-                ForEach(LockboxKey.Slot.allCases) { option in
-                    Text(option.rawValue).tag(option)
-                    if option == .attestation {
+                ForEach(LockboxKey.Slot.allCases) { slot in
+                    Text(slot.rawValue).tag(slot)
+                    if slot == .attestation {
                         Divider() // Add divider to separate supported slots from experimental slots
                     }
                 }
@@ -161,24 +161,24 @@ private struct LockerRoomLockboxKeyEnrollAdvancedOptionsView: View {
         VStack(alignment: .leading) {
             Text("Algorithm")
             Picker("", selection: $keyConfiguration.algorithm) {
-                ForEach(LockboxKey.Algorithm.allCases) { option in
-                    Text(option.rawValue).tag(option)
+                ForEach(LockboxKey.Algorithm.allCases) { algorithm in
+                    Text(algorithm.rawValue).tag(algorithm)
                 }
             }
             .pickerStyle(.segmented)
         
             Text("Pin Policy")
             Picker("", selection: $keyConfiguration.pinPolicy) {
-                ForEach(LockboxKey.PinPolicy.allCases) { option in
-                    Text(option.rawValue).tag(option)
+                ForEach(LockboxKey.PinPolicy.allCases) { pinPolicy in
+                    Text(pinPolicy.rawValue).tag(pinPolicy)
                 }
             }
             .pickerStyle(.segmented)
             
             Text("Touch Policy")
             Picker("", selection: $keyConfiguration.touchPolicy) {
-                ForEach(LockboxKey.TouchPolicy.allCases) { option in
-                    Text(option.rawValue).tag(option)
+                ForEach(LockboxKey.TouchPolicy.allCases) { touchPolicy in
+                    Text(touchPolicy.rawValue).tag(touchPolicy)
                 }
             }
             .pickerStyle(.segmented)
