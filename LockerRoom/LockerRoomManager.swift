@@ -8,16 +8,16 @@
 import Foundation
 
 class LockerRoomManager: ObservableObject {
+    @Published var lockboxes = [LockerRoomLockbox]()
+    @Published var enrolledKeys = [LockerRoomEnrolledKey]()
+    
+    static let shared = LockerRoomManager()
+    
     private let lockboxCryptor: LockboxCrypting
     private let lockboxKeyCryptor: LockboxKeyCrypting
     private let lockboxKeyGenerator: LockboxKeyGenerating
     private let lockerRoomDiskImage: LockerRoomDiskImaging
     private let lockerRoomStore: LockerRoomStoring
-    
-    @Published var lockboxes = [LockerRoomLockbox]()
-    @Published var enrolledKeys = [LockerRoomEnrolledKey]()
-    
-    static let shared = LockerRoomManager()
     
     private init(
         lockboxCryptor: LockboxCrypting = LockboxCryptor(),
