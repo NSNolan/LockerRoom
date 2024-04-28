@@ -16,7 +16,30 @@ enum LockerRoomUnencryptedLockboxViewStyle {
 
 private class LockerRoomUnencryptedLockboxConfiguration: ObservableObject {
     @Published var name = ""
-    @Published var size = 0
+    @Published var sizeString = ""
+    @Published var size = LockboxSize(unit: .megabytes, value: 0)
+    @Published var unit = LockboxUnit.megabytes
+    
+    enum LockboxUnit: String, CaseIterable, Equatable, Identifiable {
+        case megabytes = "Megabytes"
+        case gigabytes = "Gigabytes"
+        
+        var id: String { self.rawValue }
+    }
+    
+    struct LockboxSize {
+        var unit: LockboxUnit
+        var value: Int
+        
+        var megabytes: Int {
+            switch unit {
+            case .megabytes:
+                return value
+            case .gigabytes:
+                return value * 1024
+            }
+        }
+    }
 }
 
 struct LockerRoomUnencryptedLockboxView: View {
@@ -64,30 +87,46 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
         VStack(alignment: .leading) {
             Text("Name")
             TextField("", text: $unencryptedLockboxConfiguration.name)
+                .onChange(of: unencryptedLockboxConfiguration.sizeString) { _, newSizeString in
+                    let value = Int(newSizeString) ?? 0
+                    unencryptedLockboxConfiguration.size = LockerRoomUnencryptedLockboxConfiguration.LockboxSize(unit: unencryptedLockboxConfiguration.unit, value: value)
+                }
                 .padding(.bottom)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
-            Text("Size (MB)")
-            TextField("", value: $unencryptedLockboxConfiguration.size, format: .number)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+            Text("Size")
+            HStack {
+                TextField("", text: $unencryptedLockboxConfiguration.sizeString)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                Picker("", selection: $unencryptedLockboxConfiguration.unit) {
+                    ForEach(LockerRoomUnencryptedLockboxConfiguration.LockboxUnit.allCases) { unit in
+                        Text(unit.rawValue).tag(unit)
+                    }
+                }
+                .onChange(of: unencryptedLockboxConfiguration.unit) { _, newUnit in
+                    let value = Int(unencryptedLockboxConfiguration.sizeString) ?? 0
+                    unencryptedLockboxConfiguration.size = LockerRoomUnencryptedLockboxConfiguration.LockboxSize(unit: newUnit, value: value)
+                }
+                .pickerStyle(.menu)
+            }
         }
         
         HStack {
             Spacer()
             
-            let createDisabled = (unencryptedLockboxConfiguration.name.isEmpty || unencryptedLockboxConfiguration.size <= 0)
+            let name = unencryptedLockboxConfiguration.name
+            let sizeInMegabytes = unencryptedLockboxConfiguration.size.megabytes
+            let createDisabled = (name.isEmpty || sizeInMegabytes <= 0)
             
             Button("Create") {
-                let name = unencryptedLockboxConfiguration.name
-                let size = unencryptedLockboxConfiguration.size
                 
-                guard let newUnencryptedLockbox = lockerRoomManager.addUnencryptedLockbox(name: name, size: size) else {
-                    print("[Error] LockerRoom failed to create a new unencrypted lockbox \(name) of size \(size)MB")
+                guard let newUnencryptedLockbox = lockerRoomManager.addUnencryptedLockbox(name: name, size: sizeInMegabytes) else {
+                    print("[Error] LockerRoom failed to create a new unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
                     error = .failedToCreateLockbox
                     viewStyle = .error
                     return
                 }
-                print("[Default] LockerRoom created a new unencrypted lockbox \(name) of size \(size)MB")
+                print("[Default] LockerRoom created a new unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
                 
                 self.lockbox = newUnencryptedLockbox.metadata.lockerRoomLockbox
                 viewStyle = .encrypt
