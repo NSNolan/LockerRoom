@@ -126,7 +126,7 @@ private struct LockerRoomEncryptedLockboxWaitingForKeyView: View {
         
         Spacer()
         
-        ProgressView().progressViewStyle(CircularProgressViewStyle())
+        ProgressView().progressViewStyle(.circular)
         
         Spacer()
         
@@ -151,7 +151,7 @@ private struct LockerRoomEncryptedLockboxDecryptingView: View {
         
         Spacer()
         
-        ProgressView().progressViewStyle(CircularProgressViewStyle())
+        ProgressView().progressViewStyle(.circular)
         
         Spacer()
         

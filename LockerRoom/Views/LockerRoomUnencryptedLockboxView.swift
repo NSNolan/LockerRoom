@@ -87,17 +87,17 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
         VStack(alignment: .leading) {
             Text("Name")
             TextField("", text: $unencryptedLockboxConfiguration.name)
-                .onChange(of: unencryptedLockboxConfiguration.sizeString) { _, newSizeString in
-                    let value = Int(newSizeString) ?? 0
-                    unencryptedLockboxConfiguration.size = LockerRoomUnencryptedLockboxConfiguration.LockboxSize(unit: unencryptedLockboxConfiguration.unit, value: value)
-                }
                 .padding(.bottom)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .textFieldStyle(.roundedBorder)
             
             Text("Size")
             HStack {
                 TextField("", text: $unencryptedLockboxConfiguration.sizeString)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .onChange(of: unencryptedLockboxConfiguration.sizeString) { _, newSizeString in
+                        let value = Int(newSizeString) ?? 0
+                        unencryptedLockboxConfiguration.size = LockerRoomUnencryptedLockboxConfiguration.LockboxSize(unit: unencryptedLockboxConfiguration.unit, value: value)
+                    }
+                    .textFieldStyle(.roundedBorder)
                 Picker("", selection: $unencryptedLockboxConfiguration.unit) {
                     ForEach(LockerRoomUnencryptedLockboxConfiguration.LockboxUnit.allCases) { unit in
                         Text(unit.rawValue).tag(unit)
@@ -233,7 +233,7 @@ private struct LockerRoomUnencryptedLockboxEncryptingView: View {
         
         Spacer()
         
-        ProgressView().progressViewStyle(CircularProgressViewStyle())
+        ProgressView().progressViewStyle(.circular)
         
         Spacer()
         

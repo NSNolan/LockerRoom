@@ -64,7 +64,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
         VStack(alignment: .leading) {
             Text("Name")
             TextField("", text: $keyConfiguration.name)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .textFieldStyle(.roundedBorder)
             
             Text("Slot")
             Picker("", selection: $keyConfiguration.slot) {
@@ -185,7 +185,7 @@ private struct LockerRoomLockboxKeyEnrollAdvancedOptionsView: View {
 
             Text("PIV Management Key")
             TextField("", text: $keyConfiguration.managementKeyString)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .textFieldStyle(.roundedBorder)
         }
     }
 }
@@ -200,7 +200,7 @@ private struct LockerRoomLockboxKeyWaitingForKeyView: View {
         
         Spacer()
         
-        ProgressView().progressViewStyle(CircularProgressViewStyle())
+        ProgressView().progressViewStyle(.circular)
         
         Spacer()
         
