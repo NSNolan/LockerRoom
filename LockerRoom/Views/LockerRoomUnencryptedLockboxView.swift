@@ -14,34 +14,6 @@ enum LockerRoomUnencryptedLockboxViewStyle {
     case error
 }
 
-@Observable private class LockerRoomUnencryptedLockboxConfiguration {
-    var name = ""
-    var sizeString = ""
-    var size = LockboxSize(unit: .megabytes, value: 0)
-    var unit = LockboxUnit.megabytes
-    
-    enum LockboxUnit: String, CaseIterable, Equatable, Identifiable {
-        case megabytes = "Megabytes"
-        case gigabytes = "Gigabytes"
-        
-        var id: String { self.rawValue }
-    }
-    
-    struct LockboxSize {
-        var unit: LockboxUnit
-        var value: Int
-        
-        var megabytes: Int {
-            switch unit {
-            case .megabytes:
-                return value
-            case .gigabytes:
-                return value * 1024
-            }
-        }
-    }
-}
-
 struct LockerRoomUnencryptedLockboxView: View {
     @Bindable var lockerRoomManager: LockerRoomManager
     
