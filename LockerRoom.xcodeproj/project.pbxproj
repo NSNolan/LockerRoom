@@ -38,6 +38,7 @@
 		BF475F642BB493AF003A0E05 /* LockboxKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F632BB493AF003A0E05 /* LockboxKeyGenerator.swift */; };
 		BF475F672BB49FC3003A0E05 /* LockerRoomDiskImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */; };
 		BF5FBFF52BD002360054ED10 /* LockerRoomYubiKeyExperimental.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5FBFF42BD002360054ED10 /* LockerRoomYubiKeyExperimental.swift */; };
+		BF7048CD2BE04504008FB829 /* LockerRoomBindingUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7048CC2BE04504008FB829 /* LockerRoomBindingUtilities.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +93,7 @@
 		BF475F632BB493AF003A0E05 /* LockboxKeyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxKeyGenerator.swift; sourceTree = "<group>"; };
 		BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomDiskImage.swift; sourceTree = "<group>"; };
 		BF5FBFF42BD002360054ED10 /* LockerRoomYubiKeyExperimental.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomYubiKeyExperimental.swift; sourceTree = "<group>"; };
+		BF7048CC2BE04504008FB829 /* LockerRoomBindingUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomBindingUtilities.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -256,6 +258,7 @@
 		BF475F652BB49F87003A0E05 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				BF7048CC2BE04504008FB829 /* LockerRoomBindingUtilities.swift */,
 				BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */,
 				BF0BCB622BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift */,
 				BF0BCB602BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift */,
@@ -416,6 +419,7 @@
 				BF475F612BB3BED1003A0E05 /* LockboxKey.swift in Sources */,
 				BF0BCB632BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift in Sources */,
 				BF1DD0912BB1C823001FA81F /* LockerRoomStore.swift in Sources */,
+				BF7048CD2BE04504008FB829 /* LockerRoomBindingUtilities.swift in Sources */,
 				BF1DD08F2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift in Sources */,
 				BF1DD08D2BAFD2A1001FA81F /* LockboxCryptor.swift in Sources */,
 				BF1DD0762BAF5DCB001FA81F /* LockerRoomManager.swift in Sources */,

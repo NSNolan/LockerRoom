@@ -15,17 +15,17 @@ enum LockerRoomMainViewStyle: String, CaseIterable, Identifiable {
 }
 
 struct LockerRoomMainView: View {
+    @State var lockerRoomManager = LockerRoomManager.shared
+    
     @State private var viewStyle: LockerRoomMainViewStyle = .lockboxes
     @State private var showErrorView = false
     @State var error: LockerRoomError? = nil
-    
-    @StateObject var lockerRoomManager = LockerRoomManager.shared
 
     var body: some View {
         VStack {
             switch viewStyle {
             case .lockboxes:
-                LockerRoomLockboxesView(showErrorView: $showErrorView, error: $error, lockerRoomManager: lockerRoomManager)
+                LockerRoomLockboxesView(lockerRoomManager: lockerRoomManager, showErrorView: $showErrorView, error: $error)
             case .keys:
                 LockerRoomKeysView(lockerRoomManager: lockerRoomManager)
             }
@@ -44,10 +44,10 @@ struct LockerRoomMainView: View {
 }
 
 private struct LockerRoomLockboxesView: View {
+    @Bindable var lockerRoomManager: LockerRoomManager
+    
     @Binding var showErrorView: Bool
     @Binding var error: LockerRoomError?
-    
-    @ObservedObject var lockerRoomManager: LockerRoomManager
     
     @State private var lockboxes = [LockerRoomLockbox]()
     @State private var selection: LockerRoomLockbox.ID? = nil
@@ -110,13 +110,13 @@ private struct LockerRoomLockboxesView: View {
             lockboxes.sort(using: sortOrder)
         }
         .sheet(isPresented: $showUnencryptedLockboxAddView) {
-            LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxAddView, lockbox: $selectedLockbox, lockerRoomManager: lockerRoomManager, viewStyle: .add)
+            LockerRoomUnencryptedLockboxView(lockerRoomManager: lockerRoomManager, showView: $showUnencryptedLockboxAddView, lockbox: $selectedLockbox, viewStyle: .add)
         }
         .sheet(isPresented: $showUnencryptedLockboxView) {
-            LockerRoomUnencryptedLockboxView(showView: $showUnencryptedLockboxView, lockbox: $selectedLockbox, lockerRoomManager: lockerRoomManager, viewStyle: .encrypt)
+            LockerRoomUnencryptedLockboxView(lockerRoomManager: lockerRoomManager, showView: $showUnencryptedLockboxView, lockbox: $selectedLockbox, viewStyle: .encrypt)
         }
         .sheet(isPresented: $showEncryptedLockboxView) {
-            LockerRoomEncryptedLockboxView(showView: $showEncryptedLockboxView, lockbox: $selectedLockbox, lockerRoomManager: lockerRoomManager, viewStyle: .decrypt)
+            LockerRoomEncryptedLockboxView(lockerRoomManager: lockerRoomManager, showView: $showEncryptedLockboxView, lockbox: $selectedLockbox, viewStyle: .decrypt)
         }
     }
     
@@ -163,7 +163,7 @@ private struct LockerRoomLockboxesView: View {
 }
 
 private struct LockerRoomKeysView: View {
-    @ObservedObject var lockerRoomManager: LockerRoomManager
+    @Bindable var lockerRoomManager: LockerRoomManager
     
     @State private var enrolledKeys = [LockerRoomEnrolledKey]()
     @State private var selection: LockerRoomEnrolledKey.ID? = nil
@@ -209,7 +209,7 @@ private struct LockerRoomKeysView: View {
             enrolledKeys.sort(using: sortOrder)
         }
         .sheet(isPresented: $showLockboKeyAddView) {
-            LockerRoomLockboxKeyView(showView: $showLockboKeyAddView, lockerRoomManager: lockerRoomManager, viewStyle: .enroll)
+            LockerRoomLockboxKeyView(lockerRoomManager: lockerRoomManager, showView: $showLockboKeyAddView, viewStyle: .enroll)
         }
     }
 }

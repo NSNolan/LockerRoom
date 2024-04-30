@@ -14,11 +14,11 @@ enum LockerRoomUnencryptedLockboxViewStyle {
     case error
 }
 
-private class LockerRoomUnencryptedLockboxConfiguration: ObservableObject {
-    @Published var name = ""
-    @Published var sizeString = ""
-    @Published var size = LockboxSize(unit: .megabytes, value: 0)
-    @Published var unit = LockboxUnit.megabytes
+@Observable private class LockerRoomUnencryptedLockboxConfiguration {
+    var name = ""
+    var sizeString = ""
+    var size = LockboxSize(unit: .megabytes, value: 0)
+    var unit = LockboxUnit.megabytes
     
     enum LockboxUnit: String, CaseIterable, Equatable, Identifiable {
         case megabytes = "Megabytes"
@@ -43,10 +43,10 @@ private class LockerRoomUnencryptedLockboxConfiguration: ObservableObject {
 }
 
 struct LockerRoomUnencryptedLockboxView: View {
+    @Bindable var lockerRoomManager: LockerRoomManager
+    
     @Binding var showView: Bool
     @Binding var lockbox: LockerRoomLockbox?
-    
-    @ObservedObject var lockerRoomManager: LockerRoomManager
 
     @State var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     @State var error: LockerRoomError? = nil
@@ -55,9 +55,9 @@ struct LockerRoomUnencryptedLockboxView: View {
         VStack {
             switch viewStyle {
             case .add:
-                LockerRoomUnencryptedLockboxAddView(showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle, lockerRoomManager: lockerRoomManager)
+                LockerRoomUnencryptedLockboxAddView(lockerRoomManager: lockerRoomManager, showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
             case .encrypt:
-                LockerRoomUnencryptedLockboxEncryptView(showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle, lockerRoomManager: lockerRoomManager)
+                LockerRoomUnencryptedLockboxEncryptView(lockerRoomManager: lockerRoomManager, showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
             case .encrypting:
                 LockerRoomUnencryptedLockboxEncryptingView(showView: $showView, lockbox: $lockbox)
             case .error:
@@ -70,14 +70,14 @@ struct LockerRoomUnencryptedLockboxView: View {
 }
 
 private struct LockerRoomUnencryptedLockboxAddView: View {
+    @Bindable var lockerRoomManager: LockerRoomManager
+    
     @Binding var showView: Bool
     @Binding var lockbox: LockerRoomLockbox?
     @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     
-    @ObservedObject var lockerRoomManager: LockerRoomManager
-    
-    @StateObject var unencryptedLockboxConfiguration = LockerRoomUnencryptedLockboxConfiguration()
+    @State var unencryptedLockboxConfiguration = LockerRoomUnencryptedLockboxConfiguration()
     
     var body: some View {
         Text("Create a New Lockbox")
@@ -86,13 +86,13 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
         
         VStack(alignment: .leading) {
             Text("Name")
-            TextField("", text: $unencryptedLockboxConfiguration.name)
+            TextField("", text: $unencryptedLockboxConfiguration.name.deduplicatedBinding)
                 .padding(.bottom)
                 .textFieldStyle(.roundedBorder)
             
             Text("Size")
             HStack {
-                TextField("", text: $unencryptedLockboxConfiguration.sizeString)
+                TextField("", text: $unencryptedLockboxConfiguration.sizeString.deduplicatedBinding)
                     .onChange(of: unencryptedLockboxConfiguration.sizeString) { _, newSizeString in
                         let value = Int(newSizeString) ?? 0
                         unencryptedLockboxConfiguration.size = LockerRoomUnencryptedLockboxConfiguration.LockboxSize(unit: unencryptedLockboxConfiguration.unit, value: value)
@@ -147,12 +147,12 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
 }
 
 private struct LockerRoomUnencryptedLockboxEncryptView: View {
+    @Bindable var lockerRoomManager: LockerRoomManager
+    
     @Binding var showView: Bool
     @Binding var lockbox: LockerRoomLockbox?
     @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
-    
-    @ObservedObject var lockerRoomManager: LockerRoomManager
     
     var body: some View {
         VStack(spacing: 0) {

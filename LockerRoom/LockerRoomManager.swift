@@ -7,9 +7,9 @@
 
 import Foundation
 
-class LockerRoomManager: ObservableObject {
-    @Published var lockboxes = [LockerRoomLockbox]()
-    @Published var enrolledKeys = [LockerRoomEnrolledKey]()
+@Observable class LockerRoomManager {
+    var lockboxes = [LockerRoomLockbox]()
+    var enrolledKeys = [LockerRoomEnrolledKey]()
     
     static let shared = LockerRoomManager()
     
@@ -231,7 +231,7 @@ class LockerRoomManager: ObservableObject {
     }
     
     func detachFromDiskImage(name: String) -> Bool {
-        return lockerRoomDiskImage.attach(name: name)
+        return lockerRoomDiskImage.detach(name: name)
     }
 }
 

@@ -15,10 +15,10 @@ enum LockerRoomEncryptedLockboxViewStyle {
 }
 
 struct LockerRoomEncryptedLockboxView: View {
+    @Bindable var lockerRoomManager: LockerRoomManager
+    
     @Binding var showView: Bool
     @Binding var lockbox: LockerRoomLockbox?
-    
-    @ObservedObject var lockerRoomManager: LockerRoomManager
     
     @State var viewStyle: LockerRoomEncryptedLockboxViewStyle
     @State var error: LockerRoomError? = nil
@@ -27,7 +27,7 @@ struct LockerRoomEncryptedLockboxView: View {
         VStack {
             switch viewStyle {
             case .decrypt:
-                LockerRoomEncryptedLockboxDecryptView(showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle, lockerRoomManager: lockerRoomManager)
+                LockerRoomEncryptedLockboxDecryptView(lockerRoomManager: lockerRoomManager, showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
             case .waitingForKey:
                 LockerRoomEncryptedLockboxWaitingForKeyView(showView: $showView, lockbox: $lockbox)
             case .decrypting:
@@ -42,12 +42,12 @@ struct LockerRoomEncryptedLockboxView: View {
 }
 
 private struct LockerRoomEncryptedLockboxDecryptView: View {
+    @Bindable var lockerRoomManager: LockerRoomManager
+    
     @Binding var showView: Bool
     @Binding var lockbox: LockerRoomLockbox?
     @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomEncryptedLockboxViewStyle
-    
-    @ObservedObject var lockerRoomManager: LockerRoomManager
     
     var body: some View {
         VStack(spacing: 0) {

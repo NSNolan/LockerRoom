@@ -13,19 +13,19 @@ enum LockerRoomLockboxKeyViewStyle {
     case error
 }
 
-private class LockerRoomLockboxKeyConfiguration: ObservableObject {
-    @Published var name = ""
-    @Published var slot = LockboxKey.Slot.pivAuthentication
-    @Published var algorithm = LockboxKey.Algorithm.RSA2048
-    @Published var pinPolicy = LockboxKey.PinPolicy.never
-    @Published var touchPolicy = LockboxKey.TouchPolicy.never
-    @Published var managementKeyString = "010203040506070801020304050607080102030405060708" // Default management key
+@Observable private class LockerRoomLockboxKeyConfiguration {
+    var name = ""
+    var slot = LockboxKey.Slot.pivAuthentication
+    var algorithm = LockboxKey.Algorithm.RSA2048
+    var pinPolicy = LockboxKey.PinPolicy.never
+    var touchPolicy = LockboxKey.TouchPolicy.never
+    var managementKeyString = "010203040506070801020304050607080102030405060708" // Default management key
 }
 
 struct LockerRoomLockboxKeyView: View {
-    @Binding var showView: Bool
+    @Bindable var lockerRoomManager: LockerRoomManager
     
-    @ObservedObject var lockerRoomManager: LockerRoomManager
+    @Binding var showView: Bool
     
     @State var viewStyle: LockerRoomLockboxKeyViewStyle
     @State var error: LockerRoomError? = nil
@@ -34,7 +34,7 @@ struct LockerRoomLockboxKeyView: View {
         VStack {
             switch viewStyle {
             case .enroll:
-                LockerRoomLockboxKeyEnrollView(showView: $showView, error: $error, viewStyle: $viewStyle, lockerRoomManager: lockerRoomManager)
+                LockerRoomLockboxKeyEnrollView(lockerRoomManager: lockerRoomManager, showView: $showView, error: $error, viewStyle: $viewStyle)
             case .waitingForKey:
                 LockerRoomLockboxKeyWaitingForKeyView(showView: $showView, viewStyle: $viewStyle)
             case .error:
@@ -47,15 +47,14 @@ struct LockerRoomLockboxKeyView: View {
 }
 
 private struct LockerRoomLockboxKeyEnrollView: View {
+    @Bindable var lockerRoomManager: LockerRoomManager
+    
     @Binding var showView: Bool
     @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomLockboxKeyViewStyle
     
-    @ObservedObject var lockerRoomManager: LockerRoomManager
-    
-    @State private var advancedOptions = false
-    
-    @StateObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
+    @State var advancedOptions = false
+    @State var keyConfiguration = LockerRoomLockboxKeyConfiguration()
     
     var body: some View {
         Text("Enroll a New Key")
@@ -63,7 +62,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
         
         VStack(alignment: .leading) {
             Text("Name")
-            TextField("", text: $keyConfiguration.name)
+            TextField("", text: $keyConfiguration.name.deduplicatedBinding)
                 .textFieldStyle(.roundedBorder)
             
             Text("Slot")
@@ -155,7 +154,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
 }
 
 private struct LockerRoomLockboxKeyEnrollAdvancedOptionsView: View {
-    @ObservedObject var keyConfiguration = LockerRoomLockboxKeyConfiguration()
+    @Bindable var keyConfiguration: LockerRoomLockboxKeyConfiguration
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -184,7 +183,7 @@ private struct LockerRoomLockboxKeyEnrollAdvancedOptionsView: View {
             .pickerStyle(.segmented)
 
             Text("PIV Management Key")
-            TextField("", text: $keyConfiguration.managementKeyString)
+            TextField("", text: $keyConfiguration.managementKeyString.deduplicatedBinding)
                 .textFieldStyle(.roundedBorder)
         }
     }
