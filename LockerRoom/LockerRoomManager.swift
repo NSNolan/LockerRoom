@@ -8,10 +8,10 @@
 import Foundation
 
 @Observable class LockerRoomManager {
+    static let shared = LockerRoomManager()
+    
     var lockboxes = [LockerRoomLockbox]()
     var enrolledKeys = [LockerRoomEnrolledKey]()
-    
-    static let shared = LockerRoomManager()
     
     private let lockboxCryptor: LockboxCrypting
     private let lockboxKeyCryptor: LockboxKeyCrypting

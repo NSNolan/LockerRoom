@@ -8,7 +8,6 @@
 import Foundation
 
 protocol LockerRoomURLProviding {
-    var rootURL: URL { get }
     var urlForLockboxes: URL { get }
     var urlForKeys: URL { get }
     
@@ -34,7 +33,7 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
     private static let volumesPathComponent = "/Volumes/"
     
     private let fileManager = FileManager.default
-    internal var rootURL: URL
+    private let rootURL: URL
         
     init(rootURL: URL? = nil) {
         let documentDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first

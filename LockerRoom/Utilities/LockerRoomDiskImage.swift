@@ -16,7 +16,7 @@ protocol LockerRoomDiskImaging {
 struct LockerRoomDiskImage: LockerRoomDiskImaging {
     static let hdiutilLaunchPath = "/usr/bin/hdiutil"
     
-    internal var lockerRoomURLProvider: LockerRoomURLProviding
+    private let lockerRoomURLProvider: LockerRoomURLProviding
     
     init(lockerRoomURLProvider: LockerRoomURLProviding) {
         self.lockerRoomURLProvider = lockerRoomURLProvider
