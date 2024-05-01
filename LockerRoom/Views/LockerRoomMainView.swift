@@ -49,7 +49,7 @@ private struct LockerRoomLockboxesView: View {
     @Binding var showErrorView: Bool
     @Binding var error: LockerRoomError?
     
-    @State private var lockboxes = [LockerRoomLockbox]()
+    @State private var lockboxesByUUID = [UUID:LockerRoomLockbox]()
     @State private var selection: LockerRoomLockbox.ID? = nil
     @State private var sortOrder = [KeyPathComparator(\LockerRoomLockbox.name)]
     
@@ -58,6 +58,10 @@ private struct LockerRoomLockboxesView: View {
     @State private var showEncryptedLockboxView = false
     
     @State private var selectedLockbox: LockerRoomLockbox? = nil
+    
+    var lockboxes: [LockerRoomLockbox] {
+        return Array(lockboxesByUUID.values).sorted(using: sortOrder)
+    }
     
     var body: some View {
         VStack {
@@ -71,7 +75,7 @@ private struct LockerRoomLockboxesView: View {
                 }
                 .width(min: 0, ideal: 0, max: 0)
                 
-                TableColumn("Name") { lockbox in
+                TableColumn("Name", value: \.name) { lockbox in
                     HStack {
                         Text(lockbox.name)
                         ForEach(lockbox.encryptionKeyNames, id: \.self) { keyName in
@@ -99,15 +103,10 @@ private struct LockerRoomLockboxesView: View {
             .padding()
         }
         .onAppear() {
-            lockboxes = lockerRoomManager.lockboxes
-            lockboxes.sort(using: sortOrder)
+            lockboxesByUUID = lockerRoomManager.lockboxesByID
         }
-        .onChange(of: lockerRoomManager.lockboxes) {
-            lockboxes = lockerRoomManager.lockboxes
-            lockboxes.sort(using: sortOrder)
-        }
-        .onChange(of: sortOrder) {
-            lockboxes.sort(using: sortOrder)
+        .onChange(of: lockerRoomManager.lockboxesByID) {
+            lockboxesByUUID = lockerRoomManager.lockboxesByID
         }
         .sheet(isPresented: $showUnencryptedLockboxAddView) {
             LockerRoomUnencryptedLockboxView(lockerRoomManager: lockerRoomManager, showView: $showUnencryptedLockboxAddView, lockbox: $selectedLockbox, viewStyle: .add)
@@ -152,7 +151,7 @@ private struct LockerRoomLockboxesView: View {
     }
         
     private func selectedLockbox(fromIDs lockboxIDs: Set<LockerRoomLockbox.ID>) -> LockerRoomLockbox? {
-        guard let lockboxID = lockboxIDs.first, let lockbox = lockboxes.first(where: { $0.id == lockboxID }) else { // TODO: Is this really the best way to get the lockbox I just selected...
+        guard let lockboxID = lockboxIDs.first, let lockbox = lockerRoomManager.lockboxesByID[lockboxID] else {
             print("[Error] LockerRoom failed to find selected lockbox")
             error = .failedToFindSelectedLockbox
             showErrorView = true
@@ -165,7 +164,7 @@ private struct LockerRoomLockboxesView: View {
 private struct LockerRoomKeysView: View {
     @Bindable var lockerRoomManager: LockerRoomManager
     
-    @State private var enrolledKeys = [LockerRoomEnrolledKey]()
+    @State private var enrolledKeysByID = [UUID:LockerRoomEnrolledKey]()
     @State private var selection: LockerRoomEnrolledKey.ID? = nil
     @State private var sortOrder = [KeyPathComparator(\LockerRoomEnrolledKey.name)]
     
@@ -173,11 +172,15 @@ private struct LockerRoomKeysView: View {
     
     @State private var selectedLockboxKey: LockboxKey? = nil
     
+    var enrolledKeys: [LockerRoomEnrolledKey] {
+        return Array(enrolledKeysByID.values).sorted(using: sortOrder)
+    }
+    
     var body: some View {
         VStack {
             Table(enrolledKeys, selection: $selection, sortOrder: $sortOrder) {
                 TableColumn("Name", value: \.name)
-                TableColumn("Serial Number") { enrolledKey in
+                TableColumn("Serial Number", value: \.serialNumber) { enrolledKey in
                     Text("\(String(enrolledKey.serialNumber))")
                 }
                 TableColumn("Slot", value: \.slot.rawValue)
@@ -198,15 +201,10 @@ private struct LockerRoomKeysView: View {
             .padding()
         }
         .onAppear() {
-            enrolledKeys = lockerRoomManager.enrolledKeys
-            enrolledKeys.sort(using: sortOrder)
+            enrolledKeysByID = lockerRoomManager.enrolledKeysByID
         }
-        .onChange(of: lockerRoomManager.enrolledKeys) {
-            enrolledKeys = lockerRoomManager.enrolledKeys
-            enrolledKeys.sort(using: sortOrder)
-        }
-        .onChange(of: sortOrder) {
-            enrolledKeys.sort(using: sortOrder)
+        .onChange(of: lockerRoomManager.enrolledKeysByID) {
+            enrolledKeysByID = lockerRoomManager.enrolledKeysByID
         }
         .sheet(isPresented: $showLockboKeyAddView) {
             LockerRoomLockboxKeyView(lockerRoomManager: lockerRoomManager, showView: $showLockboKeyAddView, viewStyle: .enroll)

@@ -10,8 +10,8 @@ import Foundation
 @Observable class LockerRoomManager {
     static let shared = LockerRoomManager()
     
-    var lockboxes = [LockerRoomLockbox]()
-    var enrolledKeys = [LockerRoomEnrolledKey]()
+    var lockboxesByID = [UUID:LockerRoomLockbox]()
+    var enrolledKeysByID = [UUID:LockerRoomEnrolledKey]()
     
     private let lockboxCryptor: LockboxCrypting
     private let lockboxKeyCryptor: LockboxKeyCrypting
@@ -33,8 +33,8 @@ import Foundation
         self.lockerRoomDiskImage = lockerRoomDiskImage ?? LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
         self.lockerRoomStore = lockerRoomStore ?? LockerRoomStore(lockerRoomURLProvider: lockerRoomURLProvider)
         
-        self.lockboxes = self.lockerRoomStore.lockboxes
-        self.enrolledKeys = self.lockerRoomStore.enrolledKeys
+        self.lockboxesByID = self.lockerRoomStore.lockboxesByID
+        self.enrolledKeysByID = self.lockerRoomStore.enrolledKeysByID
     }
     
     func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
@@ -48,7 +48,7 @@ import Foundation
             return nil
         }
         
-        lockboxes = lockerRoomStore.lockboxes
+        lockboxesByID = lockerRoomStore.lockboxesByID
         return unencryptedLockbox
     }
     
@@ -58,7 +58,7 @@ import Foundation
             return false
         }
         
-        lockboxes = lockerRoomStore.lockboxes
+        lockboxesByID = lockerRoomStore.lockboxesByID
         return true
     }
     
@@ -68,7 +68,7 @@ import Foundation
             return false
         }
         
-        lockboxes = lockerRoomStore.lockboxes
+        lockboxesByID = lockerRoomStore.lockboxesByID
         return true
     }
     
@@ -99,7 +99,7 @@ import Foundation
             return nil
         }
         
-        enrolledKeys = lockerRoomStore.enrolledKeys
+        enrolledKeysByID = lockerRoomStore.enrolledKeysByID
         return lockboxKey
     }
     
@@ -109,7 +109,7 @@ import Foundation
             return false
         }
         
-        enrolledKeys = lockerRoomStore.enrolledKeys
+        enrolledKeysByID = lockerRoomStore.enrolledKeysByID
         return true
     }
     
@@ -162,7 +162,7 @@ import Foundation
         }
         print("[Default] Locker room manager removed unencrypted lockbox content \(name)")
         
-        lockboxes = lockerRoomStore.lockboxes
+        lockboxesByID = lockerRoomStore.lockboxesByID
         return true
     }
     
@@ -222,7 +222,7 @@ import Foundation
             return false
         }
         
-        lockboxes = lockerRoomStore.lockboxes
+        lockboxesByID = lockerRoomStore.lockboxesByID
         return true
     }
     
@@ -236,13 +236,15 @@ import Foundation
 }
 
 extension LockerRoomStoring {
-    var lockboxes: [LockerRoomLockbox] {
+    var lockboxesByID: [UUID:LockerRoomLockbox] {
         let unencryptedLockboxes = unencryptedLockboxMetdatas.map { $0.lockerRoomLockbox }
         let encryptedLockboxes = encryptedLockboxMetadatas.map { $0.lockerRoomLockbox }
-        return unencryptedLockboxes + encryptedLockboxes
+        let lockboxes = unencryptedLockboxes + encryptedLockboxes
+        return lockboxes.reduce(into: [UUID:LockerRoomLockbox]()) { $0[$1.id] = $1 }
     }
     
-    var enrolledKeys: [LockerRoomEnrolledKey] {
-        return lockboxKeys.map{ $0.lockerRoomEnrolledKey }
+    var enrolledKeysByID: [UUID:LockerRoomEnrolledKey] {
+        let enrolledKeys = lockboxKeys.map{ $0.lockerRoomEnrolledKey }
+        return enrolledKeys.reduce(into: [UUID:LockerRoomEnrolledKey]()) { $0[$1.id] = $1 }
     }
 }
