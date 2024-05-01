@@ -113,7 +113,7 @@ import Foundation
         return true
     }
     
-    func encrypt(lockbox: LockerRoomLockbox) -> Bool {
+    func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeys: [LockerRoomEnrolledKey]) -> Bool {
         _ = lockerRoomDiskImage.detach(name: lockbox.name) // Non-fatal; it may already be detached
         
         guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore) else {
@@ -128,7 +128,16 @@ import Foundation
         var encryptedSymmetricKeysBySerialNumber = [UInt32:Data]()
         var encryptionLockboxKeys = [LockboxKey]()
         
-        for lockboxKey in lockerRoomStore.lockboxKeys {
+        let lockboxKeysToUse: [LockboxKey]
+        if enrolledKeys.isEmpty {
+            lockboxKeysToUse = lockerRoomStore.lockboxKeys
+        } else {
+            let keyNamesToUse = Set(enrolledKeys.map { $0.name })
+            lockboxKeysToUse = lockerRoomStore.lockboxKeys.filter { keyNamesToUse.contains($0.name) }
+        }
+        print("[Default] Locker room manager encrypting using lockbox keys \(lockboxKeysToUse.map { $0.name })")
+        
+        for lockboxKey in lockboxKeysToUse {
             guard let encryptedSymmetricKeyData = lockboxKeyCryptor.encrypt(symmetricKeyData: symmetricKeyData, lockboxKey: lockboxKey) else {
                 print("[Error] Locker room manager failed to encrypt a symmetric key with lockbox key \(lockboxKey.name) for \(name)")
                 continue

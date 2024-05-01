@@ -126,6 +126,9 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
     @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
     
+    @State var keySelection = false
+    @State var selectedKeys = [LockerRoomEnrolledKey]()
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: -12) {
@@ -141,35 +144,58 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                 }
             }
         
-            HStack {
-                Button("Encrypt") {
-                    viewStyle = .encrypting
-                    
-                    guard let lockbox else {
-                        print("[Error] LockerRoom is missing an unencrypted lockbox to encrypt")
-                        error = .missingLockbox
-                        viewStyle = .error
-                        return
-                    }
-                    
-                    guard lockerRoomManager.encrypt(lockbox: lockbox) else {
-                        print("[Error] LockerRoom is failed to encrypt an unencrypted lockbox \(lockbox.name)")
-                        error = .failedToEncryptLockbox
-                        viewStyle = .error
-                        return
-                    }
-                    
-                    showView = false
+            VStack {
+                if keySelection {
+                    LockerRoomUnencryptedLockboxEncryptKeySelectionView(lockerRoomManager: lockerRoomManager, selectedKeys: $selectedKeys)
                 }
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut(.defaultAction)
-                .tint(.blue)
                 
-                Button("Later") {
-                    showView = false
+                HStack {
+                    Button("Encrypt") {
+                        viewStyle = .encrypting
+                        
+                        guard let lockbox else {
+                            print("[Error] LockerRoom is missing an unencrypted lockbox to encrypt")
+                            error = .missingLockbox
+                            viewStyle = .error
+                            return
+                        }
+                        
+                        guard lockerRoomManager.encrypt(lockbox: lockbox, usingEnrolledKeys: selectedKeys) else {
+                            print("[Error] LockerRoom is failed to encrypt an unencrypted lockbox \(lockbox.name)")
+                            error = .failedToEncryptLockbox
+                            viewStyle = .error
+                            return
+                        }
+                        
+                        showView = false
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
+                    .tint(.blue)
+                    
+                    Button("Later") {
+                        showView = false
+                    }
+                    .buttonStyle(.bordered)
+                    .keyboardShortcut(.escape)
                 }
-                .buttonStyle(.bordered)
-                .keyboardShortcut(.escape)
+                
+                if lockerRoomManager.enrolledKeysByID.count > 1 {
+                    Button(action: {
+                        withAnimation {
+                            keySelection.toggle()
+                        }
+                    }) {
+                        if keySelection {
+                            Image(systemName: "chevron.up")
+                            Text("Hide Key Selection")
+                        } else {
+                            Text("Show Key Selection")
+                            Image(systemName: "chevron.down")
+                        }
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                }
             }
         }
         .onAppear {
@@ -188,6 +214,46 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                 return
             }
         }
+    }
+}
+
+private struct LockerRoomUnencryptedLockboxEncryptKeySelectionView: View {
+    @Bindable var lockerRoomManager: LockerRoomManager
+    @Binding var selectedKeys: [LockerRoomEnrolledKey]
+    
+    @State private var selection: Set<LockerRoomEnrolledKey.ID> = Set()
+    
+    var enrolledKeys: [LockerRoomEnrolledKey] {
+        return Array(lockerRoomManager.enrolledKeysByID.values).sorted(using: [KeyPathComparator(\LockerRoomEnrolledKey.name)])
+    }
+    
+    var body: some View {
+        List(selection: $selection) {
+            ForEach(enrolledKeys) { item in
+                Text(item.name)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                    .contentShape(Rectangle()) // Makes the entire row clickable
+                    .background(self.rowBackgroundColor(for: item))
+                    .cornerRadius(5)
+            }
+        }
+        .background(Color.white)
+        .frame(width: 200, height: 66)
+        .onChange(of: selection) { oldValue, newValue in
+            selectedKeys = selection.reduce(into: [LockerRoomEnrolledKey]()) { result, enrolledKeyID in
+                if let enrolledKey = lockerRoomManager.enrolledKeysByID[enrolledKeyID] {
+                    result.append(enrolledKey)
+                }
+            }
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray, lineWidth: 1)
+        )
+    }
+    
+    private func rowBackgroundColor(for enrolledKey: LockerRoomEnrolledKey) -> Color {
+        return selection.contains(enrolledKey.id) ? Color.blue.opacity(0.2) : Color.clear
     }
 }
 
