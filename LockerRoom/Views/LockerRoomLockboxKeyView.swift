@@ -54,6 +54,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
         VStack(alignment: .leading) {
             Text("Name")
             TextField("", text: $keyConfiguration.name.deduplicatedBinding)
+                .padding(.leading, 10)
                 .textFieldStyle(.roundedBorder)
             
             Text("Slot")
@@ -175,6 +176,7 @@ private struct LockerRoomLockboxKeyEnrollAdvancedOptionsView: View {
 
             Text("PIV Management Key")
             TextField("", text: $keyConfiguration.managementKeyString.deduplicatedBinding)
+                .padding(.leading, 10)
                 .textFieldStyle(.roundedBorder)
         }
     }

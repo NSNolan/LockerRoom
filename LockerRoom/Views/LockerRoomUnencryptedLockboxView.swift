@@ -60,6 +60,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
             Text("Name")
             TextField("", text: $unencryptedLockboxConfiguration.name.deduplicatedBinding)
                 .padding(.bottom)
+                .padding(.leading, 10)
                 .textFieldStyle(.roundedBorder)
             
             Text("Size")
@@ -69,6 +70,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
                         let value = Int(newSizeString) ?? 0
                         unencryptedLockboxConfiguration.size = LockerRoomUnencryptedLockboxConfiguration.LockboxSize(unit: unencryptedLockboxConfiguration.unit, value: value)
                     }
+                    .padding(.leading, 10)
                     .textFieldStyle(.roundedBorder)
                 Picker("", selection: $unencryptedLockboxConfiguration.unit) {
                     ForEach(LockerRoomUnencryptedLockboxConfiguration.LockboxUnit.allCases) { unit in
@@ -88,10 +90,9 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
             
             let name = unencryptedLockboxConfiguration.name
             let sizeInMegabytes = unencryptedLockboxConfiguration.size.megabytes
-            let createDisabled = (name.isEmpty || sizeInMegabytes <= 0)
+            let createDisabled = (name.isEmpty || sizeInMegabytes <= 0 || sizeInMegabytes > LockerRoomUnencryptedLockboxConfiguration.maxSize)
             
             Button("Create") {
-                
                 guard let newUnencryptedLockbox = lockerRoomManager.addUnencryptedLockbox(name: name, size: sizeInMegabytes) else {
                     print("[Error] LockerRoom failed to create a new unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
                     error = .failedToCreateLockbox

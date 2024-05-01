@@ -8,6 +8,8 @@
 import Foundation
 
 @Observable class LockerRoomUnencryptedLockboxConfiguration {
+    static let maxSize = 100 * 1024 // 100GB
+    
     var name = ""
     var sizeString = ""
     var size = LockboxSize(unit: .megabytes, value: 0)
