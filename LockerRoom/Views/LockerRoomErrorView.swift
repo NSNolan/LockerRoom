@@ -21,12 +21,14 @@ struct LockerRoomErrorView: View {
             
             if let error {
                 Text("\(error.nonLocalizedDescription)")
-                    //.padding(.horizontal)
+                    .padding()
             }
+            
+            Button("Close") {
+                showView = false
+            }
+            .padding(.top)
         }
-        
-        Button("Close") {
-            showView = false
-        }
+        .frame(width: 300)
     }
 }
