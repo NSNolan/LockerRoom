@@ -230,16 +230,17 @@ private struct LockerRoomUnencryptedLockboxEncryptKeySelectionView: View {
     
     var body: some View {
         List(selection: $selection) {
-            ForEach(enrolledKeys) { item in
-                Text(item.name)
+            ForEach(enrolledKeys) { key in
+                Text(key.name)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-                    .contentShape(Rectangle()) // Makes the entire row clickable
-                    .background(self.rowBackgroundColor(for: item))
                     .cornerRadius(5)
             }
         }
         .background(Color.white)
         .frame(width: 200, height: 66)
+        .onAppear() {
+            selection = Set(selectedKeys.map { $0.id })
+        }
         .onChange(of: selection) { oldValue, newValue in
             selectedKeys = selection.reduce(into: [LockerRoomEnrolledKey]()) { result, enrolledKeyID in
                 if let enrolledKey = lockerRoomManager.enrolledKeysByID[enrolledKeyID] {
@@ -251,10 +252,6 @@ private struct LockerRoomUnencryptedLockboxEncryptKeySelectionView: View {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.gray, lineWidth: 1)
         )
-    }
-    
-    private func rowBackgroundColor(for enrolledKey: LockerRoomEnrolledKey) -> Color {
-        return selection.contains(enrolledKey.id) ? Color.blue.opacity(0.2) : Color.clear
     }
 }
 
