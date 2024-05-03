@@ -20,7 +20,7 @@ And while the **Keys** view is selected, the same plus button will instead promp
 
 When a new lockbox is created it starts off unencrypted and a user can add files to it. The lock icon to the left of the lockbox name indicates whether or not it has been encrypted. A lockbox cannot be encrypted until at least one key has been enrolled using an external hardware device. Once a key is enrolled, the external hardware device's corresponding public key is stored on disk. The stored public key can then be used to encrypt lockboxes without the external hardware device present. By default, all enrolled key will be used when a lockbox is encrypted. Alternatively, a user can select specific enrolled keys to be used for encryption. Each encrypted lockbox in the **Lockboxes** view indicates which keys have been used for its encryption.
 
-To enroll a key the user must first switch to the **Keys** view and then click the plus button. A key name and PIV slot must be provided when generating the public-private key pair on the external hardware device. Advanced options for specifying the key algorithm, PIN policy, touch policy and PIV management key can be configued if needed:
+To enroll a key the user must first switch to the **Keys** view and then click the plus button. A key name and PIV slot must be provided when generating the public-private key pair on the external hardware device. Selecting "Show Advanced Options" will allow the user to specify the key algorithm, PIN policy, touch policy and PIV management key:
 ![](Images/Locker-Room-Add-Key-Advanced.png)
 
  After the key specifications are configured, Locker Room will wait for the external hardware device to become present. Once present the key enrollment process will complete. The resulting public key is stored on disk for future encryption and the private key always remains on the external hardware device for future decryption. Newly enrolled keys will not be used to retroactively encrypt previously encrypted lockboxes and therefore the corresponding external hardware device cannot be used to decrypt previously encrypted lockboxes.
@@ -28,7 +28,7 @@ To enroll a key the user must first switch to the **Keys** view and then click t
 A user can choose to encrypt a lockbox directly after it is created or they can choose to encrypt it later. Double-clicking an unencrypted lockbox from the list of lockboxes will prompt the user to encrypt it:
 ![](Images/Locker-Room-Encrypt-Lockbox.png)
 
-Selecting "Show Key Selection" will allow the use to specify which keys to use instead of using all enrolled keys for encryption:
+Selecting "Show Key Selection" will allow the user to specify which keys to use instead of using all enrolled keys for encryption:
 ![](Images/Locker-Room-Encrypt-Lockbox-Key-Selection.png)
 
 And double-clicking an encrypted lockbox will prompt the user to decrypt it:
