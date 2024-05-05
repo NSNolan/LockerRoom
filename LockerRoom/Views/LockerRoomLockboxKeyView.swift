@@ -54,7 +54,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
         VStack(alignment: .leading) {
             Text("Name")
             TextField("", text: $keyConfiguration.name.deduplicatedBinding)
-                .padding(.leading, 10)
+                .padding(.leading, 8)
                 .textFieldStyle(.roundedBorder)
             
             Text("Slot")
@@ -74,6 +74,22 @@ private struct LockerRoomLockboxKeyEnrollView: View {
         }
         
         VStack {
+            Button(action: {
+                withAnimation {
+                    advancedOptions.toggle()
+                }
+            }) {
+                if advancedOptions {
+                    Image(systemName: "chevron.up")
+                    Text("Hide Advanced Options")
+                } else {
+                    Text("Show Advanced Options")
+                    Image(systemName: "chevron.down")
+                }
+            }
+            .buttonStyle(BorderlessButtonStyle())
+            .padding([.bottom, .top], 5)
+            
             HStack {
                 Spacer()
                 
@@ -101,22 +117,6 @@ private struct LockerRoomLockboxKeyEnrollView: View {
                 .buttonStyle(.bordered)
                 .keyboardShortcut(.escape)
             }
-            .padding(.top)
-            
-            Button(action: {
-                withAnimation {
-                    advancedOptions.toggle()
-                }
-            }) {
-                if advancedOptions {
-                    Image(systemName: "chevron.up")
-                    Text("Hide Advanced Options")
-                } else {
-                    Text("Show Advanced Options")
-                    Image(systemName: "chevron.down")
-                }
-            }
-            .buttonStyle(BorderlessButtonStyle())
         }
     }
     
@@ -176,7 +176,7 @@ private struct LockerRoomLockboxKeyEnrollAdvancedOptionsView: View {
 
             Text("PIV Management Key")
             TextField("", text: $keyConfiguration.managementKeyString.deduplicatedBinding)
-                .padding(.leading, 10)
+                .padding(.leading, 8)
                 .textFieldStyle(.roundedBorder)
         }
     }

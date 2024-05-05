@@ -115,7 +115,7 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
             .buttonStyle(.bordered)
             .keyboardShortcut(.escape)
         }
-        .padding([.top, .bottom])
+        .padding(.top)
     }
 }
 
@@ -131,14 +131,15 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
     @State var selectedKeys = [LockerRoomEnrolledKey]()
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack() {
             VStack(spacing: -12) {
                 Image(systemName: "lock.open")
                 
                 if let lockbox {
                     Text("Secure Lockbox \(lockbox.name)")
                         .bold()
-                        .padding()
+                        .padding(.bottom, 2)
+                        .padding(.top)
                 } else {
                     Text("Missing Lockbox to Secure")
                         .padding()
@@ -148,6 +149,24 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
             VStack {
                 if keySelection {
                     LockerRoomUnencryptedLockboxEncryptKeySelectionView(lockerRoomManager: lockerRoomManager, selectedKeys: $selectedKeys)
+                }
+                
+                if lockerRoomManager.enrolledKeysByID.count > 1 {
+                    Button(action: {
+                        withAnimation {
+                            keySelection.toggle()
+                        }
+                    }) {
+                        if keySelection {
+                            Image(systemName: "chevron.up")
+                            Text("Hide Key Selection")
+                        } else {
+                            Text("Show Key Selection")
+                            Image(systemName: "chevron.down")
+                        }
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .padding(.bottom, 5)
                 }
                 
                 HStack {
@@ -179,23 +198,6 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                     }
                     .buttonStyle(.bordered)
                     .keyboardShortcut(.escape)
-                }
-                
-                if lockerRoomManager.enrolledKeysByID.count > 1 {
-                    Button(action: {
-                        withAnimation {
-                            keySelection.toggle()
-                        }
-                    }) {
-                        if keySelection {
-                            Image(systemName: "chevron.up")
-                            Text("Hide Key Selection")
-                        } else {
-                            Text("Show Key Selection")
-                            Image(systemName: "chevron.down")
-                        }
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
                 }
             }
         }
