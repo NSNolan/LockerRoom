@@ -61,6 +61,7 @@
 		BF7048CF2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7048CE2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift */; };
 		BF7048D12BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7048D02BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift */; };
 		BFAF915E2BEBB67B0028B81C /* LockerRoomStoreMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF915D2BEBB67B0028B81C /* LockerRoomStoreMock.swift */; };
+		BFAF91602BEBC5750028B81C /* UnencryptedLockboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF915F2BEBC5750028B81C /* UnencryptedLockboxTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,6 +122,7 @@
 		BF7048CE2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockboxKeyConfiguration.swift; sourceTree = "<group>"; };
 		BF7048D02BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomUnencryptedLockboxConfiguration.swift; sourceTree = "<group>"; };
 		BFAF915D2BEBB67B0028B81C /* LockerRoomStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomStoreMock.swift; sourceTree = "<group>"; };
+		BFAF915F2BEBC5750028B81C /* UnencryptedLockboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnencryptedLockboxTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,6 +222,7 @@
 			children = (
 				BF63F4FF2BE823E500692EB8 /* LockboxCryptorTests.swift */,
 				BF0051FB2BEB363E00C69CA9 /* LockboxKeyTests.swift */,
+				BFAF915F2BEBC5750028B81C /* UnencryptedLockboxTests.swift */,
 				BF63F50B2BE8791C00692EB8 /* Mock Objects */,
 			);
 			path = LockerRoomTests;
@@ -478,6 +481,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFAF91602BEBC5750028B81C /* UnencryptedLockboxTests.swift in Sources */,
 				BF63F5112BE927A000692EB8 /* LockerRoomSecKeyPrimitives.swift in Sources */,
 				BF63F5012BE878BE00692EB8 /* UnencryptedLockbox.swift in Sources */,
 				BF63F5002BE823E500692EB8 /* LockboxCryptorTests.swift in Sources */,

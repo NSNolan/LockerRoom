@@ -131,9 +131,9 @@ final class LockboxKeyTests: XCTestCase {
         var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         store.failToRemoveLockboxKey = true
         
-        let destorySuccess = LockboxKey.destroy(name: name, lockerRoomStore: store)
+        let destroySuccess = LockboxKey.destroy(name: name, lockerRoomStore: store)
         
-        XCTAssertFalse(destorySuccess)
+        XCTAssertFalse(destroySuccess)
     }
     
     func testLockboxKeyExperimentalStatus() {
