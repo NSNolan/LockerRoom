@@ -70,6 +70,7 @@ Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU comman
 - There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
 - Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
 - Enrolled keys cannot be deleted within Locker Room. But can be removed using the filesystem.
+- An enrolled key's PIV management key should not be stored on disk.
 
 ### Future Enhancements
 
