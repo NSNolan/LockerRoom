@@ -113,11 +113,11 @@ import Foundation
         return true
     }
     
-    func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeys: [LockerRoomEnrolledKey]) -> Bool {
+    func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeysToUse: [LockerRoomEnrolledKey]) -> Bool {
         _ = lockerRoomDiskImage.detach(name: lockbox.name) // Non-fatal; it may already be detached
         
         guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore) else {
-            print("[Default] Locker room manager failed to created unencrypted lockbox \(lockbox.name)")
+            print("[Default] Locker room manager failed to create unencrypted lockbox \(lockbox.name)")
             return false
         }
         
@@ -129,10 +129,10 @@ import Foundation
         var encryptionLockboxKeys = [LockboxKey]()
         
         let lockboxKeysToUse: [LockboxKey]
-        if enrolledKeys.isEmpty {
+        if enrolledKeysToUse.isEmpty {
             lockboxKeysToUse = lockerRoomStore.lockboxKeys
         } else {
-            let keyNamesToUse = Set(enrolledKeys.map { $0.name })
+            let keyNamesToUse = Set(enrolledKeysToUse.map { $0.name })
             lockboxKeysToUse = lockerRoomStore.lockboxKeys.filter { keyNamesToUse.contains($0.name) }
         }
         print("[Default] Locker room manager encrypting using lockbox keys \(lockboxKeysToUse.map { $0.name })")
