@@ -58,7 +58,7 @@ The now decrypted symmetric key is used to decrypt the encrypted lockbox with th
 
 The YubiKey SDK allows for using the following PIV slots: PIV Authentication (9a), Digital Signature (9c), Key Management (9d), Card Authentication (9e) and Attestation (f9). These slots have canonical usages and do not typically store a raw RSA or ECC private key for encryption and decryption. Even though there is no direct support via the YubiKey SDK, there does exists 20 retired key management slots (82-95) capable of storing a raw private key. Locker Room allows a user to enroll a key using one of these unsupported PIV slots so the user does not have to reserve or misuse one of the supported slots for a Locker Room private key.
 
-Enrolling a key with an unsupported PIV slot is achieved by sending an [ADPU commands](https://docs.yubico.com/yesdk/users-manual/yubikey-reference/apdu.html) directly to the external hardware device. This bypasses the limitations of the YubiKey SDK and encodes the unsupported slot into the command's raw data.
+Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU commands](https://docs.yubico.com/yesdk/users-manual/yubikey-reference/apdu.html) directly to the external hardware device. This bypasses the limitations of the YubiKey SDK and encodes the unsupported slot into the command's raw data.
 
 ### Known Issues
 

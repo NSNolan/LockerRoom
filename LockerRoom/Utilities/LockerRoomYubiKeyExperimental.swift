@@ -13,7 +13,7 @@ import YubiKit
 // This code has been taken and modified from the YubiKey SDK to support key generation
 // and message decryption using non-standard PIV Slots. The YubiKey SDK does not have `PIVSlot`
 // representations for the 20 retired slots (82-95) availabe on YubiKey. This is accomplished by
-// sending a ADPU command with the raw slot value.
+// sending ADPU commands with the raw slot value.
 
 extension PIVSession {
     fileprivate static let insAuthenticate: UInt8 = 0x87
