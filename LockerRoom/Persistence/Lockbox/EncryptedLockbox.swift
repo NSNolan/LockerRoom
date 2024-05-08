@@ -34,15 +34,11 @@ struct EncryptedLockbox {
     }
     
     static func create(name: String, size: Int, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
-        guard !lockerRoomStore.lockboxExists(name: name) else {
-            print("[Error] Encrypted lockbox failed to add \(name) at existing path")
-            return nil
-        }
-        
         guard size > 0 else {
             print("[Error] Encrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil
         }
+        print("[Default] Encrypted lockbox creating \(name) for existing content")
         
         guard let streams = streams(forName: name, lockerRoomStore: lockerRoomStore) else {
             print("[Error] Encrypted lockbox failed to create input/output streams for \(name)")

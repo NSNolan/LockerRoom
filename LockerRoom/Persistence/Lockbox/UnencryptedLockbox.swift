@@ -30,7 +30,6 @@ struct UnencryptedLockbox {
             print("[Error] Unencrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil
         }
-        
         print("[Default] Unencrypted lockbox creating \(name) for new content")
         
         guard lockerRoomDiskImage.create(name: name, size: size) else {
