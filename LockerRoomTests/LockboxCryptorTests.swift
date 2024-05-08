@@ -8,7 +8,7 @@
 import XCTest
 
 final class LockboxCryptorTests: XCTestCase {
-    func testLockboxCryptorSmall() throws {
+    func testLockboxCryptorSmall() {
         let size = 10 // 10 Bytes
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
@@ -64,7 +64,7 @@ final class LockboxCryptorTests: XCTestCase {
         }
     }
     
-    func testLockboxCryptorLarge() throws {
+    func testLockboxCryptorLarge() {
         let size = (1 * 1024 * 1024 * 1024) // 1GB
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
