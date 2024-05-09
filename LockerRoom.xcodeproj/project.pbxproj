@@ -123,6 +123,7 @@
 		BF7048D02BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomUnencryptedLockboxConfiguration.swift; sourceTree = "<group>"; };
 		BFAF915D2BEBB67B0028B81C /* LockerRoomStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomStoreMock.swift; sourceTree = "<group>"; };
 		BFAF915F2BEBC5750028B81C /* UnencryptedLockboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnencryptedLockboxTests.swift; sourceTree = "<group>"; };
+		BFAF91612BEC43EC0028B81C /* LockerRoom.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = LockerRoom.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,6 +179,7 @@
 				BF1DD05D2BAC99C0001FA81F /* LockerRoomUITests */,
 				BF0BCB662BC31B0E00F91471 /* LICENSE */,
 				BF0BCB642BC31B0400F91471 /* README.md */,
+				BFAF91612BEC43EC0028B81C /* LockerRoom.xctestplan */,
 				BF1DD0402BAC99BF001FA81F /* Products */,
 				BF1DD06E2BAC9B88001FA81F /* Frameworks */,
 			);

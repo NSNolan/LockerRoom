@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "835829CC-4FFB-4B91-8128-F743B766D862",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:LockerRoom.xcodeproj",
+      "identifier" : "BF1DD03E2BAC99BF001FA81F",
+      "name" : "LockerRoom"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:LockerRoom.xcodeproj",
+        "identifier" : "BF1DD04F2BAC99C0001FA81F",
+        "name" : "LockerRoomTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:LockerRoom.xcodeproj",
+        "identifier" : "BF1DD0592BAC99C0001FA81F",
+        "name" : "LockerRoomUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
