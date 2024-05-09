@@ -235,9 +235,9 @@
 				BF0051FB2BEB363E00C69CA9 /* LockboxKeyTests.swift */,
 				BFAF91682BED10FD0028B81C /* LockerRoomDiskImageTests.swift */,
 				BFAF91662BEC79E90028B81C /* LockerRoomLockboxTests.swift */,
+				BFAF91642BEC76560028B81C /* LockerRoomTestUtilities.swift */,
 				BFAF915F2BEBC5750028B81C /* UnencryptedLockboxTests.swift */,
 				BF63F50B2BE8791C00692EB8 /* Mock Objects */,
-				BFAF91642BEC76560028B81C /* LockerRoomTestUtilities.swift */,
 			);
 			path = LockerRoomTests;
 			sourceTree = "<group>";
