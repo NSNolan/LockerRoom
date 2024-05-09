@@ -16,7 +16,7 @@ final class LockboxKeyTests: XCTestCase {
         let touchPolicy = LockboxKey.TouchPolicy.always
         let managementKeyString = "ManagementKey"
         
-        guard let publicKey = createRandomPublicKey() else {
+        guard let publicKey = LockerTestUtilities.createRandomPublicKey() else {
             XCTFail("Failed to create random public key")
             return
         }
@@ -70,7 +70,7 @@ final class LockboxKeyTests: XCTestCase {
         let touchPolicy = LockboxKey.TouchPolicy.always
         let managementKeyString = "ManagementKey"
         
-        guard let publicKey = createRandomPublicKey() else {
+        guard let publicKey = LockerTestUtilities.createRandomPublicKey() else {
             XCTFail("Failed to create random public key")
             return
         }
@@ -102,7 +102,7 @@ final class LockboxKeyTests: XCTestCase {
         let touchPolicy = LockboxKey.TouchPolicy.always
         let managementKeyString = "ManagementKey"
         
-        guard let publicKey = createRandomPublicKey() else {
+        guard let publicKey = LockerTestUtilities.createRandomPublicKey() else {
             XCTFail("Failed to create random public key")
             return
         }
@@ -163,25 +163,5 @@ final class LockboxKeyTests: XCTestCase {
         XCTAssertTrue(LockboxKey.Slot.experimental93.isExperimental)
         XCTAssertTrue(LockboxKey.Slot.experimental94.isExperimental)
         XCTAssertTrue(LockboxKey.Slot.experimental95.isExperimental)
-    }
-    
-    private func createRandomPublicKey() -> SecKey? {
-        var error: Unmanaged<CFError>?
-        let keyAttributes = [
-            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
-            kSecAttrKeySizeInBits as String: 2048
-        ] as CFDictionary
-        
-        guard let privateKey = SecKeyCreateRandomKey(keyAttributes, &error) else {
-            XCTFail("Failed to create private key")
-            return nil
-        }
-        
-        guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
-            XCTFail("Failed to copy public key")
-            return nil
-        }
-        
-        return publicKey
     }
 }

@@ -13,7 +13,6 @@ final class LockboxCryptorTests: XCTestCase {
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
-        var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         
         let keyGenerator = LockboxKeyGenerator()
         let symmetricKeyData = keyGenerator.generateSymmetricKeyData()
@@ -24,11 +23,12 @@ final class LockboxCryptorTests: XCTestCase {
         
         let cryptor = LockboxCryptor()
         
-        guard let unencryptedContent = createRandomData(size: size) else {
+        guard let unencryptedContent = LockerTestUtilities.createRandomData(size: size) else {
             XCTFail("Failed to create random unencrypted content")
             return
         }
         
+        var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         diskImage.unencryptedContent = unencryptedContent
         
         guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: unencryptedContent.count, lockerRoomDiskImage: diskImage, lockerRoomStore: store) else {
@@ -69,7 +69,6 @@ final class LockboxCryptorTests: XCTestCase {
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
-        var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         
         let cryptor = LockboxCryptor()
         let keyGenerator = LockboxKeyGenerator()
@@ -79,11 +78,12 @@ final class LockboxCryptorTests: XCTestCase {
         let decryptedContentURL = urlProvider.urlForLockboxUnencryptedContent(name: name)
         let decryptedContentPath = decryptedContentURL.path(percentEncoded: false)
         
-        guard let unencryptedContent = createRandomData(size: size) else {
+        guard let unencryptedContent = LockerTestUtilities.createRandomData(size: size) else {
             XCTFail("Failed to create random unencrypted content")
             return
         }
         
+        var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         diskImage.unencryptedContent = unencryptedContent
         
         guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: unencryptedContent.count, lockerRoomDiskImage: diskImage, lockerRoomStore: store) else {
@@ -117,30 +117,5 @@ final class LockboxCryptorTests: XCTestCase {
             XCTFail("Failed to remove lockbox")
             return
         }
-    }
-    
-    private func createRandomData(size: Int) -> Data? {
-        var randomData = Data(count: size)
-        
-        let randomSuccess = randomData.withUnsafeMutableBytes { buffer in
-            guard let baseAddress = buffer.baseAddress else {
-                print("Failed to get buffer base address")
-                return false
-            }
-            
-            guard SecRandomCopyBytes(kSecRandomDefault, size, baseAddress) == 0 else {
-                print("Failed to copy random bytes into buffer")
-                return false
-            }
-            
-            return true
-        }
-        
-        guard randomSuccess else {
-            print("Failed to generate random data")
-            return nil
-        }
-        
-        return randomData
     }
 }

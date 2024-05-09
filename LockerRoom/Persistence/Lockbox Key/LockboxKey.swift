@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LockboxKey: Codable {
+struct LockboxKey: Codable, Equatable {
     enum Slot: String, CaseIterable, Codable {
         case pivAuthentication = "PIV Authentication (9A)"
         case digitalSignature = "Digital Signature (9C)"
@@ -71,7 +71,7 @@ struct LockboxKey: Codable {
     let managementKeyString: String // TODO: Maybe I shouldn't persist the management key 
     let publicKeyData: Data
     
-    private init(name: String, serialNumber: UInt32, slot: Slot, algorithm: Algorithm, pinPolicy: PinPolicy, touchPolicy: TouchPolicy, managementKeyString: String, publicKey: SecKey) {
+    internal init(name: String, serialNumber: UInt32, slot: Slot, algorithm: Algorithm, pinPolicy: PinPolicy, touchPolicy: TouchPolicy, managementKeyString: String, publicKey: SecKey) {
         self.name = name
         self.serialNumber = serialNumber
         self.slot = slot
