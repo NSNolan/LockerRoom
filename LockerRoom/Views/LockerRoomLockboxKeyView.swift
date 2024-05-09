@@ -187,7 +187,7 @@ private struct LockerRoomLockboxKeyWaitingForKeyView: View {
     @Binding var viewStyle: LockerRoomLockboxKeyViewStyle
     
     var body: some View {
-        Text("Insert YubiKit to Enroll")
+        Text("Insert Key to Enroll")
             .padding()
         
         Spacer()

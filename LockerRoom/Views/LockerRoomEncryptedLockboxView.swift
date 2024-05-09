@@ -117,7 +117,7 @@ private struct LockerRoomEncryptedLockboxWaitingForKeyView: View {
     
     var body: some View {
         if let lockbox {
-            Text("Insert YubiKit to Decrypt \(lockbox.name)")
+            Text("Insert Key to Decrypt \(lockbox.name)")
                 .padding()
         } else {
             Text("Missing Lockbox to Decrypt")
