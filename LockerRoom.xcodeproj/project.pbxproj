@@ -65,6 +65,7 @@
 		BFAF91632BEC74C10028B81C /* EncryptedLockboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF91622BEC74C10028B81C /* EncryptedLockboxTests.swift */; };
 		BFAF91652BEC76560028B81C /* LockerTestUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF91642BEC76560028B81C /* LockerTestUtilities.swift */; };
 		BFAF91672BEC79E90028B81C /* LockerRoomLockboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF91662BEC79E90028B81C /* LockerRoomLockboxTests.swift */; };
+		BFAF91692BED10FD0028B81C /* LockerRoomDiskImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF91682BED10FD0028B81C /* LockerRoomDiskImageTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +131,7 @@
 		BFAF91622BEC74C10028B81C /* EncryptedLockboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptedLockboxTests.swift; sourceTree = "<group>"; };
 		BFAF91642BEC76560028B81C /* LockerTestUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerTestUtilities.swift; sourceTree = "<group>"; };
 		BFAF91662BEC79E90028B81C /* LockerRoomLockboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockboxTests.swift; sourceTree = "<group>"; };
+		BFAF91682BED10FD0028B81C /* LockerRoomDiskImageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomDiskImageTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,6 +233,7 @@
 				BFAF91622BEC74C10028B81C /* EncryptedLockboxTests.swift */,
 				BF63F4FF2BE823E500692EB8 /* LockboxCryptorTests.swift */,
 				BF0051FB2BEB363E00C69CA9 /* LockboxKeyTests.swift */,
+				BFAF91682BED10FD0028B81C /* LockerRoomDiskImageTests.swift */,
 				BFAF91662BEC79E90028B81C /* LockerRoomLockboxTests.swift */,
 				BFAF915F2BEBC5750028B81C /* UnencryptedLockboxTests.swift */,
 				BF63F50B2BE8791C00692EB8 /* Mock Objects */,
@@ -509,6 +512,7 @@
 				BF63F5142BEB251800692EB8 /* LockerRoomEnrolledKey.swift in Sources */,
 				BF63F5082BE878E400692EB8 /* LockboxCryptor.swift in Sources */,
 				BF63F5152BEB251B00692EB8 /* LockerRoomError.swift in Sources */,
+				BFAF91692BED10FD0028B81C /* LockerRoomDiskImageTests.swift in Sources */,
 				BF63F5122BE927B100692EB8 /* LockerRoomYubiKeyExperimental.swift in Sources */,
 				BF0051FC2BEB363E00C69CA9 /* LockboxKeyTests.swift in Sources */,
 				BF63F5042BE878D100692EB8 /* LockerRoomDiskImage.swift in Sources */,
