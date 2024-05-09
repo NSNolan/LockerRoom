@@ -37,19 +37,25 @@ import Foundation
         self.enrolledKeysByID = self.lockerRoomStore.enrolledKeysByID
     }
     
-    func addUnencryptedLockbox(name: String, size: Int) -> UnencryptedLockbox? {
-        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomDiskImage: lockerRoomDiskImage, lockerRoomStore: lockerRoomStore) else {
-            print("[Error] Locker room manager failed to add unencrypted lockbox \(name)")
-            return nil
+    func addUnencryptedLockbox(name: String, size: Int) async -> UnencryptedLockbox? {
+        return await withCheckedContinuation { continuation in
+            DispatchQueue.global().async {
+                guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomDiskImage: self.lockerRoomDiskImage, lockerRoomStore: self.lockerRoomStore) else {
+                    print("[Error] Locker room manager failed to add unencrypted lockbox \(name)")
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
+                guard self.lockerRoomDiskImage.attach(name: name) else {
+                    print("[Error] Locker room manager failed to attach lockbox \(name) as disk image")
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
+                self.lockboxesByID = self.lockerRoomStore.lockboxesByID
+                continuation.resume(returning: unencryptedLockbox)
+            }
         }
-        
-        guard lockerRoomDiskImage.attach(name: name) else {
-            print("[Error] Locker room manager failed to attach lockbox \(name) as disk image")
-            return nil
-        }
-        
-        lockboxesByID = lockerRoomStore.lockboxesByID
-        return unencryptedLockbox
     }
     
     func removeUnencryptedLockbox(name: String) -> Bool {

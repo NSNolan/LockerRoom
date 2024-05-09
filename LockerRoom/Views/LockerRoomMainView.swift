@@ -109,7 +109,7 @@ private struct LockerRoomLockboxesView: View {
             lockboxesByUUID = lockerRoomManager.lockboxesByID
         }
         .sheet(isPresented: $showUnencryptedLockboxAddView) {
-            LockerRoomUnencryptedLockboxView(lockerRoomManager: lockerRoomManager, showView: $showUnencryptedLockboxAddView, lockbox: $selectedLockbox, viewStyle: .add)
+            LockerRoomUnencryptedLockboxView(lockerRoomManager: lockerRoomManager, showView: $showUnencryptedLockboxAddView, lockbox: $selectedLockbox, viewStyle: .create)
         }
         .sheet(isPresented: $showUnencryptedLockboxView) {
             LockerRoomUnencryptedLockboxView(lockerRoomManager: lockerRoomManager, showView: $showUnencryptedLockboxView, lockbox: $selectedLockbox, viewStyle: .encrypt)

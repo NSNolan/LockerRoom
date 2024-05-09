@@ -8,7 +8,8 @@
 import SwiftUI
 
 enum LockerRoomUnencryptedLockboxViewStyle {
-    case add
+    case create
+    case creating
     case encrypt
     case encrypting
     case error
@@ -26,8 +27,10 @@ struct LockerRoomUnencryptedLockboxView: View {
     var body: some View {
         VStack {
             switch viewStyle {
-            case .add:
-                LockerRoomUnencryptedLockboxAddView(lockerRoomManager: lockerRoomManager, showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
+            case .create:
+                LockerRoomUnencryptedLockboxCreateView(lockerRoomManager: lockerRoomManager, showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
+            case .creating:
+                LockerRoomUnencryptedLockboxCreatingView(showView: $showView, lockbox: $lockbox)
             case .encrypt:
                 LockerRoomUnencryptedLockboxEncryptView(lockerRoomManager: lockerRoomManager, showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
             case .encrypting:
@@ -41,7 +44,7 @@ struct LockerRoomUnencryptedLockboxView: View {
     }
 }
 
-private struct LockerRoomUnencryptedLockboxAddView: View {
+private struct LockerRoomUnencryptedLockboxCreateView: View {
     @Bindable var lockerRoomManager: LockerRoomManager
     
     @Binding var showView: Bool
@@ -93,16 +96,20 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
             let createDisabled = (name.isEmpty || sizeInMegabytes <= 0 || sizeInMegabytes > LockerRoomUnencryptedLockboxConfiguration.maxSize)
             
             Button("Create") {
-                guard let newUnencryptedLockbox = lockerRoomManager.addUnencryptedLockbox(name: name, size: sizeInMegabytes) else {
-                    print("[Error] LockerRoom failed to create a new unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
-                    error = .failedToCreateLockbox
-                    viewStyle = .error
-                    return
-                }
-                print("[Default] LockerRoom created a new unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
+                viewStyle = .creating
                 
-                self.lockbox = newUnencryptedLockbox.metadata.lockerRoomLockbox
-                viewStyle = .encrypt
+                Task {
+                    guard let newUnencryptedLockbox = await lockerRoomManager.addUnencryptedLockbox(name: name, size: sizeInMegabytes) else {
+                        print("[Error] LockerRoom failed to create a new unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
+                        error = .failedToCreateLockbox
+                        viewStyle = .error
+                        return
+                    }
+                    print("[Default] LockerRoom created a new unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
+                    
+                    lockbox = newUnencryptedLockbox.metadata.lockerRoomLockbox
+                    viewStyle = .encrypt
+                }
             }
             .disabled(createDisabled)
             .buttonStyle(.borderedProminent)
@@ -116,6 +123,31 @@ private struct LockerRoomUnencryptedLockboxAddView: View {
             .keyboardShortcut(.escape)
         }
         .padding(.top)
+    }
+}
+
+private struct LockerRoomUnencryptedLockboxCreatingView: View {
+    @Binding var showView: Bool
+    @Binding var lockbox: LockerRoomLockbox?
+    
+    var body: some View {
+        if let lockbox {
+            Text("Creating \(lockbox.name)")
+                .padding()
+        } else {
+            Text("Missing Lockbox to Create")
+        }
+        
+        Spacer()
+        
+        ProgressView().progressViewStyle(.circular)
+        
+        Spacer()
+        
+        Button("Close") {
+            showView = false
+        }
+        .padding()
     }
 }
 
