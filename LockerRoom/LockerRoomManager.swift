@@ -42,14 +42,12 @@ import Foundation
             DispatchQueue.global().async {
                 guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomDiskImage: self.lockerRoomDiskImage, lockerRoomStore: self.lockerRoomStore) else {
                     print("[Error] Locker room manager failed to add unencrypted lockbox \(name)")
-                    continuation.resume(returning: nil)
-                    return
+                    return continuation.resume(returning: nil)
                 }
                 
                 guard self.lockerRoomDiskImage.attach(name: name) else {
                     print("[Error] Locker room manager failed to attach lockbox \(name) as disk image")
-                    continuation.resume(returning: nil)
-                    return
+                    return continuation.resume(returning: nil)
                 }
                 
                 self.lockboxesByID = self.lockerRoomStore.lockboxesByID
@@ -119,7 +117,7 @@ import Foundation
         return true
     }
     
-    func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeysToUse: [LockerRoomEnrolledKey]) -> Bool {
+    func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeysToUse: [LockerRoomEnrolledKey]) async -> Bool {
         _ = lockerRoomDiskImage.detach(name: lockbox.name) // Non-fatal; it may already be detached
         
         guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore) else {
@@ -158,7 +156,7 @@ import Foundation
         }
         print("[Default] Locker room manager encrypted a symmetric key for \(name)")
         
-        guard lockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard await lockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             print("[Error] Locker room manager failed to encrypt an unencrypted lockbox \(name)")
             return false
         }
@@ -204,7 +202,7 @@ import Foundation
         return symmetricKeyData
     }
     
-    func decrypt(lockbox: LockerRoomLockbox, symmetricKeyData: Data) -> Bool {
+    func decrypt(lockbox: LockerRoomLockbox, symmetricKeyData: Data) async -> Bool {
         guard let encryptedLockbox = EncryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore) else {
             print("[Default] Locker room manager failed to created encrypted lockbox \(lockbox.name)")
             return false
@@ -213,7 +211,7 @@ import Foundation
         let name = encryptedLockbox.metadata.name
         let size = encryptedLockbox.metadata.size
         
-        guard lockboxCryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard await lockboxCryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             print("[Error] Locker room manager failed to decrypt an encrypted lockbox \(name)")
             return false
         }

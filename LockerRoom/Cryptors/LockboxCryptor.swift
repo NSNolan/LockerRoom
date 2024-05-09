@@ -10,19 +10,29 @@ import Foundation
 import CryptoKit
 
 protocol LockboxCrypting {
-    func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Bool
-    func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) -> Bool
+    func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) async -> Bool
+    func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) async -> Bool
 }
 
 struct LockboxCryptor: LockboxCrypting {
     private static let chunkSize = 256 * 1024 // 256 KB
     
-    func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Bool {
-        return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: true)
+    func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) async -> Bool {
+        return await withCheckedContinuation { continuation in
+            DispatchQueue.global().async {
+                let success = processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: true)
+                continuation.resume(returning: success)
+            }
+        }
     }
     
-    func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) -> Bool {
-        return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: false)
+    func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) async -> Bool {
+        return await withCheckedContinuation { continuation in
+            DispatchQueue.global().async {
+                let success = processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: false)
+                continuation.resume(returning: success)
+            }
+        }
     }
     
     private func processLockbox(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data, encrypt: Bool) -> Bool {

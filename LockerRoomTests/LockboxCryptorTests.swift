@@ -8,7 +8,7 @@
 import XCTest
 
 final class LockboxCryptorTests: XCTestCase {
-    func testLockboxCryptorSmall() {
+    func testLockboxCryptorSmall() async {
         let size = 10 // 10 Bytes
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
@@ -36,7 +36,7 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
         
-        guard cryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard await cryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             XCTFail("Failed to encrypt lockbox")
             return
         }
@@ -46,7 +46,7 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
 
-        guard cryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard await cryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             XCTFail("Failed to decrypt lockbox")
             return
         }
@@ -64,7 +64,7 @@ final class LockboxCryptorTests: XCTestCase {
         }
     }
     
-    func testLockboxCryptorLarge() {
+    func testLockboxCryptorLarge() async {
         let size = (1 * 1024 * 1024 * 1024) // 1GB
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
@@ -91,7 +91,7 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
         
-        guard cryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard await cryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             XCTFail("Failed to encrypt lockbox")
             return
         }
@@ -101,7 +101,7 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
 
-        guard cryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard await cryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             XCTFail("Failed to decrypt lockbox")
             return
         }

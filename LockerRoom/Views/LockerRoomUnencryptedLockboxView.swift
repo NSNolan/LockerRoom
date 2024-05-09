@@ -212,14 +212,16 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                             return
                         }
                         
-                        guard lockerRoomManager.encrypt(lockbox: lockbox, usingEnrolledKeys: selectedKeys) else {
-                            print("[Error] LockerRoom is failed to encrypt an unencrypted lockbox \(lockbox.name)")
-                            error = .failedToEncryptLockbox
-                            viewStyle = .error
-                            return
+                        Task {
+                            guard await lockerRoomManager.encrypt(lockbox: lockbox, usingEnrolledKeys: selectedKeys) else {
+                                print("[Error] LockerRoom is failed to encrypt an unencrypted lockbox \(lockbox.name)")
+                                error = .failedToEncryptLockbox
+                                viewStyle = .error
+                                return
+                            }
+                            
+                            showView = false
                         }
-                        
-                        showView = false
                     }
                     .buttonStyle(.borderedProminent)
                     .keyboardShortcut(.defaultAction)

@@ -65,8 +65,6 @@ Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU comman
 - Enrolling a key will overwrite an existing private key in the specified slot on the external hardware device.
 - There is no way to enter a pin if the pin policy of the enrolled key is set to anything besides `Never`.
 - Locker Room does not run in a sandbox because creating a disk image with `hdiutil` will fail.
-- Encryption and decryption routines are not properly executed on a background thread.
-- Decrypting lockbox view does not always appear after an external hardware device is detected.
 - There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
 - Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
 - Enrolled keys cannot be deleted within Locker Room. But can be removed using the filesystem.

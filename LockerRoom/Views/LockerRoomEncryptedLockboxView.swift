@@ -87,7 +87,7 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                         
                         viewStyle = .decrypting
                         
-                        guard lockerRoomManager.decrypt(lockbox: lockbox, symmetricKeyData: symmetricKeyData) else {
+                        guard await lockerRoomManager.decrypt(lockbox: lockbox, symmetricKeyData: symmetricKeyData) else {
                             print("[Error] LockerRoom is failed to decrypt an encrypted lockbox \(name)")
                             error = .failedToDecryptLockbox
                             viewStyle = .error
