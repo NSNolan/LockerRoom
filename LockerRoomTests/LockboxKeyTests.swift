@@ -16,7 +16,7 @@ final class LockboxKeyTests: XCTestCase {
         let touchPolicy = LockboxKey.TouchPolicy.always
         let managementKeyString = "ManagementKey"
         
-        guard let publicKey = LockerTestUtilities.createRandomPublicKey() else {
+        guard let publicKey = LockerRoomTestUtilities.createRandomPublicKey() else {
             XCTFail("Failed to create random public key")
             return
         }
@@ -70,7 +70,7 @@ final class LockboxKeyTests: XCTestCase {
         let touchPolicy = LockboxKey.TouchPolicy.always
         let managementKeyString = "ManagementKey"
         
-        guard let publicKey = LockerTestUtilities.createRandomPublicKey() else {
+        guard let publicKey = LockerRoomTestUtilities.createRandomPublicKey() else {
             XCTFail("Failed to create random public key")
             return
         }
@@ -102,7 +102,7 @@ final class LockboxKeyTests: XCTestCase {
         let touchPolicy = LockboxKey.TouchPolicy.always
         let managementKeyString = "ManagementKey"
         
-        guard let publicKey = LockerTestUtilities.createRandomPublicKey() else {
+        guard let publicKey = LockerRoomTestUtilities.createRandomPublicKey() else {
             XCTFail("Failed to create random public key")
             return
         }

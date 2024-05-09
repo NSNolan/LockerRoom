@@ -23,7 +23,7 @@ final class LockboxCryptorTests: XCTestCase {
         
         let cryptor = LockboxCryptor()
         
-        guard let unencryptedContent = LockerTestUtilities.createRandomData(size: size) else {
+        guard let unencryptedContent = LockerRoomTestUtilities.createRandomData(size: size) else {
             XCTFail("Failed to create random unencrypted content")
             return
         }
@@ -78,7 +78,7 @@ final class LockboxCryptorTests: XCTestCase {
         let decryptedContentURL = urlProvider.urlForLockboxUnencryptedContent(name: name)
         let decryptedContentPath = decryptedContentURL.path(percentEncoded: false)
         
-        guard let unencryptedContent = LockerTestUtilities.createRandomData(size: size) else {
+        guard let unencryptedContent = LockerRoomTestUtilities.createRandomData(size: size) else {
             XCTFail("Failed to create random unencrypted content")
             return
         }

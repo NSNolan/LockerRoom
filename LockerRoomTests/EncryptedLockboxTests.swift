@@ -19,12 +19,12 @@ final class EncryptedLockboxTests: XCTestCase {
         let lockboxKeyTouchPolicy = LockboxKey.TouchPolicy.always
         let lockboxKeyManagementKeyString = "ManagementKey"
         
-        guard let lockboxPublicKey = LockerTestUtilities.createRandomPublicKey() else {
+        guard let lockboxPublicKey = LockerRoomTestUtilities.createRandomPublicKey() else {
             XCTFail("Failed to create random public key")
             return
         }
         
-        guard let encryptedSymmetricKey = LockerTestUtilities.createRandomData(size: size) else {
+        guard let encryptedSymmetricKey = LockerRoomTestUtilities.createRandomData(size: size) else {
             XCTFail("Failed to create random encrypted symmetric key")
             return
         }
@@ -79,12 +79,12 @@ final class EncryptedLockboxTests: XCTestCase {
         let lockboxKeyTouchPolicy = LockboxKey.TouchPolicy.always
         let lockboxKeyManagementKeyString = "ManagementKey"
         
-        guard let lockboxPublicKey = LockerTestUtilities.createRandomPublicKey() else {
+        guard let lockboxPublicKey = LockerRoomTestUtilities.createRandomPublicKey() else {
             XCTFail("Failed to create random public key")
             return
         }
         
-        guard let encryptedSymmetricKey = LockerTestUtilities.createRandomData(size: size) else {
+        guard let encryptedSymmetricKey = LockerRoomTestUtilities.createRandomData(size: size) else {
             XCTFail("Failed to create random encrypted symmetric key")
             return
         }

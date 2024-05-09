@@ -1,5 +1,5 @@
 //
-//  LockerTestUtilities.swift
+//  LockerRoomTestUtilities.swift
 //  LockerRoomTests
 //
 //  Created by Nolan Astrein on 5/8/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LockerTestUtilities {
+struct LockerRoomTestUtilities {
     static func createRandomPublicKey() -> SecKey? {
         var error: Unmanaged<CFError>?
         let keyAttributes = [
