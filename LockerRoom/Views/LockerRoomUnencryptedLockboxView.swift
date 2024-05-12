@@ -29,7 +29,7 @@ struct LockerRoomUnencryptedLockboxView: View {
         VStack {
             switch viewStyle {
             case .create:
-                LockerRoomUnencryptedLockboxCreateView(lockerRoomManager: lockerRoomManager, showView: $showView, lockboxToBeNamed: lockboxToBeNamed, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
+                LockerRoomUnencryptedLockboxCreateView(lockerRoomManager: lockerRoomManager, showView: $showView, lockboxToBeNamed: $lockboxToBeNamed, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
             case .creating:
                 LockerRoomUnencryptedLockboxCreatingView(showView: $showView, lockboxToBeNamed: lockboxToBeNamed)
             case .encrypt:
