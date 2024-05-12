@@ -21,16 +21,17 @@ struct LockerRoomUnencryptedLockboxView: View {
     @Binding var showView: Bool
     @Binding var lockbox: LockerRoomLockbox?
 
+    @State var lockboxToBeNamed: String?
     @State var viewStyle: LockerRoomUnencryptedLockboxViewStyle
-    @State var error: LockerRoomError? = nil
+    @State var error: LockerRoomError?
     
     var body: some View {
         VStack {
             switch viewStyle {
             case .create:
-                LockerRoomUnencryptedLockboxCreateView(lockerRoomManager: lockerRoomManager, showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
+                LockerRoomUnencryptedLockboxCreateView(lockerRoomManager: lockerRoomManager, showView: $showView, lockboxToBeNamed: lockboxToBeNamed, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
             case .creating:
-                LockerRoomUnencryptedLockboxCreatingView(showView: $showView, lockbox: $lockbox)
+                LockerRoomUnencryptedLockboxCreatingView(showView: $showView, lockboxToBeNamed: lockboxToBeNamed)
             case .encrypt:
                 LockerRoomUnencryptedLockboxEncryptView(lockerRoomManager: lockerRoomManager, showView: $showView, lockbox: $lockbox, error: $error, viewStyle: $viewStyle)
             case .encrypting:
@@ -48,6 +49,7 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
     @Bindable var lockerRoomManager: LockerRoomManager
     
     @Binding var showView: Bool
+    @Binding var lockboxToBeNamed: String?
     @Binding var lockbox: LockerRoomLockbox?
     @Binding var error: LockerRoomError?
     @Binding var viewStyle: LockerRoomUnencryptedLockboxViewStyle
@@ -96,6 +98,7 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
             let createDisabled = (name.isEmpty || sizeInMegabytes <= 0 || sizeInMegabytes > LockerRoomUnencryptedLockboxConfiguration.maxSize)
             
             Button("Create") {
+                lockboxToBeNamed = name
                 viewStyle = .creating
                 
                 Task {
@@ -128,14 +131,15 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
 
 private struct LockerRoomUnencryptedLockboxCreatingView: View {
     @Binding var showView: Bool
-    @Binding var lockbox: LockerRoomLockbox?
+    
+    let lockboxToBeNamed: String?
     
     var body: some View {
-        if let lockbox {
-            Text("Creating \(lockbox.name)")
+        if let lockboxToBeNamed {
+            Text("Creating '\(lockboxToBeNamed)'")
                 .padding()
         } else {
-            Text("Missing Lockbox to Create")
+            Text("Missing Lockbox Name to Create")
         }
         
         Spacer()
@@ -168,7 +172,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                 Image(systemName: "lock.open")
                 
                 if let lockbox {
-                    Text("Secure Lockbox \(lockbox.name)")
+                    Text("Secure Lockbox '\(lockbox.name)'")
                         .bold()
                         .padding(.bottom, 2)
                         .padding(.top)
@@ -297,7 +301,7 @@ private struct LockerRoomUnencryptedLockboxEncryptingView: View {
     
     var body: some View {
         if let lockbox {
-            Text("Encrypting \(lockbox.name)")
+            Text("Encrypting '\(lockbox.name)'")
                 .padding()
         } else {
             Text("Missing Lockbox to Encrypt")

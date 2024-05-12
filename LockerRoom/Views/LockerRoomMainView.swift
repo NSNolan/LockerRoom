@@ -66,21 +66,20 @@ private struct LockerRoomLockboxesView: View {
     var body: some View {
         VStack {
             Table(lockboxes, selection: $selection, sortOrder: $sortOrder) {
-                TableColumn("") { lockbox in
-                    if lockbox.isEncrypted {
-                        Image(systemName: "lock")
-                    } else {
-                        Image(systemName: "lock.open")
-                    }
-                }
-                .width(min: 0, ideal: 0, max: 0)
-                
                 TableColumn("Name", value: \.name) { lockbox in
                     HStack {
+                        if lockbox.isEncrypted {
+                            Image(systemName: "lock")
+                        } else {
+                            Image(systemName: "lock.open")
+                        }
+                        
                         Text(lockbox.name)
+                        
                         ForEach(lockbox.encryptionKeyNames, id: \.self) { keyName in
                             EncryptionKeyView(name: keyName)
                         }
+                        
                         Spacer()
                     }
                 }

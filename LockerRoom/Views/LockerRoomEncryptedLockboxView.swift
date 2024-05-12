@@ -55,7 +55,7 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                 Image(systemName: "lock")
                 
                 if let lockbox {
-                    Text("Open Lockbox \(lockbox.name)")
+                    Text("Open Lockbox '\(lockbox.name)'")
                         .bold()
                         .padding()
                 } else {
@@ -117,7 +117,7 @@ private struct LockerRoomEncryptedLockboxWaitingForKeyView: View {
     
     var body: some View {
         if let lockbox {
-            Text("Insert Key to Decrypt \(lockbox.name)")
+            Text("Insert Key to Decrypt '\(lockbox.name)'")
                 .padding()
         } else {
             Text("Missing Lockbox to Decrypt")
@@ -143,7 +143,7 @@ private struct LockerRoomEncryptedLockboxDecryptingView: View {
     
     var body: some View {
         if let lockbox {
-            Text("Decrypting \(lockbox.name)")
+            Text("Decrypting '\(lockbox.name)'")
                 .padding()
         } else {
             Text("Missing Lockbox to Decrypt")
