@@ -40,22 +40,20 @@ import os.log
     }
     
     func addUnencryptedLockbox(name: String, size: Int) async -> UnencryptedLockbox? {
-        return await withCheckedContinuation { continuation in
-            DispatchQueue.global().async {
-                guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomDiskImage: self.lockerRoomDiskImage, lockerRoomStore: self.lockerRoomStore) else {
-                    Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
-                    return continuation.resume(returning: nil)
-                }
-                
-                guard self.lockerRoomDiskImage.attach(name: name) else {
-                    Logger.manager.error("Locker room manager failed to attach lockbox \(name) as disk image")
-                    return continuation.resume(returning: nil)
-                }
-                
-                self.lockboxesByID = self.lockerRoomStore.lockboxesByID
-                continuation.resume(returning: unencryptedLockbox)
+        return (try? await Task {
+            guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomDiskImage: self.lockerRoomDiskImage, lockerRoomStore: self.lockerRoomStore) else {
+                Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
+                return nil
             }
-        }
+            
+            guard self.lockerRoomDiskImage.attach(name: name) else {
+                Logger.manager.error("Locker room manager failed to attach lockbox \(name) as disk image")
+                return nil
+            }
+            
+            self.lockboxesByID = self.lockerRoomStore.lockboxesByID
+            return unencryptedLockbox
+        }.result.get()) ?? nil
     }
     
     func removeUnencryptedLockbox(name: String) -> Bool {

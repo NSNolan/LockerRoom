@@ -19,21 +19,15 @@ struct LockboxCryptor: LockboxCrypting {
     private static let chunkSize = 256 * 1024 // 256 KB
     
     func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) async -> Bool {
-        return await withCheckedContinuation { continuation in
-            DispatchQueue.global().async {
-                let success = processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: true)
-                continuation.resume(returning: success)
-            }
-        }
+        return (try? await Task {
+            return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: true)
+        }.result.get()) ?? false
     }
     
     func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) async -> Bool {
-        return await withCheckedContinuation { continuation in
-            DispatchQueue.global().async {
-                let success = processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: false)
-                continuation.resume(returning: success)
-            }
-        }
+        return (try? await Task {
+            return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: false)
+        }.result.get()) ?? false
     }
     
     private func processLockbox(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data, encrypt: Bool) -> Bool {
