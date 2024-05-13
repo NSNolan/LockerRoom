@@ -66,6 +66,7 @@
 		BFAF91652BEC76560028B81C /* LockerRoomTestUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF91642BEC76560028B81C /* LockerRoomTestUtilities.swift */; };
 		BFAF91672BEC79E90028B81C /* LockerRoomLockboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF91662BEC79E90028B81C /* LockerRoomLockboxTests.swift */; };
 		BFAF91692BED10FD0028B81C /* LockerRoomDiskImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF91682BED10FD0028B81C /* LockerRoomDiskImageTests.swift */; };
+		BFAF916B2BF17EC60028B81C /* LockerRoomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF916A2BF17EC60028B81C /* LockerRoomLogger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,6 +133,7 @@
 		BFAF91642BEC76560028B81C /* LockerRoomTestUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomTestUtilities.swift; sourceTree = "<group>"; };
 		BFAF91662BEC79E90028B81C /* LockerRoomLockboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockboxTests.swift; sourceTree = "<group>"; };
 		BFAF91682BED10FD0028B81C /* LockerRoomDiskImageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomDiskImageTests.swift; sourceTree = "<group>"; };
+		BFAF916A2BF17EC60028B81C /* LockerRoomLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLogger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -308,6 +310,7 @@
 			children = (
 				BF7048CC2BE04504008FB829 /* LockerRoomBindingUtilities.swift */,
 				BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */,
+				BFAF916A2BF17EC60028B81C /* LockerRoomLogger.swift */,
 				BF0BCB622BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift */,
 				BF0BCB602BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift */,
 				BF5FBFF42BD002360054ED10 /* LockerRoomYubiKeyExperimental.swift */,
@@ -469,6 +472,7 @@
 				BF475F672BB49FC3003A0E05 /* LockerRoomDiskImage.swift in Sources */,
 				BF1DD0992BB3035E001FA81F /* LockerRoomLockbox.swift in Sources */,
 				BF7048CF2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift in Sources */,
+				BFAF916B2BF17EC60028B81C /* LockerRoomLogger.swift in Sources */,
 				BF1DD0852BAF88DA001FA81F /* EncryptedLockbox.swift in Sources */,
 				BF1DD0432BAC99BF001FA81F /* LockerRoomApp.swift in Sources */,
 				BF475F642BB493AF003A0E05 /* LockboxKeyGenerator.swift in Sources */,
@@ -686,7 +690,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.nastrein.LockerRoom;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nsnolan.LockerRoom;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -723,7 +727,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.nastrein.LockerRoom;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nsnolan.LockerRoom;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";

@@ -7,11 +7,13 @@
 
 import Foundation
 
+import os.log
+
 extension SecKey {
     var data: Data? {
         var error: Unmanaged<CFError>?
         guard let data = SecKeyCopyExternalRepresentation(self, &error) as Data? else {
-            print("[Error] Failed to convert public key to data: \(error.debugDescription)")
+            Logger.utilities.error("Failed to convert public key to data: \(error.debugDescription)")
             return nil
         }
         return data
@@ -26,7 +28,7 @@ extension Data {
         ]
         var error: Unmanaged<CFError>?
         guard let key = SecKeyCreateWithData(self as CFData, attributes as CFDictionary, &error) else {
-            print("[Error] Failed to convert data to public key: \(error.debugDescription)")
+            Logger.utilities.error("Failed to convert data to public key: \(error.debugDescription)")
             return nil
         }
         return key

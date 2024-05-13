@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol LockboxMetadata: Codable {
+protocol LockboxMetadata: Codable, CustomStringConvertible {
     var name: String { get }
     var size: Int { get }
     var isEncrypted: Bool { get }

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import os.log
+
 enum LockerRoomMainViewStyle: String, CaseIterable, Identifiable {
     case lockboxes = "Lockboxes"
     case keys = "Keys"
@@ -127,7 +129,7 @@ private struct LockerRoomLockboxesView: View {
                     _ = lockerRoomManager.detachFromDiskImage(name: name)
                     
                     guard lockerRoomManager.removeUnencryptedLockbox(name: name) else {
-                        print("[Error] LockerRoom failed to remove unencrypted lockbox \(name)")
+                        Logger.lockerRoomUI.error("LockerRoom failed to remove unencrypted lockbox \(name)")
                         error = .failedToRemoveLockbox
                         showErrorView = true
                         return
@@ -151,7 +153,7 @@ private struct LockerRoomLockboxesView: View {
         
     private func selectedLockbox(fromIDs lockboxIDs: Set<LockerRoomLockbox.ID>) -> LockerRoomLockbox? {
         guard let lockboxID = lockboxIDs.first, let lockbox = lockerRoomManager.lockboxesByID[lockboxID] else {
-            print("[Error] LockerRoom failed to find selected lockbox")
+            Logger.lockerRoomUI.error("LockerRoom failed to find selected lockbox")
             error = .failedToFindSelectedLockbox
             showErrorView = true
             return nil

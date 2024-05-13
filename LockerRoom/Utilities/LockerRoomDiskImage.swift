@@ -7,6 +7,8 @@
 
 import Foundation
 
+import os.log
+
 protocol LockerRoomDiskImaging {
     func create(name: String, size: Int) -> Bool
     func destory(name: String) -> Bool
@@ -32,7 +34,7 @@ struct LockerRoomDiskImage: LockerRoomDiskImaging {
             do {
                 try fileManager.createDirectory(atPath: lockboxPath, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                print("[Error] Disk image operation for \(name) failed to create lockbox directory at path \(lockboxPath) with error \(error)")
+                Logger.localDisk.error("Disk image operation for \(name) failed to create lockbox directory at path \(lockboxPath) with error \(error)")
                 return false
             }
         }
@@ -53,7 +55,7 @@ struct LockerRoomDiskImage: LockerRoomDiskImaging {
     
     func destory(name: String) -> Bool {
         guard !name.isEmpty else {
-            print("[Error] Disk image failed to remove disk with empty name")
+            Logger.localDisk.error("Disk image failed to remove disk with empty name")
             return false
         }
         
@@ -61,7 +63,7 @@ struct LockerRoomDiskImage: LockerRoomDiskImaging {
         let diskContentPath = diskContentURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: diskContentPath) else {
-            print("[Error] Disk image failed to remove disk content \(name) at non-existing path \(diskContentPath)")
+            Logger.localDisk.error("Disk image failed to remove disk content \(name) at non-existing path \(diskContentPath)")
             return false
         }
         
@@ -69,7 +71,7 @@ struct LockerRoomDiskImage: LockerRoomDiskImaging {
             try fileManager.removeItem(at: diskContentURL)
             return true
         } catch {
-            print("[Error] Disk image failed to remove disk content \(name) at path \(diskContentPath)")
+            Logger.localDisk.error("Disk image failed to remove disk content \(name) at path \(diskContentPath)")
             return false
         }
     }
@@ -108,12 +110,12 @@ struct LockerRoomDiskImage: LockerRoomDiskImaging {
             
             let status = process.terminationStatus
             if status != 0 {
-                print("[Warning] Disk image operation for \(name) with arguments \(arguments) failed with status \(status)")
+                Logger.localDisk.warning("Disk image operation for \(name) with arguments \(arguments) failed with status \(status)")
                 return false
             }
             return true
         } catch {
-            print("[Error] Disk image operation for \(name) with arguments \(arguments) failed with error \(error)")
+            Logger.localDisk.error("Disk image operation for \(name) with arguments \(arguments) failed with error \(error)")
             return false
         }
     }

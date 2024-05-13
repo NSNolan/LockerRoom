@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import os.log
+
 enum LockerRoomEncryptedLockboxViewStyle {
     case decrypt
     case waitingForKey
@@ -69,7 +71,7 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                     viewStyle = .waitingForKey
                     
                     guard let lockbox else {
-                        print("[Error] LockerRoom is missing an encrypted lockbox to decrypt")
+                        Logger.lockerRoomUI.error("LockerRoom is missing an encrypted lockbox to decrypt")
                         error = .missingLockbox
                         viewStyle = .error
                         return
@@ -79,7 +81,7 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                         let name = lockbox.name
                         
                         guard let symmetricKeyData = await lockerRoomManager.decryptKey(forLockbox: lockbox) else {
-                            print("[Error] LockerRoom failed to decrypt lockbox symmetric key for encrypted lockbox \(name)")
+                            Logger.lockerRoomUI.error("LockerRoom failed to decrypt lockbox symmetric key for encrypted lockbox \(name)")
                             error = .failedToDecryptLockboxSymmetricKey
                             viewStyle = .error
                             return
@@ -88,7 +90,7 @@ private struct LockerRoomEncryptedLockboxDecryptView: View {
                         viewStyle = .decrypting
                         
                         guard await lockerRoomManager.decrypt(lockbox: lockbox, symmetricKeyData: symmetricKeyData) else {
-                            print("[Error] LockerRoom is failed to decrypt an encrypted lockbox \(name)")
+                            Logger.lockerRoomUI.error("LockerRoom failed to decrypt an encrypted lockbox \(name)")
                             error = .failedToDecryptLockbox
                             viewStyle = .error
                             return

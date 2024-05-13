@@ -7,6 +7,7 @@
 
 import Foundation
 
+import os.log
 import YubiKit
 
 protocol LockboxKeyCrypting {
@@ -17,7 +18,7 @@ protocol LockboxKeyCrypting {
 struct LockboxKeyCryptor: LockboxKeyCrypting {
     func encrypt(symmetricKeyData: Data, lockboxKey: LockboxKey) -> Data? {
         guard let publicKey = lockboxKey.publicKey else {
-            print("[Error] Lockbox key cryptor failed to copy public key from lockbox key \(lockboxKey)")
+            Logger.cryptor.error("Lockbox key cryptor failed to copy public key from lockbox key \(lockboxKey)")
             return nil
         }
         
@@ -25,13 +26,13 @@ struct LockboxKeyCryptor: LockboxKeyCrypting {
         
         var error: Unmanaged<CFError>?
         if let encryptedSymmetricKey = SecKeyCreateEncryptedData(publicKey, algorithm, symmetricKeyData as CFData, &error) {
-            print("[Default] Lockbox key cryptor encrypted symmetric key \(encryptedSymmetricKey) using algorithm \(algorithm.rawValue)")
+            Logger.cryptor.log("Lockbox key cryptor encrypted symmetric key \(encryptedSymmetricKey) using algorithm \(algorithm.rawValue)")
             return encryptedSymmetricKey as Data
         } else if let error {
-            print("[Error] Lockbox key cryptor failed to encrypt symmetric key using algorithm \(algorithm.rawValue) with error \(error)")
+            Logger.cryptor.error("Lockbox key cryptor failed to encrypt symmetric key using algorithm \(algorithm.rawValue) with error \(String(describing: error))")
             return nil
         } else {
-            print("[Error] Lockbox key cryptor failed to encrypt symmetric key using algorithm \(algorithm.rawValue)")
+            Logger.cryptor.error("Lockbox key cryptor failed to encrypt symmetric key using algorithm \(algorithm.rawValue)")
             return nil
         }
     }
@@ -45,11 +46,11 @@ struct LockboxKeyCryptor: LockboxKeyCrypting {
                 do {
                     let serialNumber = try await session.getSerialNumber()
                     guard let encryptedSymmetricKey = encryptedSymmetricKeysBySerialNumber[serialNumber] else {
-                        print("[Error] Lockbox key cryptor failed to get encrypted symmetric key for serial number \(serialNumber)")
+                        Logger.cryptor.error("Lockbox key cryptor failed to get encrypted symmetric key for serial number \(serialNumber)")
                         return nil
                     }
                     guard let lockboxKey = lockboxKeysBySerialNumber[serialNumber] else {
-                        print("[Error] Lockbox key cryptor failed to get lockbox key for serial number \(serialNumber)")
+                        Logger.cryptor.error("Lockbox key cryptor failed to get lockbox key for serial number \(serialNumber)")
                         return nil
                     }
                     
@@ -71,22 +72,22 @@ struct LockboxKeyCryptor: LockboxKeyCrypting {
                                 encrypted: encryptedSymmetricKey
                             )
                         }
-                        print("[Default] Lockbox key cryptor decrypted symmetric key \(decryptedSymmetricKey) using slot \(slot) algorithm \(algorithm.rawValue)")
+                        Logger.cryptor.log("Lockbox key cryptor decrypted symmetric key \(decryptedSymmetricKey) using slot \(slot.rawValue) algorithm \(algorithm.rawValue)")
                         return decryptedSymmetricKey
                     } catch {
-                        print("[Error] Lockbox key cryptor failed to decrypt using slot \(slot) algorithm (algorithm) with error \(error)")
+                        Logger.cryptor.error("Lockbox key cryptor failed to decrypt using slot \(slot.rawValue) algorithm \(algorithm.rawValue) with error \(error))")
                         return nil
                     }
                 } catch {
-                    print("[Error] Lockbox key cryptor failed to get serial number with error \(error)")
+                    Logger.cryptor.error("Lockbox key cryptor failed to get serial number with error \(error)")
                     return nil
                 }
             } catch {
-                print("[Error] Lockbox key cryptor failed to create PIV session from connection \(connection) with error \(error)")
+                Logger.cryptor.error("Lockbox key cryptor failed to create PIV session from connection with error \(error)")
                 return nil
             }
         } catch {
-            print("[Error] Lockbox key cryptor failed to find a wired connection with error \(error)")
+            Logger.cryptor.error("Lockbox key cryptor failed to find a wired connection with error \(error)")
             return nil
         }
     }

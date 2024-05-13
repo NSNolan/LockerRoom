@@ -7,6 +7,8 @@
 
 import Foundation
 
+import os.log
+
 protocol LockerRoomStoring {
     var lockerRoomURLProvider: LockerRoomURLProviding { get }
     
@@ -52,7 +54,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let lockboxPath = lockboxURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: lockboxPath) else {
-            print("[Error] Locker room store failed to read unencrypted lockbox \(name) at non-existing path \(lockboxPath)")
+            Logger.persistence.error("Locker room store failed to read unencrypted lockbox \(name) at non-existing path \(lockboxPath)")
             return nil
         }
         
@@ -60,7 +62,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let lockboxMetadataPath = lockboxMetadataURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: lockboxMetadataPath) else {
-            print("[Error] Locker room store failed to read unencrypted lockbox metadata \(name) at non-existing path \(lockboxMetadataPath)")
+            Logger.persistence.error("Locker room store failed to read unencrypted lockbox metadata \(name) at non-existing path \(lockboxMetadataPath)")
             return nil
         }
         
@@ -70,11 +72,11 @@ struct LockerRoomStore: LockerRoomStoring {
             do {
                 return try decoder.decode(UnencryptedLockbox.Metadata.self, from: metadataPlistData)
             } catch {
-                print("[Error] Locker room store failed to decode unencrypted lockbox metadata \(name) with plist data \(metadataPlistData) at path \(lockboxMetadataPath) with error \(error)")
+                Logger.persistence.error("Locker room store failed to decode unencrypted lockbox metadata \(name) with plist data \(metadataPlistData) at path \(lockboxMetadataPath) with error \(error)")
                 return nil
             }
         } catch {
-            print("[Error] Locker room store failed to read unencrypted lockbox metadata \(name) at path \(lockboxMetadataPath) with error \(error)")
+            Logger.persistence.error("Locker room store failed to read unencrypted lockbox metadata \(name) at path \(lockboxMetadataPath) with error \(error)")
             return nil
         }
     }
@@ -88,7 +90,7 @@ struct LockerRoomStore: LockerRoomStoring {
             do {
                 try fileManager.createDirectory(at: lockboxURL, withIntermediateDirectories: true)
             } catch {
-                print("[Error] Locker room store failed to write unencrypted lockbox directory \(name) at path \(lockboxPath) with \(error)")
+                Logger.persistence.error("Locker room store failed to write unencrypted lockbox directory \(name) at path \(lockboxPath) with \(error)")
                 return false
             }
         }
@@ -102,12 +104,12 @@ struct LockerRoomStore: LockerRoomStoring {
                 try metadataPlistData.write(to: lockboxMetadataURL, options: .atomic)
                 return true
             } catch {
-                print("[Error] Locker room store failed to write unencrypted lockbox metadata \(name) with plist data \(metadataPlistData) to path \(lockboxMetadataPath) with error \(error)")
+                Logger.persistence.error("Locker room store failed to write unencrypted lockbox metadata \(name) with plist data \(metadataPlistData) to path \(lockboxMetadataPath) with error \(error)")
                 return false
             }
             
         } catch {
-            print("[Error] Locker room store failed to encode unencrypted lockbox metadata \(name) with metadata \(lockboxMetadata) with error \(error)")
+            Logger.persistence.error("Locker room store failed to encode unencrypted lockbox metadata \(name) with metadata \(lockboxMetadata) with error \(error)")
             return false
         }
     }
@@ -117,7 +119,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let lockboxPath = lockboxURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: lockboxPath) else {
-            print("[Error] Locker room store failed to read encrypted lockbox \(name) at non-existing path \(lockboxPath)")
+            Logger.persistence.error("Locker room store failed to read encrypted lockbox \(name) at non-existing path \(lockboxPath)")
             return nil
         }
         
@@ -125,7 +127,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let lockboxMetadataPath = lockboxMetadataURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: lockboxMetadataPath) else {
-            print("[Error] Locker room store failed to read encrypted lockbox metadata \(name) at non-existing path \(lockboxMetadataPath)")
+            Logger.persistence.error("Locker room store failed to read encrypted lockbox metadata \(name) at non-existing path \(lockboxMetadataPath)")
             return nil
         }
         
@@ -135,11 +137,11 @@ struct LockerRoomStore: LockerRoomStoring {
             do {
                 return try decoder.decode(EncryptedLockbox.Metadata.self, from: metadataPlistData)
             } catch {
-                print("[Error] Locker room store failed to decode encrypted lockbox metadata \(name) with plist data \(metadataPlistData) at path \(lockboxMetadataPath) with error \(error)")
+                Logger.persistence.error("Locker room store failed to decode encrypted lockbox metadata \(name) with plist data \(metadataPlistData) at path \(lockboxMetadataPath) with error \(error)")
                 return nil
             }
         } catch {
-            print("[Error] Locker room store failed to read encrypted lockbox metadata \(name) at path \(lockboxMetadataPath) with error \(error)")
+            Logger.persistence.error("Locker room store failed to read encrypted lockbox metadata \(name) at path \(lockboxMetadataPath) with error \(error)")
             return nil
         }
     }
@@ -153,7 +155,7 @@ struct LockerRoomStore: LockerRoomStoring {
             do {
                 try fileManager.createDirectory(at: lockboxURL, withIntermediateDirectories: true)
             } catch {
-                print("[Error] Locker room store failed to write encrypted lockbox directory \(name) at path \(lockboxPath) with \(error)")
+                Logger.persistence.error("Locker room store failed to write encrypted lockbox directory \(name) at path \(lockboxPath) with \(error)")
                 return false
             }
         }
@@ -167,12 +169,12 @@ struct LockerRoomStore: LockerRoomStoring {
                 try metadataPlistData.write(to: lockboxMetadataURL, options: .atomic)
                 return true
             } catch {
-                print("[Error] Locker room store failed to write encrypted lockbox metadata \(name) with plist data \(metadataPlistData) to path \(lockboxMetadataPath) with error \(error)")
+                Logger.persistence.error("Locker room store failed to write encrypted lockbox metadata \(name) with plist data \(metadataPlistData) to path \(lockboxMetadataPath) with error \(error)")
                 return false
             }
             
         } catch {
-            print("[Error] Locker room store failed to encode encrypted lockbox metadata \(name) with metadata \(lockboxMetadata) with error \(error)")
+            Logger.persistence.error("Locker room store failed to encode encrypted lockbox metadata \(name) with metadata \(lockboxMetadata) with error \(error)")
             return false
         }
     }
@@ -185,7 +187,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     func removeLockbox(name: String) -> Bool {
         guard !name.isEmpty else {
-            print("[Error] Locker room store failed to remove lockbock with empty name")
+            Logger.persistence.error("Locker room store failed to remove lockbock with empty name")
             return false
         }
         
@@ -193,7 +195,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let lockboxPath = lockboxURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: lockboxPath) else {
-            print("[Error] Locker room store failed to remove lockbox \(name) at non-existing path \(lockboxPath)")
+            Logger.persistence.error("Locker room store failed to remove lockbox \(name) at non-existing path \(lockboxPath)")
             return false
         }
         
@@ -201,14 +203,14 @@ struct LockerRoomStore: LockerRoomStoring {
             try fileManager.removeItem(at: lockboxURL)
             return true
         } catch {
-            print("[Error] Locker room store failed to remove lockbox \(name) at path \(lockboxPath)")
+            Logger.persistence.error("Locker room store failed to remove lockbox \(name) at path \(lockboxPath)")
             return false
         }
     }
     
     func removeUnencryptedContent(name: String) -> Bool {
         guard !name.isEmpty else {
-            print("[Error] Locker room store failed to remove lockbox unencrypted content with empty name")
+            Logger.persistence.error("Locker room store failed to remove lockbox unencrypted content with empty name")
             return false
         }
         
@@ -216,7 +218,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let lockboxUnencryptedContentPath = lockboxUnencryptedContentURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: lockboxUnencryptedContentPath) else {
-            print("[Error] Locker room store failed to remove lockbox unencrypted content \(name) at non-existing path \(lockboxUnencryptedContentPath)")
+            Logger.persistence.error("Locker room store failed to remove lockbox unencrypted content \(name) at non-existing path \(lockboxUnencryptedContentPath)")
             return false
         }
         
@@ -224,14 +226,14 @@ struct LockerRoomStore: LockerRoomStoring {
             try fileManager.removeItem(at: lockboxUnencryptedContentURL)
             return true
         } catch {
-            print("[Error] Locker room store failed to remove lockbox unencrypted content \(name) at path \(lockboxUnencryptedContentPath)")
+            Logger.persistence.error("Locker room store failed to remove lockbox unencrypted content \(name) at path \(lockboxUnencryptedContentPath)")
             return false
         }
     }
     
     func removeEncryptedContent(name: String) -> Bool {
         guard !name.isEmpty else {
-            print("[Error] Locker room store failed to remove lockbox encrypted content with empty name")
+            Logger.persistence.error("Locker room store failed to remove lockbox encrypted content with empty name")
             return false
         }
         
@@ -239,7 +241,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let lockboxEncryptedContentPath = lockboxEncryptedContentURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: lockboxEncryptedContentPath) else {
-            print("[Error] Locker room store failed to remove lockbox encrypted content \(name) at non-existing path \(lockboxEncryptedContentPath)")
+            Logger.persistence.error("Locker room store failed to remove lockbox encrypted content \(name) at non-existing path \(lockboxEncryptedContentPath)")
             return false
         }
         
@@ -247,7 +249,7 @@ struct LockerRoomStore: LockerRoomStoring {
             try fileManager.removeItem(at: lockboxEncryptedContentURL)
             return true
         } catch {
-            print("[Error] Locker room store failed to remove lockbox encrypted content \(name) at path \(lockboxEncryptedContentPath)")
+            Logger.persistence.error("Locker room store failed to remove lockbox encrypted content \(name) at path \(lockboxEncryptedContentPath)")
             return false
         }
     }
@@ -255,7 +257,7 @@ struct LockerRoomStore: LockerRoomStoring {
     var unencryptedLockboxMetdatas: [UnencryptedLockbox.Metadata] {
         return lockboxNames(wantsEncrypted: false).compactMap { lockboxName in
             guard let metadata = readUnencryptedLockboxMetadata(name: lockboxName) else {
-                print("[Error] Locker room store failed to read unencrypted lockbox metadata \(lockboxName)")
+                Logger.persistence.error("Locker room store failed to read unencrypted lockbox metadata \(lockboxName)")
                 return nil
             }
             return metadata
@@ -265,7 +267,7 @@ struct LockerRoomStore: LockerRoomStoring {
     var encryptedLockboxMetadatas: [EncryptedLockbox.Metadata] {
         return lockboxNames(wantsEncrypted: true).compactMap { lockboxName in
             guard let metadata = readEncryptedLockboxMetadata(name: lockboxName) else {
-                print("[Error] Locker room store failed to read encrypted lockbox metadata \(lockboxName)")
+                Logger.persistence.error("Locker room store failed to read encrypted lockbox metadata \(lockboxName)")
                 return nil
             }
             return metadata
@@ -296,7 +298,7 @@ struct LockerRoomStore: LockerRoomStoring {
                 return lockboxName
             }
         } catch {
-            print("[Warning] Locker room store failed to get lockbox URLs with error \(error)")
+            Logger.persistence.warning("Locker room store failed to get lockbox URLs with error \(error)")
             return [String]()
         }
     }
@@ -316,7 +318,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let keyPath = keyURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: keyPath) else {
-            print("[Error] Locker room store failed to read key \(name) at non-existing path \(keyPath)")
+            Logger.persistence.error("Locker room store failed to read key \(name) at non-existing path \(keyPath)")
             return nil
         }
         
@@ -324,7 +326,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let keyFilePath = keyFileURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: keyFilePath) else {
-            print("[Error] Locker room store failed to read key \(name) at non-existing file path \(keyFilePath)")
+            Logger.persistence.error("Locker room store failed to read key \(name) at non-existing file path \(keyFilePath)")
             return nil
         }
         
@@ -334,11 +336,11 @@ struct LockerRoomStore: LockerRoomStoring {
             do {
                  return try decoder.decode(LockboxKey.self, from: keyPlistData)
             } catch {
-                print("[Error] Locker room store failed to decode key \(name) with plist data \(keyPlistData) at path \(keyFilePath) with error \(error)")
+                Logger.persistence.error("Locker room store failed to decode key \(name) with plist data \(keyPlistData) at path \(keyFilePath) with error \(error)")
                 return nil
             }
         } catch {
-            print("[Error] Locker room store failed to read key \(name) with error \(error)")
+            Logger.persistence.error("Locker room store failed to read key \(name) with error \(error)")
             return nil
         }
     }
@@ -352,7 +354,7 @@ struct LockerRoomStore: LockerRoomStoring {
                 try fileManager.removeItem(at: keyFileURL)
                 return true
             } catch {
-                print("[Error] Locker room store failed to remove key \(name) at path \(keyFilePath) with error \(error)")
+                Logger.persistence.error("Locker room store failed to remove key \(name) at path \(keyFilePath) with error \(error)")
                 return false
             }
         }
@@ -366,7 +368,7 @@ struct LockerRoomStore: LockerRoomStoring {
                 do {
                     try fileManager.createDirectory(at: keyURL, withIntermediateDirectories: true)
                 } catch {
-                    print("[Error] Locker room store failed to create key directory \(name) at path \(keyPath)")
+                    Logger.persistence.error("Locker room store failed to create key directory \(name) at path \(keyPath)")
                     return false
                 }
             }
@@ -375,11 +377,11 @@ struct LockerRoomStore: LockerRoomStoring {
                 try keyPlistData.write(to: keyFileURL, options: .atomic)
                 return true
             } catch {
-                print("[Error] Locker room store failed to write key \(name) with plist data \(keyPlistData) to path \(keyFileURL)")
+                Logger.persistence.error("Locker room store failed to write key \(name) with plist data \(keyPlistData) to path \(keyFileURL)")
                 return false
             }
         } catch {
-            print("[Error] Locker room store failed to encode key \(name) at path \(keyFilePath) with error \(error)")
+            Logger.persistence.error("Locker room store failed to encode key \(name) at path \(keyFilePath) with error \(error)")
         }
         return true
     }
@@ -392,7 +394,7 @@ struct LockerRoomStore: LockerRoomStoring {
     
     func removeLockboxKey(name: String) -> Bool {
         guard !name.isEmpty else {
-            print("[Error] Locker room store failed to remove key with empty name")
+            Logger.persistence.error("Locker room store failed to remove key with empty name")
             return false
         }
         
@@ -400,7 +402,7 @@ struct LockerRoomStore: LockerRoomStoring {
         let keyPath = keyURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: keyPath) else {
-            print("[Error] Locker room store failed to remove key \(name) at non-existing path \(keyPath)")
+            Logger.persistence.error("Locker room store failed to remove key \(name) at non-existing path \(keyPath)")
             return false
         }
         
@@ -408,7 +410,7 @@ struct LockerRoomStore: LockerRoomStoring {
             try fileManager.removeItem(at: keyURL)
             return true
         } catch {
-            print("[Error] Locker room store failed to remove key \(name) at path \(keyPath)")
+            Logger.persistence.error("Locker room store failed to remove key \(name) at path \(keyPath)")
             return false
         }
     }
@@ -431,13 +433,13 @@ struct LockerRoomStore: LockerRoomStoring {
                 let keyName = keyURL.lastPathComponent
                 
                 guard let key = readLockboxKey(name: keyName) else {
-                    print("[Error] Locker room store failed to read key \(keyName)")
+                    Logger.persistence.error("Locker room store failed to read key \(keyName)")
                     return nil
                 }
                 return key
             }
         } catch {
-            print("[Warning] Locker room store failed to get key URLs with error \(error)")
+            Logger.persistence.warning("Locker room store failed to get key URLs with error \(error)")
             return [LockboxKey]()
         }
     }

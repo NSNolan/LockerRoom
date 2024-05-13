@@ -7,6 +7,8 @@
 
 import Foundation
 
+import os.log
+
 protocol LockerRoomURLProviding {
     var urlForLockboxes: URL { get }
     var urlForKeys: URL { get }
@@ -49,7 +51,7 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
         }
         self.rootURL = resolvedRootURL
         
-        print("[Default] Locker room URL provider is using root directory \(resolvedRootURL)")
+        Logger.persistence.log("Locker room URL provider is using root directory \(resolvedRootURL)")
     }
     
     var urlForLockboxes: URL {

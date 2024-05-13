@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct LockboxKey: Codable, Equatable {
+import os.log
+
+struct LockboxKey: Codable, CustomStringConvertible, Equatable {
     enum Slot: String, CaseIterable, Codable {
         case pivAuthentication = "PIV Authentication (9A)"
         case digitalSignature = "Digital Signature (9C)"
@@ -86,11 +88,15 @@ struct LockboxKey: Codable, Equatable {
         publicKeyData.publicKey
     }
     
+    var description: String {
+        return "[LockboxKey] Name: \(name), SerialNumber: \(serialNumber), Slot: \(slot), Algorithm: \(algorithm), PinPolicy \(pinPolicy), TouchPolicy: \(touchPolicy), PublicKey: \(publicKey.hashValue)"
+    }
+    
     static func create(name: String, serialNumber: UInt32, slot: Slot, algorithm: Algorithm, pinPolicy: PinPolicy, touchPolicy: TouchPolicy, managementKeyString: String, publicKey: SecKey, lockerRoomStore: LockerRoomStoring) -> LockboxKey? {
         let keyName = String(serialNumber) // Index keys by their serial number
         
         guard !lockerRoomStore.lockboxKeyExists(name: keyName) else {
-            print("[Error] Lockbox key failed to create \(name) at existing path")
+            Logger.persistence.error("Lockbox key failed to create \(name) at existing path")
             return nil
         }
         
@@ -106,7 +112,7 @@ struct LockboxKey: Codable, Equatable {
         )
     
         guard lockerRoomStore.writeLockboxKey(lockboxKey, name: keyName) else {
-            print("[Error] Lockbox key failed to write \(lockboxKey)")
+            Logger.persistence.error("Lockbox key failed to write \(lockboxKey)")
             return nil
         }
         
@@ -115,7 +121,7 @@ struct LockboxKey: Codable, Equatable {
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {
         guard lockerRoomStore.removeLockboxKey(name: name) else {
-            print("[Error] Lockbox key failed to remove \(name)")
+            Logger.persistence.error("Lockbox key failed to remove \(name)")
             return false
         }
         

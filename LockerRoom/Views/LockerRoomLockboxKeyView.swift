@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import os.log
+
 enum LockerRoomLockboxKeyViewStyle {
     case enroll
     case waitingForKey
@@ -136,11 +138,11 @@ private struct LockerRoomLockboxKeyEnrollView: View {
             touchPolicy: touchPolicy,
             managementKeyString: managementKeyString
         ) != nil else {
-            print("[Error] LockerRoom failed to create a new lockbox key \(name) slot \(slot) algorithm \(algorithm) pin policy \(pinPolicy) touch policy \(touchPolicy) management key string \(managementKeyString)")
+            Logger.lockerRoomUI.error("LockerRoom failed to enroll lockbox key \(name) slot \(slot.rawValue) algorithm \(algorithm.rawValue) pin policy \(pinPolicy.rawValue) touch policy \(touchPolicy.rawValue)")
             return false
         }
         
-        print("[Default] LockerRoom added a lockbox key \(name)")
+        Logger.lockerRoomUI.log("LockerRoom added a lockbox key \(name)")
         return true
     }
 }

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import os.log
+
 enum LockerRoomUnencryptedLockboxViewStyle {
     case create
     case creating
@@ -103,12 +105,12 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
                 
                 Task {
                     guard let newUnencryptedLockbox = await lockerRoomManager.addUnencryptedLockbox(name: name, size: sizeInMegabytes) else {
-                        print("[Error] LockerRoom failed to create a new unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
+                        Logger.lockerRoomUI.error("LockerRoom failed to create an unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
                         error = .failedToCreateLockbox
                         viewStyle = .error
                         return
                     }
-                    print("[Default] LockerRoom created a new unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
+                    Logger.lockerRoomUI.log("LockerRoom created an unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
                     
                     lockbox = newUnencryptedLockbox.metadata.lockerRoomLockbox
                     viewStyle = .encrypt
@@ -210,7 +212,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                         viewStyle = .encrypting
                         
                         guard let lockbox else {
-                            print("[Error] LockerRoom is missing an unencrypted lockbox to encrypt")
+                            Logger.lockerRoomUI.error("LockerRoom is missing an unencrypted lockbox to encrypt")
                             error = .missingLockbox
                             viewStyle = .error
                             return
@@ -218,7 +220,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                         
                         Task {
                             guard await lockerRoomManager.encrypt(lockbox: lockbox, usingEnrolledKeys: selectedKeys) else {
-                                print("[Error] LockerRoom is failed to encrypt an unencrypted lockbox \(lockbox.name)")
+                                Logger.lockerRoomUI.error("LockerRoom failed to encrypt an unencrypted lockbox \(lockbox.name)")
                                 error = .failedToEncryptLockbox
                                 viewStyle = .error
                                 return
@@ -241,7 +243,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
         }
         .onAppear {
             guard let lockbox else {
-                print("[Error] LockerRoom is missing an unencrypted lockbox to attach as disk image")
+                Logger.lockerRoomUI.error("LockerRoom is missing an unencrypted lockbox to attach as disk image")
                 error = .missingLockbox
                 viewStyle = .error
                 return
@@ -249,7 +251,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
             
             let name = lockbox.name
             guard lockerRoomManager.attachToDiskImage(name: name) else {
-                print("[Error] LockerRoom failed to attach lockbox \(name) as disk image")
+                Logger.lockerRoomUI.error("LockerRoom failed to attach lockbox \(name) as disk image")
                 error = .failedToAttachLockbox
                 viewStyle = .error
                 return

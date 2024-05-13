@@ -8,6 +8,7 @@
 import Foundation
 
 import CryptoKit
+import os.log
 
 protocol LockboxCrypting {
     func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) async -> Bool
@@ -43,13 +44,13 @@ struct LockboxCryptor: LockboxCrypting {
         
         inputStream.open()
         guard inputStream.streamStatus == .open else {
-            print("[Error] Lockbox cryptor failed to open input stream with error \(String(describing: inputStream.streamError))")
+            Logger.cryptor.error("Lockbox cryptor failed to open input stream with error \(inputStream.streamError)")
             return false
         }
         
         outputStream.open()
         guard outputStream.streamStatus == .open else {
-            print("[Error] Lockbox cryptor failed to open output stream with error \(String(describing: outputStream.streamError))")
+            Logger.cryptor.error("Lockbox cryptor failed to open output stream with error \(outputStream.streamError)")
             return false
         }
         
@@ -63,12 +64,12 @@ struct LockboxCryptor: LockboxCrypting {
                 guard chunkSizeBytesRead > 0 else {
                     if chunkSizeBytesRead == 0 {
                         guard inputStream.streamStatus == .atEnd else {
-                            print("[Error] Lockbox cryptor read zero bytes without reaching EOF with stream status \(inputStream.streamStatus) with error \(String(describing: inputStream.streamError))")
+                            Logger.cryptor.error("Lockbox cryptor read zero bytes without reaching EOF with stream status \(inputStream.streamStatus.rawValue) with error \(inputStream.streamError)")
                             return false
                         }
                         break
                     } else {
-                        print("[Error] Lockbox cryptor failed to read chunk size with error \(String(describing: inputStream.streamError))")
+                        Logger.cryptor.error("Lockbox cryptor failed to read chunk size with error \(inputStream.streamError)")
                         return false
                     }
                 }
@@ -82,12 +83,12 @@ struct LockboxCryptor: LockboxCrypting {
             guard bytesRead > 0 else {
                 if bytesRead == 0 {
                     guard inputStream.streamStatus == .atEnd else {
-                        print("[Error] Lockbox cryptor read zero bytes without reaching EOF with stream status \(inputStream.streamStatus) with error \(String(describing: inputStream.streamError))")
+                        Logger.cryptor.error("Lockbox cryptor read zero bytes without reaching EOF with stream status \(inputStream.streamStatus.rawValue) with error \(inputStream.streamError)")
                         return false
                     }
                     break
                 } else {
-                    print("[Error] Lockbox cryptor failed to read with error \(String(describing: inputStream.streamError))")
+                    Logger.cryptor.error("Lockbox cryptor failed to read with error \(inputStream.streamError)")
                     return false
                 }
             }
@@ -97,7 +98,7 @@ struct LockboxCryptor: LockboxCrypting {
             let processedData: Data
             if encrypt {
                 guard let encryptedContent = self.encrypt(unencryptedContent: chunk, symmetricKeyData: symmetricKeyData) else {
-                    print("[Error] Lockbox cryptor failed to process unencrypted lockbox content")
+                    Logger.cryptor.error("Lockbox cryptor failed to process unencrypted lockbox content")
                     return false
                 }
                 
@@ -107,7 +108,7 @@ struct LockboxCryptor: LockboxCrypting {
                 processedData = lengthData + encryptedContent
             } else {
                 guard let decryptedContent = self.decrypt(encryptedContent: chunk, symmetricKeyData: symmetricKeyData) else {
-                    print("[Error] Lockbox cryptor failed to process encrypted lockbox content")
+                    Logger.cryptor.error("Lockbox cryptor failed to process encrypted lockbox content")
                     return false
                 }
                 
@@ -117,7 +118,7 @@ struct LockboxCryptor: LockboxCrypting {
             var unsafeBytesWriteFailure = false
             processedData.withUnsafeBytes { rawBufferPointer in
                 guard let baseAddress = rawBufferPointer.baseAddress else {
-                    print("[Error] Lockbox cryptor failed to get base address of the raw buffer")
+                    Logger.cryptor.error("Lockbox cryptor failed to get base address of the raw buffer")
                     unsafeBytesWriteFailure = true
                     return
                 }
@@ -128,7 +129,7 @@ struct LockboxCryptor: LockboxCrypting {
                     let remainingBytes = baseAddress.assumingMemoryBound(to: UInt8.self).advanced(by: totalBytesWritten)
                     let bytesWritten = outputStream.write(remainingBytes, maxLength: totalBytesToWrite - totalBytesWritten)
                     guard bytesWritten > 0 else {
-                        print("[Error] Lockbox cryptor failed to write with error \(String(describing: outputStream.streamError))")
+                        Logger.cryptor.error("Lockbox cryptor failed to write with error \(outputStream.streamError)")
                         unsafeBytesWriteFailure = true
                         return
                     }
@@ -147,20 +148,20 @@ struct LockboxCryptor: LockboxCrypting {
     private func encrypt(unencryptedContent: Data, symmetricKeyData: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
         guard !unencryptedContent.isEmpty else {
-            print("[Error] Lockbox cryptor failed to read unencrypted lockbox content")
+            Logger.cryptor.error("Lockbox cryptor failed to read unencrypted lockbox content")
             return nil
         }
         
         do {
             guard let encryptedContent = try AES.GCM.seal(unencryptedContent, using: symmetricKey).combined else {
-                print("[Error] Lockbox cryptor failed to combine encrypted lockbox cipher text")
+                Logger.cryptor.error("Lockbox cryptor failed to combine encrypted lockbox cipher text")
                 return nil
                 
             }
-            print("[Default] Lockbox cryptor encrypted content \(encryptedContent)")
+            Logger.cryptor.debug("Lockbox cryptor encrypted content \(encryptedContent)")
             return encryptedContent
         } catch {
-            print("[Error] Lockbox cryptor failed to encrypt lockbox content with error \(error)")
+            Logger.cryptor.error("Lockbox cryptor failed to encrypt lockbox content with error \(error)")
             return nil
         }
     }
@@ -168,7 +169,7 @@ struct LockboxCryptor: LockboxCrypting {
     private func decrypt(encryptedContent: Data, symmetricKeyData: Data) -> Data? {
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
         guard !encryptedContent.isEmpty else {
-            print("[Error] Lockbox cryptor failed to read encrypted lockbox content")
+            Logger.cryptor.error("Lockbox cryptor failed to read encrypted lockbox content")
             return nil
         }
         
@@ -176,14 +177,14 @@ struct LockboxCryptor: LockboxCrypting {
             let encryptedContentBox = try AES.GCM.SealedBox(combined: encryptedContent)
             do {
                 let unencryptedContent = try AES.GCM.open(encryptedContentBox, using: symmetricKey)
-                print("[Default] Lockbox cryptor decrypted content \(unencryptedContent)")
+                Logger.cryptor.debug("Lockbox cryptor decrypted content \(unencryptedContent)")
                 return unencryptedContent
             } catch {
-                print("[Error] Lockbox cryptor failed to decrypt lockbox content with error \(error)")
+                Logger.cryptor.error("Lockbox cryptor failed to decrypt lockbox content with error \(error)")
                 return nil
             }
         } catch {
-            print("[Error] Lockbox cryptor failed to seal encrypted lockbox content with error \(error)")
+            Logger.cryptor.error("Lockbox cryptor failed to seal encrypted lockbox content with error \(error)")
             return nil
         }
     }
