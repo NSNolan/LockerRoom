@@ -19,5 +19,6 @@ extension Logger {
     static let lockerRoomUI = Logger(subsystem: OSLog.lockerRoomSubsystem, category: "lockerRoomUI")
     static let manager = Logger(subsystem: OSLog.lockerRoomSubsystem, category: "manager")
     static let persistence = Logger(subsystem: OSLog.lockerRoomSubsystem, category: "persistence")
+    static let service = Logger(subsystem: OSLog.lockerRoomSubsystem, category: "service")
     static let utilities = Logger(subsystem: OSLog.lockerRoomSubsystem, category: "utilities")
 }

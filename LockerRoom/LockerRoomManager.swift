@@ -18,40 +18,48 @@ import os.log
     private let lockboxCryptor: LockboxCrypting
     private let lockboxKeyCryptor: LockboxKeyCrypting
     private let lockboxKeyGenerator: LockboxKeyGenerating
+    private let lockerRoomDefaults: LockerRoomDefaulting
     private let lockerRoomDiskImage: LockerRoomDiskImaging
+    private let lockerRoomService: LockerRoomService
     private let lockerRoomStore: LockerRoomStoring
     
     private init(
         lockboxCryptor: LockboxCrypting = LockboxCryptor(),
         lockboxKeyCryptor: LockboxKeyCrypting = LockboxKeyCryptor(),
         lockboxKeyGenerator: LockboxKeyGenerating = LockboxKeyGenerator(),
+        lockerRoomDefaults: LockerRoomDefaulting = LockerRoomDefaults(),
         lockerRoomDiskImage: LockerRoomDiskImaging? = nil,
+        lockerRoomService: LockerRoomService? = nil,
         lockerRoomStore: LockerRoomStoring? = nil,
         lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()
     ) {
         self.lockboxCryptor = lockboxCryptor
         self.lockboxKeyCryptor = lockboxKeyCryptor
         self.lockboxKeyGenerator = lockboxKeyGenerator
+        self.lockerRoomDefaults = lockerRoomDefaults
         self.lockerRoomDiskImage = lockerRoomDiskImage ?? LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
+        self.lockerRoomService = lockerRoomService ?? LockerRoomService(lockerRoomDefaults: lockerRoomDefaults)
         self.lockerRoomStore = lockerRoomStore ?? LockerRoomStore(lockerRoomURLProvider: lockerRoomURLProvider)
         
         self.lockboxesByID = self.lockerRoomStore.lockboxesByID
         self.enrolledKeysByID = self.lockerRoomStore.enrolledKeysByID
+        
+        LockerRoomAppLifecycle.service = self.lockerRoomService
     }
     
     func addUnencryptedLockbox(name: String, size: Int) async -> UnencryptedLockbox? {
         return (try? await Task {
-            guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomDiskImage: self.lockerRoomDiskImage, lockerRoomStore: self.lockerRoomStore) else {
+            guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskImage: lockerRoomDiskImage, lockerRoomService: lockerRoomService, lockerRoomStore: lockerRoomStore) else {
                 Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
                 return nil
             }
             
-            guard self.lockerRoomDiskImage.attach(name: name) else {
+            guard lockerRoomDiskImage.attach(name: name) else {
                 Logger.manager.error("Locker room manager failed to attach lockbox \(name) as disk image")
                 return nil
             }
             
-            self.lockboxesByID = self.lockerRoomStore.lockboxesByID
+            lockboxesByID = self.lockerRoomStore.lockboxesByID
             return unencryptedLockbox
         }.result.get()) ?? nil
     }

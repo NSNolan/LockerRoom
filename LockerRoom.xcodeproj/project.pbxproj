@@ -14,6 +14,8 @@
 		BF0BCB632BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BCB622BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift */; };
 		BF0BCB652BC31B0400F91471 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = BF0BCB642BC31B0400F91471 /* README.md */; };
 		BF0BCB672BC31B0E00F91471 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = BF0BCB662BC31B0E00F91471 /* LICENSE */; };
+		BF15A48F2BF5206700243648 /* LockerRoomXPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E6302BF4E910002A3BA6 /* LockerRoomXPCConnection.swift */; };
+		BF15A4902BF5207F00243648 /* LockerRoomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF916A2BF17EC60028B81C /* LockerRoomLogger.swift */; };
 		BF1DD0432BAC99BF001FA81F /* LockerRoomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0422BAC99BF001FA81F /* LockerRoomApp.swift */; };
 		BF1DD0472BAC99C0001FA81F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF1DD0462BAC99C0001FA81F /* Assets.xcassets */; };
 		BF1DD04B2BAC99C0001FA81F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF1DD04A2BAC99C0001FA81F /* Preview Assets.xcassets */; };
@@ -60,6 +62,12 @@
 		BF7048CD2BE04504008FB829 /* LockerRoomBindingUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7048CC2BE04504008FB829 /* LockerRoomBindingUtilities.swift */; };
 		BF7048CF2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7048CE2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift */; };
 		BF7048D12BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7048D02BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift */; };
+		BFA2E61B2BF45BDA002A3BA6 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61A2BF45BDA002A3BA6 /* main.swift */; };
+		BFA2E6202BF45FEE002A3BA6 /* LockerRoomService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61F2BF45FEE002A3BA6 /* LockerRoomService.swift */; };
+		BFA2E6312BF4E910002A3BA6 /* LockerRoomXPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E6302BF4E910002A3BA6 /* LockerRoomXPCConnection.swift */; };
+		BFA2E6362BF4FD46002A3BA6 /* LockerRoomService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61F2BF45FEE002A3BA6 /* LockerRoomService.swift */; };
+		BFA2E6382BF500B8002A3BA6 /* com.nsnolan.LockerRoomDaemon.plist in Copy Launch Daemon Plist */ = {isa = PBXBuildFile; fileRef = BFA2E6352BF4FCA4002A3BA6 /* com.nsnolan.LockerRoomDaemon.plist */; };
+		BFA2E63C2BF51F73002A3BA6 /* LockerRoomDaemon in Copy Launch Daemon */ = {isa = PBXBuildFile; fileRef = BFA2E6182BF45BDA002A3BA6 /* LockerRoomDaemon */; };
 		BFAF915E2BEBB67B0028B81C /* LockerRoomStoreMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF915D2BEBB67B0028B81C /* LockerRoomStoreMock.swift */; };
 		BFAF91602BEBC5750028B81C /* UnencryptedLockboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF915F2BEBC5750028B81C /* UnencryptedLockboxTests.swift */; };
 		BFAF91632BEC74C10028B81C /* EncryptedLockboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF91622BEC74C10028B81C /* EncryptedLockboxTests.swift */; };
@@ -67,6 +75,17 @@
 		BFAF91672BEC79E90028B81C /* LockerRoomLockboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF91662BEC79E90028B81C /* LockerRoomLockboxTests.swift */; };
 		BFAF91692BED10FD0028B81C /* LockerRoomDiskImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF91682BED10FD0028B81C /* LockerRoomDiskImageTests.swift */; };
 		BFAF916B2BF17EC60028B81C /* LockerRoomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF916A2BF17EC60028B81C /* LockerRoomLogger.swift */; };
+		BFE494102BF5B3D400F9CC7B /* LockerRoomDiskImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */; };
+		BFE494112BF5B82F00F9CC7B /* LockerRoomURLProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1DD0942BB1CAB9001FA81F /* LockerRoomURLProvider.swift */; };
+		BFE494132BF6FB4B00F9CC7B /* LockerRoomDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE494122BF6FB4B00F9CC7B /* LockerRoomDefaults.swift */; };
+		BFE494152BF795F300F9CC7B /* LockerRoomAppLifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE494142BF795F300F9CC7B /* LockerRoomAppLifecycle.swift */; };
+		BFE494172BF7C3B500F9CC7B /* LockerRoomDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE494122BF6FB4B00F9CC7B /* LockerRoomDefaults.swift */; };
+		BFE494182BF7C3EC00F9CC7B /* LockerRoomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF916A2BF17EC60028B81C /* LockerRoomLogger.swift */; };
+		BFE4941A2BF7C45B00F9CC7B /* LockerRoomDefaultsMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE494192BF7C45B00F9CC7B /* LockerRoomDefaultsMock.swift */; };
+		BFE4941B2BF7C47300F9CC7B /* LockerRoomDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE494122BF6FB4B00F9CC7B /* LockerRoomDefaults.swift */; };
+		BFE4941C2BF7C4FD00F9CC7B /* LockerRoomService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61F2BF45FEE002A3BA6 /* LockerRoomService.swift */; };
+		BFE4941D2BF7C59E00F9CC7B /* LockerRoomXPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E6302BF4E910002A3BA6 /* LockerRoomXPCConnection.swift */; };
+		BFE4941F2BF7C63A00F9CC7B /* LockerRoomAppLifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE494142BF795F300F9CC7B /* LockerRoomAppLifecycle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,7 +103,48 @@
 			remoteGlobalIDString = BF1DD03E2BAC99BF001FA81F;
 			remoteInfo = LockerRoom;
 		};
+		BFA2E6392BF51B33002A3BA6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BF1DD0372BAC99BF001FA81F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BFA2E6172BF45BDA002A3BA6;
+			remoteInfo = LockerRoomDaemon;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BFA2E6162BF45BDA002A3BA6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = usr/share/man/man1;
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		BFA2E6372BF50048002A3BA6 /* Copy Launch Daemon Plist */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(BUILT_PRODUCTS_DIR)/$(CONTENTS_FOLDER_PATH)/Library/LaunchDaemons";
+			dstSubfolderSpec = 0;
+			files = (
+				BFA2E6382BF500B8002A3BA6 /* com.nsnolan.LockerRoomDaemon.plist in Copy Launch Daemon Plist */,
+			);
+			name = "Copy Launch Daemon Plist";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFA2E63B2BF51B6A002A3BA6 /* Copy Launch Daemon */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				BFA2E63C2BF51F73002A3BA6 /* LockerRoomDaemon in Copy Launch Daemon */,
+			);
+			name = "Copy Launch Daemon";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		BF0051FB2BEB363E00C69CA9 /* LockboxKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxKeyTests.swift; sourceTree = "<group>"; };
@@ -126,6 +186,11 @@
 		BF7048CC2BE04504008FB829 /* LockerRoomBindingUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomBindingUtilities.swift; sourceTree = "<group>"; };
 		BF7048CE2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockboxKeyConfiguration.swift; sourceTree = "<group>"; };
 		BF7048D02BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomUnencryptedLockboxConfiguration.swift; sourceTree = "<group>"; };
+		BFA2E6182BF45BDA002A3BA6 /* LockerRoomDaemon */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LockerRoomDaemon; sourceTree = BUILT_PRODUCTS_DIR; };
+		BFA2E61A2BF45BDA002A3BA6 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		BFA2E61F2BF45FEE002A3BA6 /* LockerRoomService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomService.swift; sourceTree = "<group>"; };
+		BFA2E6302BF4E910002A3BA6 /* LockerRoomXPCConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomXPCConnection.swift; sourceTree = "<group>"; };
+		BFA2E6352BF4FCA4002A3BA6 /* com.nsnolan.LockerRoomDaemon.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = com.nsnolan.LockerRoomDaemon.plist; sourceTree = "<group>"; };
 		BFAF915D2BEBB67B0028B81C /* LockerRoomStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomStoreMock.swift; sourceTree = "<group>"; };
 		BFAF915F2BEBC5750028B81C /* UnencryptedLockboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnencryptedLockboxTests.swift; sourceTree = "<group>"; };
 		BFAF91612BEC43EC0028B81C /* LockerRoom.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = LockerRoom.xctestplan; sourceTree = "<group>"; };
@@ -134,6 +199,9 @@
 		BFAF91662BEC79E90028B81C /* LockerRoomLockboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLockboxTests.swift; sourceTree = "<group>"; };
 		BFAF91682BED10FD0028B81C /* LockerRoomDiskImageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomDiskImageTests.swift; sourceTree = "<group>"; };
 		BFAF916A2BF17EC60028B81C /* LockerRoomLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomLogger.swift; sourceTree = "<group>"; };
+		BFE494122BF6FB4B00F9CC7B /* LockerRoomDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomDefaults.swift; sourceTree = "<group>"; };
+		BFE494142BF795F300F9CC7B /* LockerRoomAppLifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomAppLifecycle.swift; sourceTree = "<group>"; };
+		BFE494192BF7C45B00F9CC7B /* LockerRoomDefaultsMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomDefaultsMock.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +221,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BF1DD0572BAC99C0001FA81F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFA2E6152BF45BDA002A3BA6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -185,6 +260,7 @@
 			isa = PBXGroup;
 			children = (
 				BF1DD0412BAC99BF001FA81F /* LockerRoom */,
+				BFA2E6192BF45BDA002A3BA6 /* LockerRoomDaemon */,
 				BF1DD0532BAC99C0001FA81F /* LockerRoomTests */,
 				BF1DD05D2BAC99C0001FA81F /* LockerRoomUITests */,
 				BF0BCB662BC31B0E00F91471 /* LICENSE */,
@@ -201,6 +277,7 @@
 				BF1DD03F2BAC99BF001FA81F /* LockerRoom.app */,
 				BF1DD0502BAC99C0001FA81F /* LockerRoomTests.xctest */,
 				BF1DD05A2BAC99C0001FA81F /* LockerRoomUITests.xctest */,
+				BFA2E6182BF45BDA002A3BA6 /* LockerRoomDaemon */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -209,10 +286,12 @@
 			isa = PBXGroup;
 			children = (
 				BF1DD0422BAC99BF001FA81F /* LockerRoomApp.swift */,
+				BFE494142BF795F300F9CC7B /* LockerRoomAppLifecycle.swift */,
 				BF1DD0752BAF5DCB001FA81F /* LockerRoomManager.swift */,
 				BF1DD0932BB1C850001FA81F /* Views */,
 				BF0BCB5B2BB8940400F91471 /* Persistence */,
 				BF1DD0962BB1FAC1001FA81F /* Cryptors */,
+				BFA2E62E2BF46191002A3BA6 /* Services */,
 				BF475F652BB49F87003A0E05 /* Utilities */,
 				BF1DD0462BAC99C0001FA81F /* Assets.xcassets */,
 				BF1DD0482BAC99C0001FA81F /* LockerRoom.entitlements */,
@@ -309,6 +388,7 @@
 			isa = PBXGroup;
 			children = (
 				BF7048CC2BE04504008FB829 /* LockerRoomBindingUtilities.swift */,
+				BFE494122BF6FB4B00F9CC7B /* LockerRoomDefaults.swift */,
 				BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */,
 				BFAF916A2BF17EC60028B81C /* LockerRoomLogger.swift */,
 				BF0BCB622BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift */,
@@ -321,10 +401,29 @@
 		BF63F50B2BE8791C00692EB8 /* Mock Objects */ = {
 			isa = PBXGroup;
 			children = (
+				BFE494192BF7C45B00F9CC7B /* LockerRoomDefaultsMock.swift */,
 				BF63F50C2BE8793F00692EB8 /* LockerRoomDiskImageMock.swift */,
 				BFAF915D2BEBB67B0028B81C /* LockerRoomStoreMock.swift */,
 			);
 			path = "Mock Objects";
+			sourceTree = "<group>";
+		};
+		BFA2E6192BF45BDA002A3BA6 /* LockerRoomDaemon */ = {
+			isa = PBXGroup;
+			children = (
+				BFA2E61A2BF45BDA002A3BA6 /* main.swift */,
+				BFA2E6352BF4FCA4002A3BA6 /* com.nsnolan.LockerRoomDaemon.plist */,
+			);
+			path = LockerRoomDaemon;
+			sourceTree = "<group>";
+		};
+		BFA2E62E2BF46191002A3BA6 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				BFA2E61F2BF45FEE002A3BA6 /* LockerRoomService.swift */,
+				BFA2E6302BF4E910002A3BA6 /* LockerRoomXPCConnection.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -337,10 +436,13 @@
 				BF1DD03B2BAC99BF001FA81F /* Sources */,
 				BF1DD03C2BAC99BF001FA81F /* Frameworks */,
 				BF1DD03D2BAC99BF001FA81F /* Resources */,
+				BFA2E6372BF50048002A3BA6 /* Copy Launch Daemon Plist */,
+				BFA2E63B2BF51B6A002A3BA6 /* Copy Launch Daemon */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BFA2E63A2BF51B33002A3BA6 /* PBXTargetDependency */,
 			);
 			name = LockerRoom;
 			packageProductDependencies = (
@@ -386,6 +488,23 @@
 			productReference = BF1DD05A2BAC99C0001FA81F /* LockerRoomUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		BFA2E6172BF45BDA002A3BA6 /* LockerRoomDaemon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BFA2E61C2BF45BDA002A3BA6 /* Build configuration list for PBXNativeTarget "LockerRoomDaemon" */;
+			buildPhases = (
+				BFA2E6142BF45BDA002A3BA6 /* Sources */,
+				BFA2E6152BF45BDA002A3BA6 /* Frameworks */,
+				BFA2E6162BF45BDA002A3BA6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LockerRoomDaemon;
+			productName = LockerRoomDaemon;
+			productReference = BFA2E6182BF45BDA002A3BA6 /* LockerRoomDaemon */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -407,6 +526,9 @@
 						CreatedOnToolsVersion = 15.3;
 						TestTargetID = BF1DD03E2BAC99BF001FA81F;
 					};
+					BFA2E6172BF45BDA002A3BA6 = {
+						CreatedOnToolsVersion = 15.3;
+					};
 				};
 			};
 			buildConfigurationList = BF1DD03A2BAC99BF001FA81F /* Build configuration list for PBXProject "LockerRoom" */;
@@ -426,6 +548,7 @@
 			projectRoot = "";
 			targets = (
 				BF1DD03E2BAC99BF001FA81F /* LockerRoom */,
+				BFA2E6172BF45BDA002A3BA6 /* LockerRoomDaemon */,
 				BF1DD04F2BAC99C0001FA81F /* LockerRoomTests */,
 				BF1DD0592BAC99C0001FA81F /* LockerRoomUITests */,
 			);
@@ -473,12 +596,14 @@
 				BF1DD0992BB3035E001FA81F /* LockerRoomLockbox.swift in Sources */,
 				BF7048CF2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift in Sources */,
 				BFAF916B2BF17EC60028B81C /* LockerRoomLogger.swift in Sources */,
+				BFA2E6202BF45FEE002A3BA6 /* LockerRoomService.swift in Sources */,
 				BF1DD0852BAF88DA001FA81F /* EncryptedLockbox.swift in Sources */,
 				BF1DD0432BAC99BF001FA81F /* LockerRoomApp.swift in Sources */,
 				BF475F642BB493AF003A0E05 /* LockboxKeyGenerator.swift in Sources */,
 				BF1DD08A2BAF94F7001FA81F /* UnencryptedLockbox.swift in Sources */,
 				BF475F5F2BB3BB92003A0E05 /* LockerRoomLockboxKeyView.swift in Sources */,
 				BF475F612BB3BED1003A0E05 /* LockboxKey.swift in Sources */,
+				BFA2E6312BF4E910002A3BA6 /* LockerRoomXPCConnection.swift in Sources */,
 				BF0BCB632BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift in Sources */,
 				BF1DD0912BB1C823001FA81F /* LockerRoomStore.swift in Sources */,
 				BF7048CD2BE04504008FB829 /* LockerRoomBindingUtilities.swift in Sources */,
@@ -486,11 +611,13 @@
 				BF1DD08D2BAFD2A1001FA81F /* LockboxCryptor.swift in Sources */,
 				BF7048D12BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift in Sources */,
 				BF1DD0762BAF5DCB001FA81F /* LockerRoomManager.swift in Sources */,
+				BFE494152BF795F300F9CC7B /* LockerRoomAppLifecycle.swift in Sources */,
 				BF5FBFF52BD002360054ED10 /* LockerRoomYubiKeyExperimental.swift in Sources */,
 				BF0BCB612BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift in Sources */,
 				BF1DD0722BACAB48001FA81F /* LockboxKeyCryptor.swift in Sources */,
 				BF288E642BDB62D000ADEA03 /* LockerRoomErrorView.swift in Sources */,
 				BF1DD0882BAF91BF001FA81F /* LockerRoomUnencryptedLockboxView.swift in Sources */,
+				BFE494132BF6FB4B00F9CC7B /* LockerRoomDefaults.swift in Sources */,
 				BF288E662BDB632F00ADEA03 /* LockerRoomError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -501,19 +628,25 @@
 			files = (
 				BFAF91602BEBC5750028B81C /* UnencryptedLockboxTests.swift in Sources */,
 				BF63F5112BE927A000692EB8 /* LockerRoomSecKeyPrimitives.swift in Sources */,
+				BFE4941A2BF7C45B00F9CC7B /* LockerRoomDefaultsMock.swift in Sources */,
 				BF63F5012BE878BE00692EB8 /* UnencryptedLockbox.swift in Sources */,
 				BFAF91632BEC74C10028B81C /* EncryptedLockboxTests.swift in Sources */,
+				BFE4941F2BF7C63A00F9CC7B /* LockerRoomAppLifecycle.swift in Sources */,
 				BF63F5002BE823E500692EB8 /* LockboxCryptorTests.swift in Sources */,
 				BF63F5062BE878DD00692EB8 /* LockerRoomStore.swift in Sources */,
 				BF63F5072BE878E000692EB8 /* LockerRoomURLProvider.swift in Sources */,
+				BFE494182BF7C3EC00F9CC7B /* LockerRoomLogger.swift in Sources */,
 				BF63F5052BE878DA00692EB8 /* LockboxKey.swift in Sources */,
 				BFAF91652BEC76560028B81C /* LockerRoomTestUtilities.swift in Sources */,
 				BF0051FA2BEB2B0D00C69CA9 /* LockerRoomManager.swift in Sources */,
 				BF63F5102BE9275800692EB8 /* LockerRoomLockbox.swift in Sources */,
+				BFE4941B2BF7C47300F9CC7B /* LockerRoomDefaults.swift in Sources */,
 				BF63F5092BE878E700692EB8 /* LockboxKeyCryptor.swift in Sources */,
 				BFAF915E2BEBB67B0028B81C /* LockerRoomStoreMock.swift in Sources */,
+				BFE4941D2BF7C59E00F9CC7B /* LockerRoomXPCConnection.swift in Sources */,
 				BF63F5032BE878C400692EB8 /* EncryptedLockbox.swift in Sources */,
 				BF63F5142BEB251800692EB8 /* LockerRoomEnrolledKey.swift in Sources */,
+				BFE4941C2BF7C4FD00F9CC7B /* LockerRoomService.swift in Sources */,
 				BF63F5082BE878E400692EB8 /* LockboxCryptor.swift in Sources */,
 				BF63F5152BEB251B00692EB8 /* LockerRoomError.swift in Sources */,
 				BFAF91692BED10FD0028B81C /* LockerRoomDiskImageTests.swift in Sources */,
@@ -537,6 +670,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BFA2E6142BF45BDA002A3BA6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF15A48F2BF5206700243648 /* LockerRoomXPCConnection.swift in Sources */,
+				BFE494102BF5B3D400F9CC7B /* LockerRoomDiskImage.swift in Sources */,
+				BFA2E6362BF4FD46002A3BA6 /* LockerRoomService.swift in Sources */,
+				BFE494112BF5B82F00F9CC7B /* LockerRoomURLProvider.swift in Sources */,
+				BFE494172BF7C3B500F9CC7B /* LockerRoomDefaults.swift in Sources */,
+				BF15A4902BF5207F00243648 /* LockerRoomLogger.swift in Sources */,
+				BFA2E61B2BF45BDA002A3BA6 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -549,6 +696,11 @@
 			isa = PBXTargetDependency;
 			target = BF1DD03E2BAC99BF001FA81F /* LockerRoom */;
 			targetProxy = BF1DD05B2BAC99C0001FA81F /* PBXContainerItemProxy */;
+		};
+		BFA2E63A2BF51B33002A3BA6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BFA2E6172BF45BDA002A3BA6 /* LockerRoomDaemon */;
+			targetProxy = BFA2E6392BF51B33002A3BA6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -823,6 +975,34 @@
 			};
 			name = Release;
 		};
+		BFA2E61D2BF45BDA002A3BA6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				OTHER_CODE_SIGN_FLAGS = "$(inherited) \"-i $(PRODUCT_BUNDLE_IDENTIFIER)\"";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nsnolan.LockerRoomDaemon;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		BFA2E61E2BF45BDA002A3BA6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				OTHER_CODE_SIGN_FLAGS = "$(inherited) \"-i $(PRODUCT_BUNDLE_IDENTIFIER)\"";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nsnolan.LockerRoomDaemon;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -858,6 +1038,15 @@
 			buildConfigurations = (
 				BF1DD06B2BAC99C0001FA81F /* Debug */,
 				BF1DD06C2BAC99C0001FA81F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BFA2E61C2BF45BDA002A3BA6 /* Build configuration list for PBXNativeTarget "LockerRoomDaemon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BFA2E61D2BF45BDA002A3BA6 /* Debug */,
+				BFA2E61E2BF45BDA002A3BA6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

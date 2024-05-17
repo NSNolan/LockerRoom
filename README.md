@@ -56,6 +56,25 @@ The now decrypted symmetric key is used to decrypt the encrypted lockbox with th
 
 ### Experimental Details
 
+#### Out-of-Process Disk Image Creation
+
+Creating a disk image using `hdiutil` from within the Locker Room app's main process prevents it from running in an [App Sandbox](https://developer.apple.com/documentation/security/app_sandbox). Locker Room can be configured to create disk images outside of the app's main process with the following command:
+```
+$ defaults write com.nsnolan.LockerRoom LockerRoomServiceEnabled -bool true
+```
+
+This command will instruct Locker Room to register a launch daemon to spawn on-demand when disk image creation is requested. The launch daemon will only be registered while Locker Room is running. The launch daemon registration state can be observed with the following command:
+ ```
+ $ launchctl print system/com.nsnolan.LockerRoomDaemon
+ ```
+
+MacOS prevents a launch daemon with an ad-hoc code signature from running when System Integrity Protection is enabled. Until the lauch daemon is signed with a developer certificate and provision profile System Integrity Protection must be disabled from the RecoveryOS parition with the following command:
+```
+$ csrutil disable
+```
+
+#### Retired PIV Slots
+
 The YubiKey SDK allows for using the following PIV slots: PIV Authentication (9a), Digital Signature (9c), Key Management (9d), Card Authentication (9e) and Attestation (f9). These slots have canonical usages and do not typically store a raw RSA or ECC private key for encryption and decryption. Even though there is no direct support via the YubiKey SDK, there does exists 20 retired key management slots (82-95) capable of storing a raw private key. Locker Room allows a user to enroll a key using one of these unsupported PIV slots so the user does not have to reserve or misuse one of the supported slots for a Locker Room private key.
 
 Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU commands](https://docs.yubico.com/yesdk/users-manual/yubikey-reference/apdu.html) directly to the external hardware device. This bypasses the limitations of the YubiKey SDK and encodes the unsupported slot into the command's raw data.
@@ -65,6 +84,8 @@ Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU comman
 - Enrolling a key will overwrite an existing private key in the specified slot on the external hardware device.
 - There is no way to enter a pin if the pin policy of the enrolled key is set to anything besides `Never`.
 - Locker Room does not run in a sandbox because creating a disk image with `hdiutil` will fail.
+- Locker Room app and launch daemon are not codesigned developer certificate and provisioning profile.
+- Locker Room launch daemon has debugging entitlement `com.apple.security.get-task-allow`.
 - There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
 - Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
 - Enrolled keys cannot be deleted within Locker Room. But can be removed using the filesystem.
@@ -76,6 +97,7 @@ Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU comman
 - Allow enrolled key deletion within Locker Room but only after there are no more encrypted lockbox it can decrypt. Keys can be removed using the filesystem and there is currently no way to remove the corresponding private key on the external hardware device. Yubico [changelogs](https://github.com/Yubico/yubico-piv-tool/blob/master/debian/changelog) suggests that YubiKey firmware 5.7.0 will add support for deleting keys.
 - Add localization strings for the UI.
 - Encrypt and decrypt an external volume.
+- Create a logging profile for private daemon log messages.
 - Generate keys using elliptic curve cryptography. This is blocked by YubiKey's current support for RSA cipher text decryption only.
 
 ### Contact
