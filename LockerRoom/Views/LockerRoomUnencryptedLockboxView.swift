@@ -243,7 +243,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
         }
         .onAppear {
             guard let lockbox else {
-                Logger.lockerRoomUI.error("LockerRoom is missing an unencrypted lockbox to attach as disk image")
+                Logger.lockerRoomUI.error("LockerRoom is missing an unencrypted lockbox to attach")
                 error = .missingLockbox
                 viewStyle = .error
                 return
@@ -251,7 +251,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
             
             let name = lockbox.name
             guard lockerRoomManager.attachToDiskImage(name: name) else {
-                Logger.lockerRoomUI.error("LockerRoom failed to attach lockbox \(name) as disk image")
+                Logger.lockerRoomUI.error("LockerRoom failed to attach lockbox \(name)")
                 error = .failedToAttachLockbox
                 viewStyle = .error
                 return

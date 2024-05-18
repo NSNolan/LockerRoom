@@ -47,9 +47,24 @@ extension LockerRoomDaemon: LockerRoomDaemonInterface {
             return
         }
         
+        guard let peerInfo = peerInfoForCurrentXPCConnection else {
+            replyHandler(false)
+            return
+        }
+        
+        let uid = peerInfo.uid
+        let gid = peerInfo.gid
+        
+        let lockboxesURL = lockerRoomURLProvider.urlForLockboxes
+        let lockboxesPath = lockboxesURL.path(percentEncoded: false)
+        guard changeOwner(path: lockboxesPath, uid: uid, gid: gid, recursive: false) else {
+            replyHandler(false)
+            return
+        }
+        
         let lockboxURL = lockerRoomURLProvider.urlForLockbox(name: name)
         let lockboxPath = lockboxURL.path(percentEncoded: false)
-        guard updateLockboxOwner(for: lockboxPath) else {
+        guard changeOwner(path: lockboxPath, uid: uid, gid: gid, recursive: true) else {
             replyHandler(false)
             return
         }
@@ -57,34 +72,52 @@ extension LockerRoomDaemon: LockerRoomDaemonInterface {
         replyHandler(true)
     }
     
-    private func updateLockboxOwner(for path: String) -> Bool {
+    func attachToDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
+        let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
+        let lockerRoomDiskImage = LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
+        guard lockerRoomDiskImage.attach(name: name) else {
+            replyHandler(false)
+            return
+        }
+        
+        replyHandler(true)
+    }
+    
+    func detachFromDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
+        let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
+        let lockerRoomDiskImage = LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
+        guard lockerRoomDiskImage.detach(name: name) else {
+            replyHandler(false)
+            return
+        }
+        
+        replyHandler(true)
+    }
+    
+    private var peerInfoForCurrentXPCConnection: (uid: uid_t, gid: gid_t)? {
         guard let currentConnection = NSXPCConnection.current() else {
             Logger.service.error("Locker room daemon failed to get current XPC connection")
-            return false
+            return nil
         }
         
         // TODO: Find a better way to extract the uid and gid of the remote XPC process.
         guard let connection = currentConnection.value(forKey: "_xpcConnection") else {
             Logger.service.error("Locker room daemon failed to get underlying XPC connection")
-            return false
+            return nil
         }
         
-        guard let xpc_conncetion = connection as? xpc_connection_t else {
+        guard let xpc_connection = connection as? xpc_connection_t else {
             Logger.service.error("Locker room daemon failed to cast XPC connection")
-            return false
+            return nil
         }
         
-        let uid = xpc_connection_get_euid(xpc_conncetion)
-        let gid = xpc_connection_get_egid(xpc_conncetion)
+        let uid = xpc_connection_get_euid(xpc_connection)
+        let gid = xpc_connection_get_egid(xpc_connection)
         
-        guard changeOwner(path: path, uid: uid, gid: gid) else {
-            return false
-        }
-        
-        return true
+        return (uid, gid)
     }
     
-    private func changeOwner(path: String, uid: uid_t, gid: gid_t) -> Bool {
+    private func changeOwner(path: String, uid: uid_t, gid: gid_t, recursive: Bool) -> Bool {
         let fileManager = FileManager.default
         
         var isDirectory: ObjCBool = false
@@ -100,7 +133,7 @@ extension LockerRoomDaemon: LockerRoomDaemonInterface {
         
         Logger.service.log("Locker room daemon changed ownership of \(path) to uid \(uid) gid \(gid)")
         
-        guard isDirectory.boolValue else {
+        guard recursive && isDirectory.boolValue else {
             return true
         }
         
@@ -108,7 +141,7 @@ extension LockerRoomDaemon: LockerRoomDaemonInterface {
             let subPaths = try fileManager.contentsOfDirectory(atPath: path)
             for subPath in subPaths {
                 let fullPath = (path as NSString).appendingPathComponent(subPath)
-                if !changeOwner(path: fullPath, uid: uid, gid: gid) {
+                if !changeOwner(path: fullPath, uid: uid, gid: gid, recursive: recursive) {
                     return false
                 }
             }

@@ -81,6 +81,7 @@ struct LockerRoomDiskImage: LockerRoomDiskImaging {
         return hdiutil(
             arguments: [
                 "attach",
+                "-verbose",
                 "-autoopen",
                 lockboxUnencryptedContentPath
             ],
@@ -93,6 +94,7 @@ struct LockerRoomDiskImage: LockerRoomDiskImaging {
         return hdiutil(
             arguments: [
                 "detach",
+                "-verbose",
                 mountedVolumePath
             ],
             name: name

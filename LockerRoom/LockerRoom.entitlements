@@ -10,7 +10,7 @@
 	<true/>
 	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
 	<array>
-		<string>com.apple.system.hdiejectd.xpc</string>
+		<string>com.nsnolan.LockerRoomDaemon</string>
 	</array>
 </dict>
 </plist>

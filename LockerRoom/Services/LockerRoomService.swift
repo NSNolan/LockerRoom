@@ -13,6 +13,8 @@ import ServiceManagement
 @objc
 protocol LockerRoomDaemonInterface {
     func createDiskImage(name: String, size: Int, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
+    func attachToDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
+    func detachFromDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
 }
 
 struct LockerRoomService {
@@ -112,7 +114,7 @@ extension LockerRoomService {
             return false
         }
         
-        Logger.service.log("Locker room service creating disk image with name \(name) size \(size)MB rootURL \(rootURL)")
+        Logger.service.log("Locker room service creating disk image \(name) size \(size)MB rootURL \(rootURL)")
         
         var success = false
         daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
@@ -127,7 +129,59 @@ extension LockerRoomService {
                 }
                 
             case .failure(let error):
-                Logger.service.error("Locker room service failed to create disk image with error \(error)")
+                Logger.service.error("Locker room service failed to create disk image \(name) with error \(error)")
+            }
+        }
+        return success
+    }
+    
+    func attachToDiskImage(name: String, rootURL: URL) -> Bool {
+        guard isEnabled else {
+            return false
+        }
+        
+        Logger.service.log("Locker room service attaching to disk image \(name) rootURL \(rootURL)")
+        
+        var success = false
+        daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
+            switch proxyResult {
+            case .success(let proxy):
+                guard let daemon = proxy as? LockerRoomDaemonInterface else {
+                    Logger.service.fault("Locker room service failed to cast proxy object")
+                    return
+                }
+                daemon.attachToDiskImage(name: name, rootURL: rootURL) { attachResult in
+                    success = attachResult
+                }
+                
+            case .failure(let error):
+                Logger.service.error("Locker room service failed to attach to disk image \(name) with error \(error)")
+            }
+        }
+        return success
+    }
+    
+    func detachFromDiskImage(name: String, rootURL: URL) -> Bool {
+        guard isEnabled else {
+            return false
+        }
+        
+        Logger.service.log("Locker room service detaching from disk image \(name) rootURL \(rootURL)")
+        
+        var success = false
+        daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
+            switch proxyResult {
+            case .success(let proxy):
+                guard let daemon = proxy as? LockerRoomDaemonInterface else {
+                    Logger.service.fault("Locker room service failed to cast proxy object")
+                    return
+                }
+                daemon.detachFromDiskImage(name: name, rootURL: rootURL) { detachResult in
+                    success = detachResult
+                }
+                
+            case .failure(let error):
+                Logger.service.error("Locker room service failed to detach from disk image \(name) with error \(error)")
             }
         }
         return success

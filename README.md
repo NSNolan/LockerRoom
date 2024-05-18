@@ -56,22 +56,24 @@ The now decrypted symmetric key is used to decrypt the encrypted lockbox with th
 
 ### Experimental Details
 
-#### Out-of-Process Disk Image Creation
+#### Out-of-Process Disk Image Operations
 
-Creating a disk image using `hdiutil` from within the Locker Room app's main process prevents it from running in an [App Sandbox](https://developer.apple.com/documentation/security/app_sandbox). Locker Room can be configured to create disk images outside of the app's main process with the following command:
+Creating, attaching and detaching a disk image using `hdiutil` from an app's main process is prevented when running in an [App Sandbox](https://developer.apple.com/documentation/security/app_sandbox). Locker Room can be configured to perform disk images operations outside of the app's main process with the following command:
 ```
-$ defaults write com.nsnolan.LockerRoom LockerRoomServiceEnabled -bool true
+$ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom LockerRoomServiceEnabled -bool true
 ```
 
-This command will instruct Locker Room to register a launch daemon to spawn on-demand when disk image creation is requested. The launch daemon will only be registered while Locker Room is running. The launch daemon registration state can be observed with the following command:
+This command will instruct Locker Room to register a launch daemon to spawn on-demand when disk image operations are requested. The launch daemon will only be registered while Locker Room is running. The launch daemon's registration state can be observed with the following command:
  ```
  $ launchctl print system/com.nsnolan.LockerRoomDaemon
  ```
 
-MacOS prevents a launch daemon with an ad-hoc code signature from running when System Integrity Protection is enabled. Until the lauch daemon is signed with a developer certificate and provision profile System Integrity Protection must be disabled from the RecoveryOS parition with the following command:
+However, macOS also prevents a launch daemon with an ad-hoc code signature from running when System Integrity Protection is enabled. Until the lauch daemon is signed with a developer certificate and provision profile System Integrity Protection must be disabled from the RecoveryOS parition with the following command:
 ```
 $ csrutil disable
 ```
+
+Out-of-process disk image operations are an incremental step towards running Locker Room in an App Sandbox. Locker Room will not enable an App Sandbox until the launch daemon is codesigned with a developer identity, provisioning profile and can be run without disable System Integrity Protection. 
 
 #### Retired PIV Slots
 

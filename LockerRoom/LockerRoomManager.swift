@@ -54,11 +54,6 @@ import os.log
                 return nil
             }
             
-            guard lockerRoomDiskImage.attach(name: name) else {
-                Logger.manager.error("Locker room manager failed to attach lockbox \(name) as disk image")
-                return nil
-            }
-            
             lockboxesByID = self.lockerRoomStore.lockboxesByID
             return unencryptedLockbox
         }.result.get()) ?? nil
@@ -126,7 +121,7 @@ import os.log
     }
     
     func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeysToUse: [LockerRoomEnrolledKey]) async -> Bool {
-        _ = lockerRoomDiskImage.detach(name: lockbox.name) // Non-fatal; it may already be detached
+        _ = detachFromDiskImage(name: lockbox.name) // Non-fatal; it may already be detached
         
         guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore) else {
             Logger.manager.log("Locker room manager failed to create unencrypted lockbox \(lockbox.name)")
@@ -238,8 +233,7 @@ import os.log
         }
         Logger.manager.log("Locker room manager removed encrypted lockbox content \(name)")
         
-        guard lockerRoomDiskImage.attach(name: name) else {
-            Logger.manager.error("Locker room manager failed to attach lockbox \(name) as disk image")
+        guard attachToDiskImage(name: name) else {
             return false
         }
         
@@ -248,11 +242,35 @@ import os.log
     }
     
     func attachToDiskImage(name: String) -> Bool {
-        return lockerRoomDiskImage.attach(name: name)
+        if lockerRoomDefaults.serviceEnabled {
+            guard lockerRoomService.attachToDiskImage(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
+                Logger.manager.error("Locker room manager failed to attach lockbox \(name)")
+                return false
+            }
+        } else {
+            guard lockerRoomDiskImage.attach(name: name) else {
+                Logger.manager.error("Locker room manager failed to attach lockbox \(name)")
+                return false
+            }
+        }
+        
+        return true
     }
     
     func detachFromDiskImage(name: String) -> Bool {
-        return lockerRoomDiskImage.detach(name: name)
+        if lockerRoomDefaults.serviceEnabled {
+            guard lockerRoomService.detachFromDiskImage(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
+                Logger.manager.error("Locker room manager failed to detach lockbox \(name)")
+                return false
+            }
+        } else {
+            guard lockerRoomDiskImage.detach(name: name) else {
+                Logger.manager.error("Locker room manager failed to detach lockbox \(name)")
+                return false
+            }
+        }
+        
+        return true
     }
 }
 
