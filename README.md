@@ -92,6 +92,7 @@ Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU comman
 - Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
 - Enrolled keys cannot be deleted within Locker Room. But can be removed using the filesystem.
 - An enrolled key's PIV management key should not be stored on disk.
+- Hide experimental PIV slots behind a user default.
 
 ### Future Enhancements
 
