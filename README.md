@@ -95,7 +95,7 @@ Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU comman
 
 ### Future Enhancements
 
-- 100% unit tests coverage.
+- More unit tests coverage.
 - Allow enrolled key deletion within Locker Room but only after there are no more encrypted lockbox it can decrypt. Keys can be removed using the filesystem and there is currently no way to remove the corresponding private key on the external hardware device. Yubico [changelogs](https://github.com/Yubico/yubico-piv-tool/blob/master/debian/changelog) suggests that YubiKey firmware 5.7.0 will add support for deleting keys.
 - Add localization strings for the UI.
 - Encrypt and decrypt an external volume.
