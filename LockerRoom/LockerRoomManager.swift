@@ -124,6 +124,11 @@ import os.log
         return true
     }
     
+    var lockboxKeySlots: [LockboxKey.Slot] {
+        let experimentalPIVSlotsEnabled = lockerRoomDefaults.experimentalPIVSlotsEnabled
+        return LockboxKey.Slot.allCases.filter{ !$0.isExperimental || experimentalPIVSlotsEnabled }
+    }
+    
     func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeysToUse: [LockerRoomEnrolledKey]) async -> Bool {
         _ = detachFromDiskImage(name: lockbox.name) // Non-fatal; it may already be detached
         

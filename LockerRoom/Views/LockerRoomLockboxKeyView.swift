@@ -61,7 +61,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
             
             Text("Slot")
             Picker("", selection: $keyConfiguration.slot) {
-                ForEach(LockboxKey.Slot.allCases) { slot in
+                ForEach(lockerRoomManager.lockboxKeySlots) { slot in
                     Text(slot.rawValue).tag(slot)
                     if slot == .attestation {
                         Divider() // Add divider to separate supported slots from experimental slots
