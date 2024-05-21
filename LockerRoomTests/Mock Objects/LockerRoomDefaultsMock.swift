@@ -8,5 +8,6 @@
 import Foundation
 
 struct LockerRoomDefaultsMock: LockerRoomDefaulting {
-    var serviceEnabled: Bool
+    var externalDrivesEnabled = false
+    var serviceEnabled = false
 }

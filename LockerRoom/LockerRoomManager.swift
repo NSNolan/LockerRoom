@@ -20,6 +20,7 @@ import os.log
     private let lockboxKeyGenerator: LockboxKeyGenerating
     private let lockerRoomDefaults: LockerRoomDefaulting
     private let lockerRoomDiskImage: LockerRoomDiskImaging
+    private let lockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding
     private let lockerRoomService: LockerRoomService
     private let lockerRoomStore: LockerRoomStoring
     
@@ -29,6 +30,7 @@ import os.log
         lockboxKeyGenerator: LockboxKeyGenerating = LockboxKeyGenerator(),
         lockerRoomDefaults: LockerRoomDefaulting = LockerRoomDefaults(),
         lockerRoomDiskImage: LockerRoomDiskImaging? = nil,
+        lockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding? = nil,
         lockerRoomService: LockerRoomService? = nil,
         lockerRoomStore: LockerRoomStoring? = nil,
         lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()
@@ -38,12 +40,14 @@ import os.log
         self.lockboxKeyGenerator = lockboxKeyGenerator
         self.lockerRoomDefaults = lockerRoomDefaults
         self.lockerRoomDiskImage = lockerRoomDiskImage ?? LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
+        self.lockerRoomExternalDiskFinder = lockerRoomExternalDiskFinder ?? LockerRoomExternalDiskFinder(lockerRoomDefaults: lockerRoomDefaults)
         self.lockerRoomService = lockerRoomService ?? LockerRoomService(lockerRoomDefaults: lockerRoomDefaults)
         self.lockerRoomStore = lockerRoomStore ?? LockerRoomStore(lockerRoomURLProvider: lockerRoomURLProvider)
         
         self.lockboxesByID = self.lockerRoomStore.lockboxesByID
         self.enrolledKeysByID = self.lockerRoomStore.enrolledKeysByID
         
+        LockerRoomAppLifecycle.externalDiskFinder = self.lockerRoomExternalDiskFinder
         LockerRoomAppLifecycle.service = self.lockerRoomService
     }
     

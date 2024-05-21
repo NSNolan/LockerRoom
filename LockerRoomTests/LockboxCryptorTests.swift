@@ -14,7 +14,7 @@ final class LockboxCryptorTests: XCTestCase {
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
-        let defaults = LockerRoomDefaultsMock(serviceEnabled: false)
+        let defaults = LockerRoomDefaultsMock()
         let service = LockerRoomService(lockerRoomDefaults: defaults)
         
         let keyGenerator = LockboxKeyGenerator()
@@ -73,7 +73,7 @@ final class LockboxCryptorTests: XCTestCase {
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
-        let defaults = LockerRoomDefaultsMock(serviceEnabled: false)
+        let defaults = LockerRoomDefaultsMock()
         let service = LockerRoomService(lockerRoomDefaults: defaults)
         
         let cryptor = LockboxCryptor()

@@ -70,7 +70,7 @@ struct LockerRoomService {
     }
     
     func activate() -> Bool {
-        guard !isEnabled && shouldEnable else {
+        guard shouldEnable && !isEnabled else {
             return true
         }
         

@@ -13,7 +13,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
-        let defaults = LockerRoomDefaultsMock(serviceEnabled: false)
+        let defaults = LockerRoomDefaultsMock()
         let diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         let service = LockerRoomService(lockerRoomDefaults: defaults)
         
@@ -69,7 +69,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
-        let defaults = LockerRoomDefaultsMock(serviceEnabled: false)
+        let defaults = LockerRoomDefaultsMock()
         let diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         let service = LockerRoomService(lockerRoomDefaults: defaults)
         
@@ -90,7 +90,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
-        let defaults = LockerRoomDefaultsMock(serviceEnabled: false)
+        let defaults = LockerRoomDefaultsMock()
         let service = LockerRoomService(lockerRoomDefaults: defaults)
         
         var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
@@ -112,7 +112,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         let size = 10
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
-        let defaults = LockerRoomDefaultsMock(serviceEnabled: false)
+        let defaults = LockerRoomDefaultsMock()
         let diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         let service = LockerRoomService(lockerRoomDefaults: defaults)
         
