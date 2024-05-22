@@ -10,29 +10,29 @@ import AppKit
 import os.log
 
 class LockerRoomAppLifecycle: NSObject, NSApplicationDelegate {
-    static var externalDiskFinder: LockerRoomExternalDiskFinding? = nil
-    static var service: LockerRoomService? = nil
+    static var externalDiskDiscovery: LockerRoomExternalDiskDiscovering? = nil
+    static var remoteService: LockerRoomRemoteService? = nil
     
     func applicationWillFinishLaunching(_ notification: Notification) {
-        guard let externalDiskFinder = LockerRoomAppLifecycle.externalDiskFinder, externalDiskFinder.activate() else {
-            Logger.lockerRoomUI.error("Locker room app lifecycle failed to activate external disk finder")
+        guard let externalDiskDiscovery = LockerRoomAppLifecycle.externalDiskDiscovery, externalDiskDiscovery.activate() else {
+            Logger.lockerRoomUI.error("Locker room app lifecycle failed to activate external disk discovery")
             return
         }
         
-        guard let service = LockerRoomAppLifecycle.service, service.activate() else {
-            Logger.lockerRoomUI.error("Locker room app lifecycle failed to activate service")
+        guard let remoteService = LockerRoomAppLifecycle.remoteService, remoteService.activate() else {
+            Logger.lockerRoomUI.error("Locker room app lifecycle failed to activate remote service")
             return
         }
     }
     
     func applicationWillTerminate(_ notification: Notification) {
-        guard let externalDiskFinder = LockerRoomAppLifecycle.externalDiskFinder, externalDiskFinder.invalidate() else {
-            Logger.lockerRoomUI.error("Locker room app lifecycle failed to invalidate external disk finder")
+        guard let externalDiskDiscovery = LockerRoomAppLifecycle.externalDiskDiscovery, externalDiskDiscovery.invalidate() else {
+            Logger.lockerRoomUI.error("Locker room app lifecycle failed to invalidate external disk discovery")
             return
         }
         
-        guard let service = LockerRoomAppLifecycle.service, service.invalidate() else {
-            Logger.lockerRoomUI.error("Locker room app lifecycle failed to invalidate service")
+        guard let remoteService = LockerRoomAppLifecycle.remoteService, remoteService.invalidate() else {
+            Logger.lockerRoomUI.error("Locker room app lifecycle failed to invalidate remote service")
             return
         }
     }

@@ -15,14 +15,14 @@ final class UnencryptedLockboxTests: XCTestCase {
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         let defaults = LockerRoomDefaultsMock()
         let diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
-        let service = LockerRoomService(lockerRoomDefaults: defaults)
+        let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         guard let unencryptedLockbox = UnencryptedLockbox.create(
             name: name, 
             size: size,
             lockerRoomDefaults: defaults,
             lockerRoomDiskImage: diskImage,
-            lockerRoomService: service,
+            lockerRoomRemoteService: remoteService,
             lockerRoomStore: store
         ) else {
             XCTFail("Failed to create unencrypted lockbox")
@@ -71,14 +71,14 @@ final class UnencryptedLockboxTests: XCTestCase {
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         let defaults = LockerRoomDefaultsMock()
         let diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
-        let service = LockerRoomService(lockerRoomDefaults: defaults)
+        let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         let unencryptedLockbox = UnencryptedLockbox.create(
             name: name,
             size: size,
             lockerRoomDefaults: defaults,
             lockerRoomDiskImage: diskImage,
-            lockerRoomService: service,
+            lockerRoomRemoteService: remoteService,
             lockerRoomStore: store
         )
         
@@ -91,7 +91,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         let defaults = LockerRoomDefaultsMock()
-        let service = LockerRoomService(lockerRoomDefaults: defaults)
+        let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         diskImage.failToCreate = true
@@ -101,7 +101,7 @@ final class UnencryptedLockboxTests: XCTestCase {
             size: size,
             lockerRoomDefaults: defaults,
             lockerRoomDiskImage: diskImage,
-            lockerRoomService: service,
+            lockerRoomRemoteService: remoteService,
             lockerRoomStore: store
         )
         
@@ -114,7 +114,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let defaults = LockerRoomDefaultsMock()
         let diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
-        let service = LockerRoomService(lockerRoomDefaults: defaults)
+        let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         store.failToWriteUnencryptedLockboxMetadata = true
@@ -124,7 +124,7 @@ final class UnencryptedLockboxTests: XCTestCase {
             size: size,
             lockerRoomDefaults: defaults,
             lockerRoomDiskImage: diskImage,
-            lockerRoomService: service,
+            lockerRoomRemoteService: remoteService,
             lockerRoomStore: store
         )
         

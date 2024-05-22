@@ -9,14 +9,14 @@ import Foundation
 
 protocol LockerRoomDefaulting {
     var experimentalPIVSlotsEnabled: Bool { get set }
-    var externalDrivesEnabled: Bool { get set }
-    var serviceEnabled: Bool { get set }
+    var externalDisksEnabled: Bool { get set }
+    var remoteServiceEnabled: Bool { get set }
 }
 
 struct LockerRoomDefaults: LockerRoomDefaulting {
     private static let experimentalPIVSlotsEnabledKey = "ExperimentalPIVSlotsEnabled"
-    private static let externalDrivesEnabledKey = "ExternalDrivesEnabled"
-    private static let serivceEnabledKey = "ServiceEnabled"
+    private static let externalDisksEnabledKey = "ExternalDisksEnabled"
+    private static let remoteServiceEnabledKey = "RemoteServiceEnabled"
     
     var experimentalPIVSlotsEnabled: Bool {
         get {
@@ -27,21 +27,21 @@ struct LockerRoomDefaults: LockerRoomDefaulting {
         }
     }
     
-    var externalDrivesEnabled: Bool {
+    var externalDisksEnabled: Bool {
         get {
-            return UserDefaults.standard.bool(forKey: LockerRoomDefaults.externalDrivesEnabledKey)
+            return UserDefaults.standard.bool(forKey: LockerRoomDefaults.externalDisksEnabledKey)
         }
         set {
-            UserDefaults.standard.set(newValue ,forKey: LockerRoomDefaults.externalDrivesEnabledKey)
+            UserDefaults.standard.set(newValue ,forKey: LockerRoomDefaults.externalDisksEnabledKey)
         }
     }
     
-    var serviceEnabled: Bool {
+    var remoteServiceEnabled: Bool {
         get {
-            return UserDefaults.standard.bool(forKey: LockerRoomDefaults.serivceEnabledKey)
+            return UserDefaults.standard.bool(forKey: LockerRoomDefaults.remoteServiceEnabledKey)
         }
         set {
-            UserDefaults.standard.set(newValue ,forKey: LockerRoomDefaults.serivceEnabledKey)
+            UserDefaults.standard.set(newValue ,forKey: LockerRoomDefaults.remoteServiceEnabledKey)
         }
     }
 }

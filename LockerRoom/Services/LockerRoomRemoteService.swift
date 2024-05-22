@@ -1,5 +1,5 @@
 //
-//  LockerRoomService.swift
+//  LockerRoomRemoteService.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 5/14/24.
@@ -17,7 +17,7 @@ protocol LockerRoomDaemonInterface {
     func detachFromDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
 }
 
-struct LockerRoomService {
+struct LockerRoomRemoteService {
     static let daemonServiceName = "com.nsnolan.LockerRoomDaemon"
     static let daemonOptions = NSXPCConnection.Options.privileged
     
@@ -25,7 +25,7 @@ struct LockerRoomService {
     private let lockerRoomDefaults: LockerRoomDefaulting
     
     init(lockerRoomDefaults: LockerRoomDefaulting) {
-        let plistName = LockerRoomService.daemonServiceName + ".plist"
+        let plistName = LockerRoomRemoteService.daemonServiceName + ".plist"
         let daemon = SMAppService.daemon(plistName: plistName)
         service = daemon
         
@@ -37,27 +37,27 @@ struct LockerRoomService {
         
         switch service.status {
         case .notRegistered:
-            Logger.service.error("Locker room service is not registered")
+            Logger.service.error("Locker room remote service is not registered")
         case .enabled:
-            Logger.service.log("Locker room service is enabled")
+            Logger.service.log("Locker room remote service is enabled")
             enabled = true
         case .requiresApproval:
-            Logger.service.error("Locker room service requires approval")
+            Logger.service.error("Locker room remote service requires approval")
         case .notFound:
-            Logger.service.error("Locker room service is not found")
+            Logger.service.error("Locker room remote service is not found")
         @unknown default:
-            Logger.service.error("Locker room service has unknown status")
+            Logger.service.error("Locker room remote service has unknown status")
         }
         
         return enabled
     }
     
     private var shouldEnable: Bool {
-        return lockerRoomDefaults.serviceEnabled
+        return lockerRoomDefaults.remoteServiceEnabled
     }
     
     private var daemonConnection: LockerRoomXPCConnecting {
-        let connection = underlyingConnection(LockerRoomService.daemonServiceName, LockerRoomService.daemonOptions)
+        let connection = underlyingConnection(LockerRoomRemoteService.daemonServiceName, LockerRoomRemoteService.daemonOptions)
         connection.exportedObject = nil
         connection.exportedInterface = nil
         connection.remoteObjectInterface = NSXPCInterface(with: LockerRoomDaemonInterface.self)
@@ -78,11 +78,11 @@ struct LockerRoomService {
         do {
             try service.register()
             activated = true
-            Logger.service.log("Locker room service activated")
+            Logger.service.log("Locker room remote service activated")
         } catch let error as NSError {
-            Logger.service.error("Locker room service failed to activate with error \(error)")
+            Logger.service.error("Locker room remote service failed to activate with error \(error)")
         } catch {
-            Logger.service.error("Locker room service failed to activate with unknown error \(error)")
+            Logger.service.error("Locker room remote service failed to activate with unknown error \(error)")
         }
         
         return activated
@@ -97,31 +97,31 @@ struct LockerRoomService {
         do {
             try service.unregister()
             invalidated = true
-            Logger.service.log("Locker room service invalidated")
+            Logger.service.log("Locker room remote service invalidated")
         } catch let error as NSError {
-            Logger.service.error("Locker room service failed to invalidate with error \(error)")
+            Logger.service.error("Locker room remote service failed to invalidate with error \(error)")
         } catch {
-            Logger.service.error("Locker room service failed to invalidate with unknown error \(error)")
+            Logger.service.error("Locker room remote service failed to invalidate with unknown error \(error)")
         }
         
         return invalidated
     }
 }
 
-extension LockerRoomService {
+extension LockerRoomRemoteService {
     func createDiskImage(name: String, size: Int, rootURL: URL) -> Bool {
         guard isEnabled else {
             return false
         }
         
-        Logger.service.log("Locker room service creating disk image \(name) size \(size)MB rootURL \(rootURL)")
+        Logger.service.log("Locker room remote service creating disk image \(name) size \(size)MB rootURL \(rootURL)")
         
         var success = false
         daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
             switch proxyResult {
             case .success(let proxy):
                 guard let daemon = proxy as? LockerRoomDaemonInterface else {
-                    Logger.service.fault("Locker room service failed to cast proxy object")
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
                     return
                 }
                 daemon.createDiskImage(name: name, size: size, rootURL: rootURL) { createResult in
@@ -129,7 +129,7 @@ extension LockerRoomService {
                 }
                 
             case .failure(let error):
-                Logger.service.error("Locker room service failed to create disk image \(name) with error \(error)")
+                Logger.service.error("Locker room remote service failed to create disk image \(name) with error \(error)")
             }
         }
         return success
@@ -140,14 +140,14 @@ extension LockerRoomService {
             return false
         }
         
-        Logger.service.log("Locker room service attaching to disk image \(name) rootURL \(rootURL)")
+        Logger.service.log("Locker room remote service attaching to disk image \(name) rootURL \(rootURL)")
         
         var success = false
         daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
             switch proxyResult {
             case .success(let proxy):
                 guard let daemon = proxy as? LockerRoomDaemonInterface else {
-                    Logger.service.fault("Locker room service failed to cast proxy object")
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
                     return
                 }
                 daemon.attachToDiskImage(name: name, rootURL: rootURL) { attachResult in
@@ -155,7 +155,7 @@ extension LockerRoomService {
                 }
                 
             case .failure(let error):
-                Logger.service.error("Locker room service failed to attach to disk image \(name) with error \(error)")
+                Logger.service.error("Locker room remote service failed to attach to disk image \(name) with error \(error)")
             }
         }
         return success
@@ -166,14 +166,14 @@ extension LockerRoomService {
             return false
         }
         
-        Logger.service.log("Locker room service detaching from disk image \(name) rootURL \(rootURL)")
+        Logger.service.log("Locker room remote service detaching from disk image \(name) rootURL \(rootURL)")
         
         var success = false
         daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
             switch proxyResult {
             case .success(let proxy):
                 guard let daemon = proxy as? LockerRoomDaemonInterface else {
-                    Logger.service.fault("Locker room service failed to cast proxy object")
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
                     return
                 }
                 daemon.detachFromDiskImage(name: name, rootURL: rootURL) { detachResult in
@@ -181,7 +181,7 @@ extension LockerRoomService {
                 }
                 
             case .failure(let error):
-                Logger.service.error("Locker room service failed to detach from disk image \(name) with error \(error)")
+                Logger.service.error("Locker room remote service failed to detach from disk image \(name) with error \(error)")
             }
         }
         return success

@@ -20,8 +20,8 @@ import os.log
     private let lockboxKeyGenerator: LockboxKeyGenerating
     private let lockerRoomDefaults: LockerRoomDefaulting
     private let lockerRoomDiskImage: LockerRoomDiskImaging
-    private let lockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding
-    private let lockerRoomService: LockerRoomService
+    private let lockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering
+    private let lockerRoomRemoteService: LockerRoomRemoteService
     private let lockerRoomStore: LockerRoomStoring
     
     private init(
@@ -30,8 +30,8 @@ import os.log
         lockboxKeyGenerator: LockboxKeyGenerating = LockboxKeyGenerator(),
         lockerRoomDefaults: LockerRoomDefaulting = LockerRoomDefaults(),
         lockerRoomDiskImage: LockerRoomDiskImaging? = nil,
-        lockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding? = nil,
-        lockerRoomService: LockerRoomService? = nil,
+        lockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering? = nil,
+        lockerRoomRemoteService: LockerRoomRemoteService? = nil,
         lockerRoomStore: LockerRoomStoring? = nil,
         lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()
     ) {
@@ -40,20 +40,20 @@ import os.log
         self.lockboxKeyGenerator = lockboxKeyGenerator
         self.lockerRoomDefaults = lockerRoomDefaults
         self.lockerRoomDiskImage = lockerRoomDiskImage ?? LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
-        self.lockerRoomExternalDiskFinder = lockerRoomExternalDiskFinder ?? LockerRoomExternalDiskFinder(lockerRoomDefaults: lockerRoomDefaults)
-        self.lockerRoomService = lockerRoomService ?? LockerRoomService(lockerRoomDefaults: lockerRoomDefaults)
+        self.lockerRoomExternalDiskDiscovery = lockerRoomExternalDiskDiscovery ?? LockerRoomExternalDiskDiscovery(lockerRoomDefaults: lockerRoomDefaults)
+        self.lockerRoomRemoteService = lockerRoomRemoteService ?? LockerRoomRemoteService(lockerRoomDefaults: lockerRoomDefaults)
         self.lockerRoomStore = lockerRoomStore ?? LockerRoomStore(lockerRoomURLProvider: lockerRoomURLProvider)
         
         self.lockboxesByID = self.lockerRoomStore.lockboxesByID
         self.enrolledKeysByID = self.lockerRoomStore.enrolledKeysByID
         
-        LockerRoomAppLifecycle.externalDiskFinder = self.lockerRoomExternalDiskFinder
-        LockerRoomAppLifecycle.service = self.lockerRoomService
+        LockerRoomAppLifecycle.externalDiskDiscovery = self.lockerRoomExternalDiskDiscovery
+        LockerRoomAppLifecycle.remoteService = self.lockerRoomRemoteService
     }
     
     func addUnencryptedLockbox(name: String, size: Int) async -> UnencryptedLockbox? {
         return (try? await Task {
-            guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskImage: lockerRoomDiskImage, lockerRoomService: lockerRoomService, lockerRoomStore: lockerRoomStore) else {
+            guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskImage: lockerRoomDiskImage, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
                 Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
                 return nil
             }
@@ -251,8 +251,8 @@ import os.log
     }
     
     func attachToDiskImage(name: String) -> Bool {
-        if lockerRoomDefaults.serviceEnabled {
-            guard lockerRoomService.attachToDiskImage(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
+        if lockerRoomDefaults.remoteServiceEnabled {
+            guard lockerRoomRemoteService.attachToDiskImage(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
                 Logger.manager.error("Locker room manager failed to attach lockbox \(name)")
                 return false
             }
@@ -267,8 +267,8 @@ import os.log
     }
     
     func detachFromDiskImage(name: String) -> Bool {
-        if lockerRoomDefaults.serviceEnabled {
-            guard lockerRoomService.detachFromDiskImage(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
+        if lockerRoomDefaults.remoteServiceEnabled {
+            guard lockerRoomRemoteService.detachFromDiskImage(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
                 Logger.manager.error("Locker room manager failed to detach lockbox \(name)")
                 return false
             }

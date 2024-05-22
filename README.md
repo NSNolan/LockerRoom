@@ -60,7 +60,7 @@ The now decrypted symmetric key is used to decrypt the encrypted lockbox with th
 
 Creating, attaching and detaching a disk image using `hdiutil` from an app's main process is prevented when running in an [App Sandbox](https://developer.apple.com/documentation/security/app_sandbox). Locker Room can be configured to perform disk images operations outside of the app's main process with the following command:
 ```
-$ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom ServiceEnabled -bool true
+$ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom RemoteServiceEnabled -bool true
 ```
 
 This command will instruct Locker Room to register a launch daemon to spawn on-demand when disk image operations are requested. The launch daemon will only be registered while Locker Room is running. The launch daemon's registration state can be observed with the following command:
@@ -68,12 +68,12 @@ This command will instruct Locker Room to register a launch daemon to spawn on-d
  $ launchctl print system/com.nsnolan.LockerRoomDaemon
  ```
 
-However, macOS also prevents a launch daemon with an ad-hoc code signature from running when System Integrity Protection is enabled. Until the lauch daemon is signed with a developer certificate and provision profile System Integrity Protection must be disabled from the RecoveryOS parition with the following command:
+However, macOS also prevents a launch daemon with an ad-hoc code signature from running when System Integrity Protection is enabled. Until the lauch daemon is signed with a developer certificate and provision profile, System Integrity Protection must be disabled from the RecoveryOS parition with the following command:
 ```
 $ csrutil disable
 ```
 
-Out-of-process disk image operations are an incremental step towards running Locker Room in an App Sandbox. Locker Room will not enable an App Sandbox until the launch daemon is codesigned with a developer identity, provisioning profile and can be run without disable System Integrity Protection. 
+Out-of-process disk image operations are an incremental step towards running Locker Room inside of an App Sandbox. Locker Room will not enable App Sandboxing until the launch daemon is codesigned with a developer identity, provisioning profile and can be run without disabling System Integrity Protection. 
 
 #### Retired PIV Slots
 
@@ -88,7 +88,7 @@ Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU comman
 
 Locker Room can be configured to discover external disks to be used for Lockbox creation with the followng command:
 ```
-$ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom ExternalDrivesEnabled -bool true
+$ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom ExternalDisksEnabled -bool true
 ```
 
 ### Known Issues

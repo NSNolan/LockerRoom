@@ -15,7 +15,7 @@ final class LockboxCryptorTests: XCTestCase {
         let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
         let defaults = LockerRoomDefaultsMock()
-        let service = LockerRoomService(lockerRoomDefaults: defaults)
+        let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         let keyGenerator = LockboxKeyGenerator()
         let symmetricKeyData = keyGenerator.generateSymmetricKeyData()
@@ -34,7 +34,7 @@ final class LockboxCryptorTests: XCTestCase {
         var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         diskImage.unencryptedContent = unencryptedContent
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: unencryptedContent.count, lockerRoomDefaults: defaults,  lockerRoomDiskImage: diskImage, lockerRoomService: service, lockerRoomStore: store) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: unencryptedContent.count, lockerRoomDefaults: defaults,  lockerRoomDiskImage: diskImage, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
             return
         }
@@ -74,7 +74,7 @@ final class LockboxCryptorTests: XCTestCase {
         let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
         let defaults = LockerRoomDefaultsMock()
-        let service = LockerRoomService(lockerRoomDefaults: defaults)
+        let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         let cryptor = LockboxCryptor()
         let keyGenerator = LockboxKeyGenerator()
@@ -92,7 +92,7 @@ final class LockboxCryptorTests: XCTestCase {
         var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         diskImage.unencryptedContent = unencryptedContent
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: unencryptedContent.count, lockerRoomDefaults: defaults, lockerRoomDiskImage: diskImage, lockerRoomService: service, lockerRoomStore: store) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: unencryptedContent.count, lockerRoomDefaults: defaults, lockerRoomDiskImage: diskImage, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
             return
         }

@@ -14,7 +14,7 @@ daemon.run()
 dispatchMain()
 
 class LockerRoomDaemon: NSObject {
-    private let listener = NSXPCListener(machServiceName: LockerRoomService.daemonServiceName)
+    private let listener = NSXPCListener(machServiceName: LockerRoomRemoteService.daemonServiceName)
     
     func run() {
         listener.delegate = self

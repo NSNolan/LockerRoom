@@ -40,11 +40,11 @@
 		BF475F612BB3BED1003A0E05 /* LockboxKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F602BB3BED1003A0E05 /* LockboxKey.swift */; };
 		BF475F642BB493AF003A0E05 /* LockboxKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F632BB493AF003A0E05 /* LockboxKeyGenerator.swift */; };
 		BF475F672BB49FC3003A0E05 /* LockerRoomDiskImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */; };
-		BF57AC152BFAED330061314D /* LockerRoomExternalDiskFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF57AC142BFAED330061314D /* LockerRoomExternalDiskFinder.swift */; };
+		BF57AC152BFAED330061314D /* LockerRoomExternalDiskDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF57AC142BFAED330061314D /* LockerRoomExternalDiskDiscovery.swift */; };
 		BF57AC182BFCD8500061314D /* LockerRoomExternalDisk.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF57AC172BFCD8500061314D /* LockerRoomExternalDisk.swift */; };
 		BF57AC192BFCE2AA0061314D /* LockerRoomDiskImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */; };
 		BF57AC1A2BFD09B90061314D /* LockerRoomExternalDisk.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF57AC172BFCD8500061314D /* LockerRoomExternalDisk.swift */; };
-		BF57AC1B2BFD09BC0061314D /* LockerRoomExternalDiskFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF57AC142BFAED330061314D /* LockerRoomExternalDiskFinder.swift */; };
+		BF57AC1B2BFD09BC0061314D /* LockerRoomExternalDiskDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF57AC142BFAED330061314D /* LockerRoomExternalDiskDiscovery.swift */; };
 		BF57AC1C2BFD0A4B0061314D /* LockerRoomDiskImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */; };
 		BF5FBFF52BD002360054ED10 /* LockerRoomYubiKeyExperimental.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5FBFF42BD002360054ED10 /* LockerRoomYubiKeyExperimental.swift */; };
 		BF63F5002BE823E500692EB8 /* LockboxCryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF63F4FF2BE823E500692EB8 /* LockboxCryptorTests.swift */; };
@@ -68,9 +68,9 @@
 		BF7048CF2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7048CE2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift */; };
 		BF7048D12BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7048D02BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift */; };
 		BFA2E61B2BF45BDA002A3BA6 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61A2BF45BDA002A3BA6 /* main.swift */; };
-		BFA2E6202BF45FEE002A3BA6 /* LockerRoomService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61F2BF45FEE002A3BA6 /* LockerRoomService.swift */; };
+		BFA2E6202BF45FEE002A3BA6 /* LockerRoomRemoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61F2BF45FEE002A3BA6 /* LockerRoomRemoteService.swift */; };
 		BFA2E6312BF4E910002A3BA6 /* LockerRoomXPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E6302BF4E910002A3BA6 /* LockerRoomXPCConnection.swift */; };
-		BFA2E6362BF4FD46002A3BA6 /* LockerRoomService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61F2BF45FEE002A3BA6 /* LockerRoomService.swift */; };
+		BFA2E6362BF4FD46002A3BA6 /* LockerRoomRemoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61F2BF45FEE002A3BA6 /* LockerRoomRemoteService.swift */; };
 		BFA2E6382BF500B8002A3BA6 /* com.nsnolan.LockerRoomDaemon.plist in Copy Launch Daemon Plist */ = {isa = PBXBuildFile; fileRef = BFA2E6352BF4FCA4002A3BA6 /* com.nsnolan.LockerRoomDaemon.plist */; };
 		BFA2E63C2BF51F73002A3BA6 /* LockerRoomDaemon in Copy Launch Daemon */ = {isa = PBXBuildFile; fileRef = BFA2E6182BF45BDA002A3BA6 /* LockerRoomDaemon */; };
 		BFAF915E2BEBB67B0028B81C /* LockerRoomStoreMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF915D2BEBB67B0028B81C /* LockerRoomStoreMock.swift */; };
@@ -87,7 +87,7 @@
 		BFE494182BF7C3EC00F9CC7B /* LockerRoomLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAF916A2BF17EC60028B81C /* LockerRoomLogger.swift */; };
 		BFE4941A2BF7C45B00F9CC7B /* LockerRoomDefaultsMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE494192BF7C45B00F9CC7B /* LockerRoomDefaultsMock.swift */; };
 		BFE4941B2BF7C47300F9CC7B /* LockerRoomDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE494122BF6FB4B00F9CC7B /* LockerRoomDefaults.swift */; };
-		BFE4941C2BF7C4FD00F9CC7B /* LockerRoomService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61F2BF45FEE002A3BA6 /* LockerRoomService.swift */; };
+		BFE4941C2BF7C4FD00F9CC7B /* LockerRoomRemoteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E61F2BF45FEE002A3BA6 /* LockerRoomRemoteService.swift */; };
 		BFE4941D2BF7C59E00F9CC7B /* LockerRoomXPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA2E6302BF4E910002A3BA6 /* LockerRoomXPCConnection.swift */; };
 		BFE4941F2BF7C63A00F9CC7B /* LockerRoomAppLifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE494142BF795F300F9CC7B /* LockerRoomAppLifecycle.swift */; };
 /* End PBXBuildFile section */
@@ -184,7 +184,7 @@
 		BF475F602BB3BED1003A0E05 /* LockboxKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxKey.swift; sourceTree = "<group>"; };
 		BF475F632BB493AF003A0E05 /* LockboxKeyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxKeyGenerator.swift; sourceTree = "<group>"; };
 		BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomDiskImage.swift; sourceTree = "<group>"; };
-		BF57AC142BFAED330061314D /* LockerRoomExternalDiskFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomExternalDiskFinder.swift; sourceTree = "<group>"; };
+		BF57AC142BFAED330061314D /* LockerRoomExternalDiskDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomExternalDiskDiscovery.swift; sourceTree = "<group>"; };
 		BF57AC172BFCD8500061314D /* LockerRoomExternalDisk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomExternalDisk.swift; sourceTree = "<group>"; };
 		BF5FBFF42BD002360054ED10 /* LockerRoomYubiKeyExperimental.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomYubiKeyExperimental.swift; sourceTree = "<group>"; };
 		BF63F4FF2BE823E500692EB8 /* LockboxCryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockboxCryptorTests.swift; sourceTree = "<group>"; };
@@ -194,7 +194,7 @@
 		BF7048D02BE095A6008FB829 /* LockerRoomUnencryptedLockboxConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomUnencryptedLockboxConfiguration.swift; sourceTree = "<group>"; };
 		BFA2E6182BF45BDA002A3BA6 /* LockerRoomDaemon */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LockerRoomDaemon; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFA2E61A2BF45BDA002A3BA6 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		BFA2E61F2BF45FEE002A3BA6 /* LockerRoomService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomService.swift; sourceTree = "<group>"; };
+		BFA2E61F2BF45FEE002A3BA6 /* LockerRoomRemoteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomRemoteService.swift; sourceTree = "<group>"; };
 		BFA2E6302BF4E910002A3BA6 /* LockerRoomXPCConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomXPCConnection.swift; sourceTree = "<group>"; };
 		BFA2E6352BF4FCA4002A3BA6 /* com.nsnolan.LockerRoomDaemon.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = com.nsnolan.LockerRoomDaemon.plist; sourceTree = "<group>"; };
 		BFAF915D2BEBB67B0028B81C /* LockerRoomStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockerRoomStoreMock.swift; sourceTree = "<group>"; };
@@ -409,7 +409,7 @@
 			children = (
 				BF475F662BB49FC3003A0E05 /* LockerRoomDiskImage.swift */,
 				BF57AC172BFCD8500061314D /* LockerRoomExternalDisk.swift */,
-				BF57AC142BFAED330061314D /* LockerRoomExternalDiskFinder.swift */,
+				BF57AC142BFAED330061314D /* LockerRoomExternalDiskDiscovery.swift */,
 			);
 			path = Disks;
 			sourceTree = "<group>";
@@ -436,7 +436,7 @@
 		BFA2E62E2BF46191002A3BA6 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				BFA2E61F2BF45FEE002A3BA6 /* LockerRoomService.swift */,
+				BFA2E61F2BF45FEE002A3BA6 /* LockerRoomRemoteService.swift */,
 				BFA2E6302BF4E910002A3BA6 /* LockerRoomXPCConnection.swift */,
 			);
 			path = Services;
@@ -612,7 +612,7 @@
 				BF1DD0992BB3035E001FA81F /* LockerRoomLockbox.swift in Sources */,
 				BF7048CF2BE09519008FB829 /* LockerRoomLockboxKeyConfiguration.swift in Sources */,
 				BFAF916B2BF17EC60028B81C /* LockerRoomLogger.swift in Sources */,
-				BFA2E6202BF45FEE002A3BA6 /* LockerRoomService.swift in Sources */,
+				BFA2E6202BF45FEE002A3BA6 /* LockerRoomRemoteService.swift in Sources */,
 				BF1DD0852BAF88DA001FA81F /* EncryptedLockbox.swift in Sources */,
 				BF57AC182BFCD8500061314D /* LockerRoomExternalDisk.swift in Sources */,
 				BF1DD0432BAC99BF001FA81F /* LockerRoomApp.swift in Sources */,
@@ -623,7 +623,7 @@
 				BFA2E6312BF4E910002A3BA6 /* LockerRoomXPCConnection.swift in Sources */,
 				BF0BCB632BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift in Sources */,
 				BF1DD0912BB1C823001FA81F /* LockerRoomStore.swift in Sources */,
-				BF57AC152BFAED330061314D /* LockerRoomExternalDiskFinder.swift in Sources */,
+				BF57AC152BFAED330061314D /* LockerRoomExternalDiskDiscovery.swift in Sources */,
 				BF7048CD2BE04504008FB829 /* LockerRoomBindingUtilities.swift in Sources */,
 				BF1DD08F2BB0E4AE001FA81F /* LockerRoomEncryptedLockboxView.swift in Sources */,
 				BF1DD08D2BAFD2A1001FA81F /* LockboxCryptor.swift in Sources */,
@@ -666,8 +666,8 @@
 				BFE4941D2BF7C59E00F9CC7B /* LockerRoomXPCConnection.swift in Sources */,
 				BF63F5032BE878C400692EB8 /* EncryptedLockbox.swift in Sources */,
 				BF63F5142BEB251800692EB8 /* LockerRoomEnrolledKey.swift in Sources */,
-				BFE4941C2BF7C4FD00F9CC7B /* LockerRoomService.swift in Sources */,
-				BF57AC1B2BFD09BC0061314D /* LockerRoomExternalDiskFinder.swift in Sources */,
+				BFE4941C2BF7C4FD00F9CC7B /* LockerRoomRemoteService.swift in Sources */,
+				BF57AC1B2BFD09BC0061314D /* LockerRoomExternalDiskDiscovery.swift in Sources */,
 				BF63F5082BE878E400692EB8 /* LockboxCryptor.swift in Sources */,
 				BF63F5152BEB251B00692EB8 /* LockerRoomError.swift in Sources */,
 				BFAF91692BED10FD0028B81C /* LockerRoomDiskImageTests.swift in Sources */,
@@ -696,7 +696,7 @@
 			files = (
 				BF57AC192BFCE2AA0061314D /* LockerRoomDiskImage.swift in Sources */,
 				BF15A48F2BF5206700243648 /* LockerRoomXPCConnection.swift in Sources */,
-				BFA2E6362BF4FD46002A3BA6 /* LockerRoomService.swift in Sources */,
+				BFA2E6362BF4FD46002A3BA6 /* LockerRoomRemoteService.swift in Sources */,
 				BFE494112BF5B82F00F9CC7B /* LockerRoomURLProvider.swift in Sources */,
 				BFE494172BF7C3B500F9CC7B /* LockerRoomDefaults.swift in Sources */,
 				BF15A4902BF5207F00243648 /* LockerRoomLogger.swift in Sources */,

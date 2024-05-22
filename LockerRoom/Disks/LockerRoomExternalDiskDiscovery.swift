@@ -1,5 +1,5 @@
 //
-//  LockerRoomExternalDiskFinder.swift
+//  LockerRoomExternalDiskDiscovery.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 5/19/24.
@@ -10,15 +10,15 @@ import Foundation
 import DiskArbitration
 import os.log
 
-protocol LockerRoomExternalDiskFinding {
+protocol LockerRoomExternalDiskDiscovering {
     var disks: [LockerRoomExternalDisk] { get }
     
     func activate() -> Bool
     func invalidate() -> Bool
 }
 
-class LockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding {
-    @Published var disks: [LockerRoomExternalDisk] = [LockerRoomExternalDisk]()
+@Observable class LockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering {
+    var disks: [LockerRoomExternalDisk] = [LockerRoomExternalDisk]()
     
     private let session: DASession?
     private let sessionQueue: DispatchQueue
@@ -33,7 +33,7 @@ class LockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding {
         self.lockerRoomDefaults = lockerRoomDefaults
         
         guard let session else {
-            Logger.externalDrive.error("Locker room external disk finder failed to create disk arbitration session")
+            Logger.externalDrive.error("Locker room external disk discovery failed to create disk arbitration session")
             return
         }
         
@@ -43,14 +43,14 @@ class LockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding {
             }
             
             guard let context else {
-                Logger.externalDrive.error("Locker room external disk finder failed to receive context")
+                Logger.externalDrive.error("Locker room external disk discovery failed to receive context")
                 return
             }
             
             DispatchQueue.main.async {
-                let capturedSelf = Unmanaged<LockerRoomExternalDiskFinder>.fromOpaque(context).takeUnretainedValue()
+                let capturedSelf = Unmanaged<LockerRoomExternalDiskDiscovery>.fromOpaque(context).takeUnretainedValue()
                 capturedSelf.disks.append(externalDisk)
-                Logger.externalDrive.log("Locker room external disk finder added external disk \(externalDisk.name) with uuid \(externalDisk.uuidString)")
+                Logger.externalDrive.log("Locker room external disk discovery found external disk \(externalDisk.name) with uuid \(externalDisk.uuidString)")
             }
         }
         
@@ -60,14 +60,14 @@ class LockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding {
             }
             
             guard let context else {
-                Logger.externalDrive.error("Locker room external disk finder failed to receive context")
+                Logger.externalDrive.error("Locker room external disk discovery failed to receive context")
                 return
             }
             
             DispatchQueue.main.async {
-                let capturedSelf = Unmanaged<LockerRoomExternalDiskFinder>.fromOpaque(context).takeUnretainedValue()
+                let capturedSelf = Unmanaged<LockerRoomExternalDiskDiscovery>.fromOpaque(context).takeUnretainedValue()
                 capturedSelf.disks.removeAll { $0.uuidString == externalDisk.uuidString }
-                Logger.externalDrive.log("Locker room external disk finder removed external disk \(externalDisk.name) with uuid \(externalDisk.uuidString)")
+                Logger.externalDrive.log("Locker room external disk discovery lost external disk \(externalDisk.name) with uuid \(externalDisk.uuidString)")
             }
         }
         
@@ -83,7 +83,7 @@ class LockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding {
     }
     
     private var shouldEnable: Bool {
-        return lockerRoomDefaults.externalDrivesEnabled
+        return lockerRoomDefaults.externalDisksEnabled
     }
     
     func activate() -> Bool {
@@ -93,7 +93,7 @@ class LockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding {
         
         sessionQueue.resume()
         isSessionActive = true
-        Logger.service.log("Locker room external disk finder activated")
+        Logger.service.log("Locker room external disk discovery activated")
         
         return true
     }
@@ -105,7 +105,7 @@ class LockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding {
         
         sessionQueue.suspend()
         isSessionActive = false
-        Logger.service.log("Locker room external disk finder invalidated")
+        Logger.service.log("Locker room external disk discovery invalidated")
         
         return true
     }
@@ -114,15 +114,17 @@ class LockerRoomExternalDiskFinder: LockerRoomExternalDiskFinding {
 extension DADisk {
     var lockerRoomExternalDisk: LockerRoomExternalDisk? {
         guard let description = DADiskCopyDescription(self) as NSDictionary? else {
-            Logger.externalDrive.error("Locker room external disk finder found disk with without description")
+            Logger.externalDrive.error("Locker room external disk discovery found disk with without description")
             return nil
         }
-        
-        guard let name = description[kDADiskDescriptionVolumeNameKey] as? String else {
+                
+        guard let name = description[kDADiskDescriptionMediaNameKey] as? String else {
+            Logger.externalDrive.error("Locker room external disk discovery found disk description with without name \(description)")
             return nil
         }
         
         guard let uuidObject = description[kDADiskDescriptionMediaUUIDKey] else {
+            Logger.externalDrive.error("Locker room external disk discovery found disk description with without uuid \(description)")
             return nil
         }
         
@@ -132,6 +134,7 @@ extension DADisk {
         let uuid = uuidObject as! CFUUID
         
         guard let uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuid) as String? else {
+            Logger.externalDrive.error("Locker room external disk discovery failed to convert uuid \(String(describing: uuid)) to string")
             return nil
         }
         
