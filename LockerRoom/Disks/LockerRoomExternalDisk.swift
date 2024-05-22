@@ -10,4 +10,5 @@ import Foundation
 struct LockerRoomExternalDisk {
     let name: String
     let uuidString: String
+    let devicePath: String
 }

@@ -23,6 +23,7 @@ protocol LockerRoomURLProviding {
     func urlForKey(name: String) -> URL
     func urlForKeyFile(name: String) -> URL
     
+    func urlForAttachedDevice(name: String) -> URL
     func urlForMountedVolume(name: String) -> URL
 }
 
@@ -34,6 +35,7 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
     
     private static let lockboxesPathComponent = "Lockboxes"
     private static let keysPathComponent = "Keys"
+    private static let devicePathComponenet = "/dev/"
     private static let volumesPathComponent = "/Volumes/"
     
     private let fileManager = FileManager.default
@@ -58,39 +60,43 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
     }
     
     var urlForLockboxes: URL {
-        rootURL.appending(component: LockerRoomURLProvider.lockboxesPathComponent)
+        return rootURL.appending(component: LockerRoomURLProvider.lockboxesPathComponent)
     }
     
     var urlForKeys: URL {
-        rootURL.appending(component: LockerRoomURLProvider.keysPathComponent)
+        return rootURL.appending(component: LockerRoomURLProvider.keysPathComponent)
     }
     
     func urlForLockbox(name: String) -> URL {
-        urlForLockboxes.appending(component: name)
+        return urlForLockboxes.appending(component: name)
     }
     
     func urlForLockboxMetadata(name: String) -> URL {
-        urlForLockbox(name: name).appending(component: LockerRoomURLProvider.metadataFileName)
+        return urlForLockbox(name: name).appending(component: LockerRoomURLProvider.metadataFileName)
     }
     
     func urlForLockboxUnencryptedContent(name: String) -> URL {
-        urlForLockbox(name: name).appending(component: LockerRoomURLProvider.unencryptedContentFileName)
+        return urlForLockbox(name: name).appending(component: LockerRoomURLProvider.unencryptedContentFileName)
     }
     
     func urlForLockboxEncryptedContent(name: String) -> URL {
-        urlForLockbox(name: name).appending(component: LockerRoomURLProvider.encryptedContentFileName)
+        return urlForLockbox(name: name).appending(component: LockerRoomURLProvider.encryptedContentFileName)
     }
     
     func urlForKey(name: String) -> URL {
-        urlForKeys.appending(component: name)
+        return urlForKeys.appending(component: name)
     }
     
     func urlForKeyFile(name: String) -> URL {
-        urlForKey(name: name).appending(component: LockerRoomURLProvider.lockboxKeyFileName)
+        return urlForKey(name: name).appending(component: LockerRoomURLProvider.lockboxKeyFileName)
+    }
+    
+    func urlForAttachedDevice(name: String) -> URL {
+        return URL(filePath: LockerRoomURLProvider.devicePathComponenet).appending(component: name)
     }
     
     func urlForMountedVolume(name: String) -> URL {
-        URL(filePath: "\(LockerRoomURLProvider.volumesPathComponent)\(name)")
+        return URL(filePath: LockerRoomURLProvider.volumesPathComponent).appending(component: name)
     }
 }
 

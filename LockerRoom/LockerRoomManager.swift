@@ -39,10 +39,19 @@ import os.log
         self.lockboxKeyCryptor = lockboxKeyCryptor
         self.lockboxKeyGenerator = lockboxKeyGenerator
         self.lockerRoomDefaults = lockerRoomDefaults
-        self.lockerRoomDiskImage = lockerRoomDiskImage ?? LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
-        self.lockerRoomExternalDiskDiscovery = lockerRoomExternalDiskDiscovery ?? LockerRoomExternalDiskDiscovery(lockerRoomDefaults: lockerRoomDefaults)
-        self.lockerRoomRemoteService = lockerRoomRemoteService ?? LockerRoomRemoteService(lockerRoomDefaults: lockerRoomDefaults)
-        self.lockerRoomStore = lockerRoomStore ?? LockerRoomStore(lockerRoomURLProvider: lockerRoomURLProvider)
+        self.lockerRoomDiskImage = lockerRoomDiskImage ?? LockerRoomDiskImage(
+            lockerRoomURLProvider: lockerRoomURLProvider
+        )
+        self.lockerRoomExternalDiskDiscovery = lockerRoomExternalDiskDiscovery ?? LockerRoomExternalDiskDiscovery(
+            lockerRoomDefaults: lockerRoomDefaults,
+            lockerRoomURLProvider: lockerRoomURLProvider
+        )
+        self.lockerRoomRemoteService = lockerRoomRemoteService ?? LockerRoomRemoteService(
+            lockerRoomDefaults: lockerRoomDefaults
+        )
+        self.lockerRoomStore = lockerRoomStore ?? LockerRoomStore(
+            lockerRoomURLProvider: lockerRoomURLProvider
+        )
         
         self.lockboxesByID = self.lockerRoomStore.lockboxesByID
         self.enrolledKeysByID = self.lockerRoomStore.enrolledKeysByID
