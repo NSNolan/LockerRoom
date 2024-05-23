@@ -7,8 +7,9 @@
 
 import Foundation
 
-struct LockerRoomExternalDisk {
+struct LockerRoomExternalDisk: Identifiable, Equatable {
+    let id: UUID
     let name: String
-    let uuidString: String
     let devicePath: String
+    let size: Int
 }

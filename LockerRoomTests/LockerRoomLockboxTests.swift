@@ -11,8 +11,9 @@ final class LockerRoomLockboxTests: XCTestCase {
     func testUnencryptedLockboxMetadataTransform() {
         let size = 10
         let isEncrypted = false
+        let isExternal = false
         
-        let unencryptedLockboxMetadata = UnencryptedLockbox.Metadata(name: name, size: size, isEncrypted: isEncrypted)
+        let unencryptedLockboxMetadata = UnencryptedLockbox.Metadata(name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal)
         let lockerRoomLockbox = unencryptedLockboxMetadata.lockerRoomLockbox
         
         XCTAssertNotNil(lockerRoomLockbox.id)
@@ -25,6 +26,7 @@ final class LockerRoomLockboxTests: XCTestCase {
     func testEncryptedLockboxMetadataTransform() {
         let size = 10
         let isEncrypted = true
+        let isExternal = false
         
         let lockboxKeyName = "LockboxKey"
         let lockboxKeySerialNumber: UInt32 = 4321
@@ -62,7 +64,7 @@ final class LockerRoomLockboxTests: XCTestCase {
         ]
         let encryptionKeyNames = encryptionLockboxKeys.map { $0.name }
         
-        let encryptedLockboxMetadata = EncryptedLockbox.Metadata(name: name, size: size, isEncrypted: isEncrypted, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        let encryptedLockboxMetadata = EncryptedLockbox.Metadata(name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
         let lockerRoomLockbox = encryptedLockboxMetadata.lockerRoomLockbox
         
         XCTAssertNotNil(lockerRoomLockbox.id)

@@ -15,6 +15,7 @@ struct UnencryptedLockbox {
         let name: String
         let size: Int
         let isEncrypted: Bool
+        let isExternal: Bool
         
         var description: String {
             return "[UnencryptedLockbox.Metadata] Name: \(name), Size: \(size), IsEncrypted: \(isEncrypted)"
@@ -25,13 +26,13 @@ struct UnencryptedLockbox {
     let inputStream: InputStream
     let outputStream: OutputStream
     
-    private init(name: String, size: Int, inputStream: InputStream, outputStream: OutputStream) {
-        self.metadata = Metadata(name: name, size: size, isEncrypted: false)
+    private init(name: String, size: Int, isExternal: Bool, inputStream: InputStream, outputStream: OutputStream) {
+        self.metadata = Metadata(name: name, size: size, isEncrypted: false, isExternal: isExternal)
         self.inputStream = inputStream
         self.outputStream = outputStream
     }
     
-    static func create(name: String, size: Int, lockerRoomDefaults: LockerRoomDefaulting, lockerRoomDiskImage: LockerRoomDiskImaging, lockerRoomRemoteService: LockerRoomRemoteService, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
+    static func create(name: String, size: Int, isExternal: Bool, lockerRoomDefaults: LockerRoomDefaulting, lockerRoomDiskImage: LockerRoomDiskImaging, lockerRoomRemoteService: LockerRoomRemoteService, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
         guard size > 0 else {
             Logger.persistence.error("Unencrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil
@@ -54,7 +55,7 @@ struct UnencryptedLockbox {
             return nil
         }
         
-        let lockbox = UnencryptedLockbox(name: name, size: size, inputStream: streams.input, outputStream: streams.output)
+        let lockbox = UnencryptedLockbox(name: name, size: size, isExternal: isExternal, inputStream: streams.input, outputStream: streams.output)
         
         guard lockerRoomStore.writeUnencryptedLockboxMetadata(lockbox.metadata) else {
             Logger.persistence.error("Unencrypted lockbox failed to write lockbox metadata for \(name)")
@@ -85,7 +86,10 @@ struct UnencryptedLockbox {
             return nil
         }
         
-        return UnencryptedLockbox(name: name, size: metadata.size, inputStream: streams.input, outputStream: streams.output)
+        let size = metadata.size
+        let isExternal = metadata.isExternal
+        
+        return UnencryptedLockbox(name: name, size: size, isExternal: isExternal, inputStream: streams.input, outputStream: streams.output)
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {

@@ -11,14 +11,14 @@ import DiskArbitration
 import os.log
 
 protocol LockerRoomExternalDiskDiscovering {
-    var disks: [LockerRoomExternalDisk] { get }
+    var disksByID: [UUID:LockerRoomExternalDisk] { get }
     
     func activate() -> Bool
     func invalidate() -> Bool
 }
 
 @Observable class LockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering {
-    var disks: [LockerRoomExternalDisk] = [LockerRoomExternalDisk]()
+    var disksByID: [UUID:LockerRoomExternalDisk] = [UUID:LockerRoomExternalDisk]()
     
     private let session: DASession?
     private let sessionQueue: DispatchQueue
@@ -52,8 +52,8 @@ protocol LockerRoomExternalDiskDiscovering {
             }
             
             DispatchQueue.main.async {
-                capturedSelf.disks.append(externalDisk)
-                Logger.externalDrive.log("Locker room external disk discovery found external disk \(externalDisk.name) with uuid \(externalDisk.uuidString) at path \(externalDisk.devicePath)")
+                capturedSelf.disksByID[externalDisk.id] = externalDisk
+                Logger.externalDrive.log("Locker room external disk discovery found external disk \(externalDisk.name) with id \(externalDisk.id) at path \(externalDisk.devicePath)")
             }
         }
         
@@ -70,8 +70,8 @@ protocol LockerRoomExternalDiskDiscovering {
             }
             
             DispatchQueue.main.async {
-                capturedSelf.disks.removeAll { $0.uuidString == externalDisk.uuidString }
-                Logger.externalDrive.log("Locker room external disk discovery lost external disk \(externalDisk.name) with uuid \(externalDisk.uuidString) at path \(externalDisk.devicePath)")
+                capturedSelf.disksByID[externalDisk.id] = nil
+                Logger.externalDrive.log("Locker room external disk discovery lost external disk \(externalDisk.name) with id \(externalDisk.id) at path \(externalDisk.devicePath)")
             }
         }
         
@@ -110,7 +110,7 @@ protocol LockerRoomExternalDiskDiscovering {
         
         sessionQueue.suspend()
         isSessionActive = false
-        disks.removeAll()
+        disksByID.removeAll()
         Logger.service.log("Locker room external disk discovery invalidated")
         
         return true
@@ -121,11 +121,6 @@ extension DADisk {
     func lockerRoomExternalDisk(lockerRoomURLProvider: LockerRoomURLProviding) -> LockerRoomExternalDisk? {
         guard let description = DADiskCopyDescription(self) as NSDictionary? else {
             Logger.externalDrive.error("Locker room external disk discovery found disk with without description")
-            return nil
-        }
-        
-        guard let name = description[kDADiskDescriptionMediaNameKey] as? String else {
-            Logger.externalDrive.error("Locker room external disk discovery found disk description with without name \(description)")
             return nil
         }
         
@@ -144,6 +139,16 @@ extension DADisk {
             return nil
         }
         
+        guard let id = UUID(uuidString: uuidString) else {
+            Logger.externalDrive.error("Locker room external disk discovery failed to convert uuid \(String(describing: uuid)) to id")
+            return nil
+        }
+        
+        guard let name = description[kDADiskDescriptionMediaNameKey] as? String else {
+            Logger.externalDrive.error("Locker room external disk discovery found disk description with without name \(description)")
+            return nil
+        }
+        
         guard let bsdName = description[kDADiskDescriptionMediaBSDNameKey] as? String else {
             Logger.externalDrive.error("Locker room external disk discovery found disk description without BSD name \(description)")
             return nil
@@ -152,6 +157,13 @@ extension DADisk {
         let deviceURL = lockerRoomURLProvider.urlForAttachedDevice(name: bsdName)
         let devicePath = deviceURL.path(percentEncoded: false)
         
-        return LockerRoomExternalDisk(name: name, uuidString: uuidString, devicePath: devicePath)
+        guard let sizeInBytes = description[kDADiskDescriptionMediaSizeKey] as? Int else {
+            Logger.externalDrive.error("Locker room external disk discovery found disk description without size \(description)")
+            return nil
+        }
+        
+        let sizeInMegabytes = sizeInBytes / 1024
+        
+        return LockerRoomExternalDisk(id: id, name: name, devicePath: devicePath, size: sizeInMegabytes)
     }
 }

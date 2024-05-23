@@ -12,6 +12,7 @@ struct LockerRoomLockbox: Identifiable, Equatable {
     let name: String
     let size: Int
     let isEncrypted: Bool
+    let isExternal: Bool
     let encryptionKeyNames: [String]
 }
 
@@ -21,6 +22,7 @@ extension UnencryptedLockbox.Metadata {
             name: name,
             size: size,
             isEncrypted: isEncrypted,
+            isExternal: isExternal,
             encryptionKeyNames: [String]()
         )
     }
@@ -32,6 +34,7 @@ extension EncryptedLockbox.Metadata {
             name: name,
             size: size,
             isEncrypted: isEncrypted,
+            isExternal: isExternal,
             encryptionKeyNames: encryptionLockboxKeys.map { $0.name }
         )
     }

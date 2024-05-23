@@ -104,7 +104,7 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
                 viewStyle = .creating
                 
                 Task {
-                    guard let newUnencryptedLockbox = await lockerRoomManager.addUnencryptedLockbox(name: name, size: sizeInMegabytes) else {
+                    guard let newUnencryptedLockbox = await lockerRoomManager.addUnencryptedLockbox(name: name, size: sizeInMegabytes, isExternal: false) else {
                         Logger.lockerRoomUI.error("LockerRoom failed to create an unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
                         error = .failedToCreateLockbox
                         viewStyle = .error

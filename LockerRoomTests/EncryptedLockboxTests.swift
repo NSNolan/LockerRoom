@@ -10,6 +10,7 @@ import XCTest
 final class EncryptedLockboxTests: XCTestCase {
     func testCreateEncryptedLockbox() {
         let size = 10
+        let isExternal = false
         
         let lockboxKeyName = "LockboxKey"
         let lockboxKeySerialNumber: UInt32 = 4321
@@ -52,6 +53,7 @@ final class EncryptedLockboxTests: XCTestCase {
         guard let encryptedLockbox = EncryptedLockbox.create(
             name: name,
             size: size,
+            isExternal: isExternal,
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
             encryptionLockboxKeys: encryptionLockboxKeys,
             lockerRoomStore: store
@@ -62,6 +64,7 @@ final class EncryptedLockboxTests: XCTestCase {
         
         XCTAssertEqual(encryptedLockbox.metadata.name, name)
         XCTAssertEqual(encryptedLockbox.metadata.size, size)
+        XCTAssertEqual(encryptedLockbox.metadata.isExternal, isExternal)
         XCTAssertEqual(encryptedLockbox.metadata.encryptedSymmetricKeysBySerialNumber, encryptedSymmetricKeysBySerialNumber)
         XCTAssertEqual(encryptedLockbox.metadata.encryptionLockboxKeys, encryptionLockboxKeys)
         XCTAssertTrue(encryptedLockbox.metadata.isEncrypted)
@@ -70,6 +73,7 @@ final class EncryptedLockboxTests: XCTestCase {
     func testCreateEncryptedLockboxFromLockerRoomLockbox() {
         let size = 10
         let isEncrypted = true
+        let isExternal = false
         
         let lockboxKeyName = "LockboxKey"
         let lockboxKeySerialNumber: UInt32 = 4321
@@ -112,11 +116,12 @@ final class EncryptedLockboxTests: XCTestCase {
             name: name,
             size: size,
             isEncrypted: isEncrypted,
+            isExternal: isExternal,
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
             encryptionLockboxKeys: encryptionLockboxKeys
         )
         
-        let lockerRoomLockbox = LockerRoomLockbox(name: name, size: size, isEncrypted: isEncrypted, encryptionKeyNames: [String]())
+        let lockerRoomLockbox = LockerRoomLockbox(name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptionKeyNames: [String]())
         
         guard let encryptedLockbox = EncryptedLockbox.create(from: lockerRoomLockbox, lockerRoomStore: store) else {
             XCTFail("Failed to create encrypted lockbox")
@@ -125,6 +130,7 @@ final class EncryptedLockboxTests: XCTestCase {
         
         XCTAssertEqual(encryptedLockbox.metadata.name, name)
         XCTAssertEqual(encryptedLockbox.metadata.size, size)
+        XCTAssertEqual(encryptedLockbox.metadata.isExternal, isExternal)
         XCTAssertEqual(encryptedLockbox.metadata.encryptedSymmetricKeysBySerialNumber, encryptedSymmetricKeysBySerialNumber)
         XCTAssertEqual(encryptedLockbox.metadata.encryptionLockboxKeys, encryptionLockboxKeys)
         XCTAssertTrue(encryptedLockbox.metadata.isEncrypted)
@@ -142,6 +148,7 @@ final class EncryptedLockboxTests: XCTestCase {
     
     func testCreateEncryptedLockboxInvalidSizeFailure() {
         let size = 0
+        let isExternal = false
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
@@ -149,6 +156,7 @@ final class EncryptedLockboxTests: XCTestCase {
         let encryptedLockbox = EncryptedLockbox.create(
             name: name,
             size: size,
+            isExternal: isExternal,
             encryptedSymmetricKeysBySerialNumber: [UInt32:Data](),
             encryptionLockboxKeys: [LockboxKey](),
             lockerRoomStore: store
@@ -159,6 +167,7 @@ final class EncryptedLockboxTests: XCTestCase {
     
     func testCreateEncryptedLockboxWriteMetadataFailure() {
         let size = 10
+        let isExternal = false
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
@@ -167,6 +176,7 @@ final class EncryptedLockboxTests: XCTestCase {
         let encryptedLockbox = EncryptedLockbox.create(
             name: name,
             size: size,
+            isExternal: isExternal,
             encryptedSymmetricKeysBySerialNumber: [UInt32:Data](),
             encryptionLockboxKeys: [LockboxKey](),
             lockerRoomStore: store
@@ -178,8 +188,9 @@ final class EncryptedLockboxTests: XCTestCase {
     func testCreateEncryptedLockboxFromLockerRoomLockboxIsEncryptedFailure() {
         let size = 10
         let isEncrypted = false
+        let isExternal = false
         
-        let lockerRoomLockbox = LockerRoomLockbox(name: name, size: size, isEncrypted: isEncrypted, encryptionKeyNames: [String]())
+        let lockerRoomLockbox = LockerRoomLockbox(name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptionKeyNames: [String]())
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
@@ -192,8 +203,9 @@ final class EncryptedLockboxTests: XCTestCase {
     func testCreateEncryptedLockboxFromLockerRoomLockboxReadMetadataFailure() {
         let size = 10
         let isEncrypted = true
+        let isExternal = false
         
-        let lockerRoomLockbox = LockerRoomLockbox(name: name, size: size, isEncrypted: isEncrypted, encryptionKeyNames: [String]())
+        let lockerRoomLockbox = LockerRoomLockbox(name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptionKeyNames: [String]())
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)

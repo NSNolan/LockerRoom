@@ -55,9 +55,12 @@ private struct LockerRoomLockboxesView: View {
     @State private var selection: LockerRoomLockbox.ID? = nil
     @State private var sortOrder = [KeyPathComparator(\LockerRoomLockbox.name)]
     
-    @State private var showUnencryptedLockboxAddView = false
+    @State private var showUnencryptedLockboxCreateView = false
     @State private var showUnencryptedLockboxView = false
     @State private var showEncryptedLockboxView = false
+    
+    @State private var shouldShowUnencryptedLockboxCreateOptionsView = false
+    @State private var showUnencryptedLockboxCreateOptionsView = false
     
     @State private var selectedLockbox: LockerRoomLockbox? = nil
     
@@ -78,6 +81,10 @@ private struct LockerRoomLockboxesView: View {
                         
                         Text(lockbox.name)
                         
+                        if lockbox.isExternal {
+                            Image(systemName: "externaldrive")
+                        }
+                        
                         ForEach(lockbox.encryptionKeyNames, id: \.self) { keyName in
                             EncryptionKeyView(name: keyName)
                         }
@@ -96,21 +103,32 @@ private struct LockerRoomLockboxesView: View {
                 Spacer()
                 
                 Button(action: {
-                    showUnencryptedLockboxAddView = true
+                    if shouldShowUnencryptedLockboxCreateOptionsView {
+                        showUnencryptedLockboxCreateOptionsView = true
+                    } else {
+                        showUnencryptedLockboxCreateView = true
+                    }
                 }) {
                     Image(systemName: "plus")
+                }
+                .popover(isPresented: $showUnencryptedLockboxCreateOptionsView) {
+                    UnencryptedLockboxCreateOptionsView(showView: $showUnencryptedLockboxCreateOptionsView)
                 }
             }
             .padding()
         }
         .onAppear() {
             lockboxesByUUID = lockerRoomManager.lockboxesByID
+            shouldShowUnencryptedLockboxCreateOptionsView = (lockerRoomManager.eligibleExternalDisksByID.count > 0)
         }
         .onChange(of: lockerRoomManager.lockboxesByID) {
             lockboxesByUUID = lockerRoomManager.lockboxesByID
         }
-        .sheet(isPresented: $showUnencryptedLockboxAddView) {
-            LockerRoomUnencryptedLockboxView(lockerRoomManager: lockerRoomManager, showView: $showUnencryptedLockboxAddView, lockbox: $selectedLockbox, viewStyle: .create)
+        .onChange(of: lockerRoomManager.eligibleExternalDisksByID) {
+            shouldShowUnencryptedLockboxCreateOptionsView = (lockerRoomManager.eligibleExternalDisksByID.count > 0)
+        }
+        .sheet(isPresented: $showUnencryptedLockboxCreateView) {
+            LockerRoomUnencryptedLockboxView(lockerRoomManager: lockerRoomManager, showView: $showUnencryptedLockboxCreateView, lockbox: $selectedLockbox, viewStyle: .create)
         }
         .sheet(isPresented: $showUnencryptedLockboxView) {
             LockerRoomUnencryptedLockboxView(lockerRoomManager: lockerRoomManager, showView: $showUnencryptedLockboxView, lockbox: $selectedLockbox, viewStyle: .encrypt)
@@ -227,6 +245,19 @@ private struct EncryptionKeyView: View {
                 }
             )
             .foregroundColor(.white)
+    }
+}
+
+private struct UnencryptedLockboxCreateOptionsView: View {
+    @Binding var showView: Bool
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Create Lockbox Options")
+                .padding()
+        }
+        .cornerRadius(8)
+        .shadow(radius: 10)
     }
 }
 
