@@ -89,7 +89,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
                     Image(systemName: "chevron.down")
                 }
             }
-            .buttonStyle(BorderlessButtonStyle())
+            .buttonStyle(.plain)
             .padding([.bottom, .top], 5)
             
             HStack {

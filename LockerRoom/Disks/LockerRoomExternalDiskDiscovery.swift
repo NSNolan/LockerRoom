@@ -162,7 +162,7 @@ extension DADisk {
             return nil
         }
         
-        let sizeInMegabytes = sizeInBytes / 1024
+        let sizeInMegabytes = sizeInBytes / (1024 * 1024)
         
         return LockerRoomExternalDisk(id: id, name: name, devicePath: devicePath, size: sizeInMegabytes)
     }

@@ -97,7 +97,7 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
             
             let name = unencryptedLockboxConfiguration.name
             let sizeInMegabytes = unencryptedLockboxConfiguration.size.megabytes
-            let createDisabled = (name.isEmpty || sizeInMegabytes <= 0 || sizeInMegabytes > LockerRoomUnencryptedLockboxConfiguration.maxSize)
+            let createDisabled = (name.isEmpty || sizeInMegabytes <= 0 || sizeInMegabytes > LockerRoomUnencryptedLockboxConfiguration.maxSizeInMegabytes)
             
             Button("Create") {
                 lockboxToBeNamed = name
@@ -203,7 +203,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                             Image(systemName: "chevron.down")
                         }
                     }
-                    .buttonStyle(BorderlessButtonStyle())
+                    .buttonStyle(.plain)
                     .padding(.bottom, 5)
                 }
                 
