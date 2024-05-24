@@ -9,6 +9,7 @@ import XCTest
 
 final class LockboxCryptorTests: XCTestCase {
     func testLockboxCryptorSmall() async {
+        let id = UUID()
         let size = 10 // 10 Bytes
         let isExternal = false
         
@@ -35,7 +36,7 @@ final class LockboxCryptorTests: XCTestCase {
         var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         diskImage.unencryptedContent = unencryptedContent
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults,  lockerRoomDiskImage: diskImage, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults,  lockerRoomDiskImage: diskImage, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
             return
         }
@@ -45,7 +46,7 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
         
-        guard let encryptedLockbox = EncryptedLockbox.create(name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionLockboxKeys: [LockboxKey](), lockerRoomStore: store) else {
+        guard let encryptedLockbox = EncryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionLockboxKeys: [LockboxKey](), lockerRoomStore: store) else {
             XCTFail("Failed to create encrypted lockbox")
             return
         }
@@ -69,6 +70,7 @@ final class LockboxCryptorTests: XCTestCase {
     }
     
     func testLockboxCryptorLarge() async {
+        let id = UUID()
         let size = (1 * 1024 * 1024 * 1024) // 1GB
         let isExternal = false
         
@@ -94,7 +96,7 @@ final class LockboxCryptorTests: XCTestCase {
         var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
         diskImage.unencryptedContent = unencryptedContent
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults, lockerRoomDiskImage: diskImage, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults, lockerRoomDiskImage: diskImage, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
             return
         }
@@ -104,7 +106,7 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
         
-        guard let encryptedLockbox = EncryptedLockbox.create(name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionLockboxKeys: [LockboxKey](), lockerRoomStore: store) else {
+        guard let encryptedLockbox = EncryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionLockboxKeys: [LockboxKey](), lockerRoomStore: store) else {
             XCTFail("Failed to create encrypted lockbox")
             return
         }

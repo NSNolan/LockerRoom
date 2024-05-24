@@ -9,14 +9,15 @@ import XCTest
 
 final class LockerRoomLockboxTests: XCTestCase {
     func testUnencryptedLockboxMetadataTransform() {
+        let id = UUID()
         let size = 10
         let isEncrypted = false
         let isExternal = false
         
-        let unencryptedLockboxMetadata = UnencryptedLockbox.Metadata(name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal)
+        let unencryptedLockboxMetadata = UnencryptedLockbox.Metadata(id: id, name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal)
         let lockerRoomLockbox = unencryptedLockboxMetadata.lockerRoomLockbox
         
-        XCTAssertNotNil(lockerRoomLockbox.id)
+        XCTAssertEqual(lockerRoomLockbox.id, id)
         XCTAssertEqual(lockerRoomLockbox.name, name)
         XCTAssertEqual(lockerRoomLockbox.size, size)
         XCTAssertEqual(lockerRoomLockbox.isEncrypted, isEncrypted)
@@ -24,6 +25,7 @@ final class LockerRoomLockboxTests: XCTestCase {
     }
     
     func testEncryptedLockboxMetadataTransform() {
+        let id = UUID()
         let size = 10
         let isEncrypted = true
         let isExternal = false
@@ -64,10 +66,10 @@ final class LockerRoomLockboxTests: XCTestCase {
         ]
         let encryptionKeyNames = encryptionLockboxKeys.map { $0.name }
         
-        let encryptedLockboxMetadata = EncryptedLockbox.Metadata(name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        let encryptedLockboxMetadata = EncryptedLockbox.Metadata(id: id, name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
         let lockerRoomLockbox = encryptedLockboxMetadata.lockerRoomLockbox
         
-        XCTAssertNotNil(lockerRoomLockbox.id)
+        XCTAssertEqual(lockerRoomLockbox.id, id)
         XCTAssertEqual(lockerRoomLockbox.name, name)
         XCTAssertEqual(lockerRoomLockbox.size, size)
         XCTAssertEqual(lockerRoomLockbox.isEncrypted, isEncrypted)

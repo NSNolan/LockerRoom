@@ -95,6 +95,7 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
         HStack {
             Spacer()
             
+            let id = UUID()
             let name = unencryptedLockboxConfiguration.name
             let sizeInMegabytes = unencryptedLockboxConfiguration.size.megabytes
             let createDisabled = (name.isEmpty || sizeInMegabytes <= 0 || sizeInMegabytes > LockerRoomUnencryptedLockboxConfiguration.maxSizeInMegabytes)
@@ -104,13 +105,13 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
                 viewStyle = .creating
                 
                 Task {
-                    guard let newUnencryptedLockbox = await lockerRoomManager.addUnencryptedLockbox(name: name, size: sizeInMegabytes, isExternal: false) else {
-                        Logger.lockerRoomUI.error("LockerRoom failed to create an unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
+                    guard let newUnencryptedLockbox = await lockerRoomManager.addUnencryptedLockbox(id: id, name: name, size: sizeInMegabytes, isExternal: false) else {
+                        Logger.lockerRoomUI.error("LockerRoom failed to create an unencrypted lockbox \(name) with id \(id) of size \(sizeInMegabytes)MB")
                         error = .failedToCreateLockbox
                         viewStyle = .error
                         return
                     }
-                    Logger.lockerRoomUI.log("LockerRoom created an unencrypted lockbox \(name) of size \(sizeInMegabytes)MB")
+                    Logger.lockerRoomUI.log("LockerRoom created an unencrypted lockbox \(name) with id \(id) of size \(sizeInMegabytes)MB")
                     
                     lockbox = newUnencryptedLockbox.metadata.lockerRoomLockbox
                     viewStyle = .encrypt

@@ -16,7 +16,10 @@ import os.log
     var enrolledKeysByID = [UUID:LockerRoomEnrolledKey]()
     
     var eligibleExternalDisksByID: [UUID:LockerRoomExternalDisk] {
-        return lockerRoomExternalDiskDiscovery.disksByID
+        return lockerRoomExternalDiskDiscovery.disksByID.filter { externalDiskEntry in
+            let externalDiskID = externalDiskEntry.value.id
+            return (lockboxesByID[externalDiskID] == nil)
+        }
     }
     
     private let lockboxCryptor: LockboxCrypting
@@ -64,9 +67,9 @@ import os.log
         LockerRoomAppLifecycle.remoteService = self.lockerRoomRemoteService
     }
     
-    func addUnencryptedLockbox(name: String, size: Int, isExternal: Bool) async -> UnencryptedLockbox? {
+    func addUnencryptedLockbox(id: UUID, name: String, size: Int, isExternal: Bool) async -> UnencryptedLockbox? {
         return (try? await Task {
-            guard let unencryptedLockbox = UnencryptedLockbox.create(name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskImage: lockerRoomDiskImage, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
+            guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskImage: lockerRoomDiskImage, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
                 Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
                 return nil
             }
@@ -150,6 +153,7 @@ import os.log
             return false
         }
         
+        let id = unencryptedLockbox.metadata.id
         let name = unencryptedLockbox.metadata.name
         let size = unencryptedLockbox.metadata.size
         let isExternal = unencryptedLockbox.metadata.isExternal
@@ -188,7 +192,7 @@ import os.log
         }
         Logger.manager.log("Locker room manager encrypted an unencrypted lockbox \(name)")
         
-        let encryptedLockboxMetdata = EncryptedLockbox.Metadata(name: name, size: size, isEncrypted: true, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        let encryptedLockboxMetdata = EncryptedLockbox.Metadata(id: id, name: name, size: size, isEncrypted: true, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
         guard lockerRoomStore.writeEncryptedLockboxMetadata(encryptedLockboxMetdata) else {
             Logger.manager.error("Locker room manager failed to write encrypted lockbox metadata \(encryptedLockboxMetdata)")
             return false
@@ -234,6 +238,7 @@ import os.log
             return false
         }
         
+        let id = encryptedLockbox.metadata.id
         let name = encryptedLockbox.metadata.name
         let size = encryptedLockbox.metadata.size
         let isExternal = encryptedLockbox.metadata.isExternal
@@ -244,7 +249,7 @@ import os.log
         }
         Logger.manager.log("Locker room manager decrypted an encrypted lockbox \(name)")
         
-        let unencryptedLockboxMetdata = UnencryptedLockbox.Metadata(name: name, size: size, isEncrypted: false, isExternal: isExternal)
+        let unencryptedLockboxMetdata = UnencryptedLockbox.Metadata(id: id, name: name, size: size, isEncrypted: false, isExternal: isExternal)
         guard lockerRoomStore.writeUnencryptedLockboxMetadata(unencryptedLockboxMetdata) else {
             Logger.manager.error("Locker room manager failed to write unencrypted lockbox metadata \(unencryptedLockboxMetdata)")
             return false

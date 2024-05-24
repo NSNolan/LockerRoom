@@ -12,6 +12,7 @@ import os.log
 struct EncryptedLockbox {
     
     struct Metadata: LockboxMetadata {
+        let id: UUID
         let name: String
         let size: Int
         let isEncrypted: Bool
@@ -20,7 +21,7 @@ struct EncryptedLockbox {
         let encryptionLockboxKeys: [LockboxKey]
         
         var description: String {
-            return "[UnencryptedLockbox.Metadata] Name: \(name), Size: \(size), IsEncrypted: \(isEncrypted), EncryptedSymmetricKeysBySerialNumber: \(encryptedSymmetricKeysBySerialNumber), EncryptionLockboxKeys: \(encryptionLockboxKeys)"
+            return "[UnencryptedLockbox.Metadata] ID: \(id), Name: \(name), Size: \(size), IsEncrypted: \(isEncrypted), IsExternal: \(isExternal), EncryptedSymmetricKeysBySerialNumber: \(encryptedSymmetricKeysBySerialNumber), EncryptionLockboxKeys: \(encryptionLockboxKeys)"
         }
     }
     
@@ -28,8 +29,9 @@ struct EncryptedLockbox {
     let inputStream: InputStream
     let outputStream: OutputStream
         
-    private init(name: String, size: Int, isExternal: Bool, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], inputStream: InputStream, outputStream: OutputStream) {
+    private init(id: UUID, name: String, size: Int, isExternal: Bool, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], inputStream: InputStream, outputStream: OutputStream) {
         self.metadata = Metadata(
+            id: id,
             name: name,
             size: size,
             isEncrypted: true,
@@ -41,7 +43,7 @@ struct EncryptedLockbox {
         self.outputStream = outputStream
     }
     
-    static func create(name: String, size: Int, isExternal: Bool, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
+    static func create(id: UUID, name: String, size: Int, isExternal: Bool, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
         guard size > 0 else {
             Logger.persistence.error("Encrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil
@@ -52,7 +54,7 @@ struct EncryptedLockbox {
             return nil
         }
         
-        let lockbox = EncryptedLockbox(name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys, inputStream: streams.input, outputStream: streams.output)
+        let lockbox = EncryptedLockbox(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys, inputStream: streams.input, outputStream: streams.output)
         
         guard lockerRoomStore.writeEncryptedLockboxMetadata(lockbox.metadata) else {
             Logger.persistence.error("Encrypted lockbox failed to write lockbox metadata for \(name)")
@@ -83,12 +85,13 @@ struct EncryptedLockbox {
             return nil
         }
         
+        let id = metadata.id
         let size = metadata.size
         let isExternal = metadata.isExternal
         let encryptedSymmetricKeysBySerialNumber = metadata.encryptedSymmetricKeysBySerialNumber
         let encryptionLockboxKeys = metadata.encryptionLockboxKeys
 
-        return EncryptedLockbox(name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys, inputStream: streams.input, outputStream: streams.output)
+        return EncryptedLockbox(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys, inputStream: streams.input, outputStream: streams.output)
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {

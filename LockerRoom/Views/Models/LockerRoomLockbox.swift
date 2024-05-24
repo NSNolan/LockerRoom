@@ -8,7 +8,7 @@
 import Foundation
 
 struct LockerRoomLockbox: Identifiable, Equatable {
-    let id = UUID()
+    let id: UUID
     let name: String
     let size: Int
     let isEncrypted: Bool
@@ -19,6 +19,7 @@ struct LockerRoomLockbox: Identifiable, Equatable {
 extension UnencryptedLockbox.Metadata {
     var lockerRoomLockbox: LockerRoomLockbox {
         return LockerRoomLockbox(
+            id: id,
             name: name,
             size: size,
             isEncrypted: isEncrypted,
@@ -31,6 +32,7 @@ extension UnencryptedLockbox.Metadata {
 extension EncryptedLockbox.Metadata {
     var lockerRoomLockbox: LockerRoomLockbox {
         return LockerRoomLockbox(
+            id: id,
             name: name,
             size: size,
             isEncrypted: isEncrypted,
