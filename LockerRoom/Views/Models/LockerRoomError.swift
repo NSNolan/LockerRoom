@@ -11,6 +11,7 @@ enum LockerRoomError: Error {
     case failedToAttachLockbox
     case failedToCreateLockbox
     case failedToCreateLockboxKey
+    case failedToCreateExternalLockbox
     case failedToDecryptLockbox
     case failedToDecryptLockboxSymmetricKey
     case failedToEncryptLockbox
@@ -26,6 +27,8 @@ enum LockerRoomError: Error {
             return "Failed to create lockbox."
         case .failedToCreateLockboxKey:
             return "Failed to create lockbox key."
+        case .failedToCreateExternalLockbox:
+            return "Failed to create external lockbox."
         case .failedToDecryptLockbox:
             return "Failed to decrypt lockbox."
         case .failedToDecryptLockboxSymmetricKey:

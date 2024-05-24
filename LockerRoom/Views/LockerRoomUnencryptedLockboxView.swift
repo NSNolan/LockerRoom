@@ -120,7 +120,7 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
             .tint(.blue)
-                        
+            
             Button("Close") {
                 showView = false
             }
@@ -204,6 +204,7 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                         }
                     }
                     .buttonStyle(.plain)
+                    .focusable(false)
                     .padding(.bottom, 5)
                 }
                 
@@ -246,6 +247,11 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                 Logger.lockerRoomUI.error("LockerRoom is missing an unencrypted lockbox to attach")
                 error = .missingLockbox
                 viewStyle = .error
+                return
+            }
+            
+            // TODO: Attach to external disk
+            guard !lockbox.isExternal else {
                 return
             }
             

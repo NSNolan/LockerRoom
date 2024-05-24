@@ -90,6 +90,7 @@ private struct LockerRoomLockboxKeyEnrollView: View {
                 }
             }
             .buttonStyle(.plain)
+            .focusable(false)
             .padding([.bottom, .top], 5)
             
             HStack {

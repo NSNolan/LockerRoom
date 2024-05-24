@@ -86,7 +86,7 @@ private struct LockerRoomLockboxesView: View {
                         }
                         
                         ForEach(lockbox.encryptionKeyNames, id: \.self) { keyName in
-                            EncryptionKeyView(name: keyName)
+                            LockerRoomEncryptionKeyView(name: keyName)
                         }
                         
                         Spacer()
@@ -112,7 +112,7 @@ private struct LockerRoomLockboxesView: View {
                     Image(systemName: "plus")
                 }
                 .popover(isPresented: $showUnencryptedLockboxCreateOptionsView) {
-                    UnencryptedLockboxCreateOptionsView(showView: $showUnencryptedLockboxCreateOptionsView)
+                    LockerRoomUnencryptedLockboxCreateOptionsView(lockerRoomManager: lockerRoomManager, showView: $showUnencryptedLockboxCreateOptionsView, showUnencryptedLockboxCreateView: $showUnencryptedLockboxCreateView, showUnencryptedLockboxView: $showUnencryptedLockboxView, lockbox: $selectedLockbox, showErrorView: $showErrorView, error: $error)
                 }
             }
             .padding()
@@ -231,7 +231,7 @@ private struct LockerRoomKeysView: View {
     }
 }
 
-private struct EncryptionKeyView: View {
+private struct LockerRoomEncryptionKeyView: View {
     let name: String
     
     var body: some View {
@@ -248,15 +248,71 @@ private struct EncryptionKeyView: View {
     }
 }
 
-private struct UnencryptedLockboxCreateOptionsView: View {
+private struct LockerRoomUnencryptedLockboxCreateOptionsView: View {
+    @Bindable var lockerRoomManager: LockerRoomManager
+    
     @Binding var showView: Bool
+    @Binding var showUnencryptedLockboxCreateView: Bool
+    @Binding var showUnencryptedLockboxView: Bool
+    
+    @Binding var lockbox: LockerRoomLockbox?
+    
+    @Binding var showErrorView: Bool
+    @Binding var error: LockerRoomError?
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text("Create Lockbox Options")
+        VStack(alignment: .leading, spacing: -20) {
+            Button(action: {
+                showView = false
+                showUnencryptedLockboxCreateView = true
+            }) {
+                HStack {
+                    Image(systemName: "plus.square")
+                    Text("Create new...")
+                }
+            }
+            .buttonStyle(.plain)
+            .padding()
+            
+            let eligibleExternalDisks = Array(lockerRoomManager.eligibleExternalDisksByID.values)
+            
+            if !eligibleExternalDisks.isEmpty {
+                Divider()
+                    .foregroundColor(.black)
+                    .padding()
+            }
+            
+            ForEach(eligibleExternalDisks) { externalDisk in
+                let name = externalDisk.name
+                let size = externalDisk.size
+                
+                Button(action: {
+                    Task {
+                        guard let newUnencryptedLockbox = await lockerRoomManager.addUnencryptedLockbox(name: name, size: size, isExternal: true) else {
+                            Logger.lockerRoomUI.error("LockerRoom failed to create an external unencrypted lockbox \(name) of size \(size)MB")
+                            error = .failedToCreateExternalLockbox
+                            showView = false
+                            showErrorView = true
+                            return
+                        }
+                        Logger.lockerRoomUI.log("LockerRoom created an external unencrypted lockbox \(name) of size \(size)MB")
+                        
+                        lockbox = newUnencryptedLockbox.metadata.lockerRoomLockbox
+                        showView = false
+                        showUnencryptedLockboxView = true
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "plus.square.on.square")
+                        Text("Create from \(externalDisk.name)")
+                    }
+                }
+                .buttonStyle(.plain)
                 .padding()
+            }
         }
         .cornerRadius(8)
+        .frame(maxWidth: .infinity)
         .shadow(radius: 10)
     }
 }

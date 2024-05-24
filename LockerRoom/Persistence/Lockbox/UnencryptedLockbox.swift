@@ -38,15 +38,17 @@ struct UnencryptedLockbox {
             return nil
         }
         
-        if lockerRoomDefaults.remoteServiceEnabled {
-            guard lockerRoomRemoteService.createDiskImage(name: name, size: size, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
-                Logger.persistence.error("Unencrypted lockbox failed to create disk image \(name)")
-                return nil
-            }
-        } else {
-            guard lockerRoomDiskImage.create(name: name, size: size) else {
-                Logger.persistence.error("Unencrypted lockbox failed to create disk image \(name)")
-                return nil
+        if !isExternal {
+            if lockerRoomDefaults.remoteServiceEnabled {
+                guard lockerRoomRemoteService.createDiskImage(name: name, size: size, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
+                    Logger.persistence.error("Unencrypted lockbox failed to create disk image \(name)")
+                    return nil
+                }
+            } else {
+                guard lockerRoomDiskImage.create(name: name, size: size) else {
+                    Logger.persistence.error("Unencrypted lockbox failed to create disk image \(name)")
+                    return nil
+                }
             }
         }
         

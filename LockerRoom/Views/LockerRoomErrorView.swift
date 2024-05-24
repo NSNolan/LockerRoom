@@ -27,6 +27,7 @@ struct LockerRoomErrorView: View {
             Button("Close") {
                 showView = false
             }
+            .focusable(false)
             .padding(.top)
         }
         .frame(width: 300)
