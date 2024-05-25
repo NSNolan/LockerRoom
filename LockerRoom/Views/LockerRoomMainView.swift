@@ -41,6 +41,7 @@ struct LockerRoomMainView: View {
         }
         .sheet(isPresented: $showErrorView) {
             LockerRoomErrorView(showView: $showErrorView, error: $error)
+                .padding()
         }
     }
 }
