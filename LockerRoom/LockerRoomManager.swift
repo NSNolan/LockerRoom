@@ -15,13 +15,6 @@ import os.log
     var lockboxesByID = [UUID:LockerRoomLockbox]()
     var enrolledKeysByID = [UUID:LockerRoomEnrolledKey]()
     
-    var eligibleExternalDisksByID: [UUID:LockerRoomExternalDisk] {
-        return lockerRoomExternalDiskDiscovery.disksByID.filter { externalDiskEntry in
-            let externalDiskID = externalDiskEntry.value.id
-            return (lockboxesByID[externalDiskID] == nil)
-        }
-    }
-    
     private let lockboxCryptor: LockboxCrypting
     private let lockboxKeyCryptor: LockboxKeyCrypting
     private let lockboxKeyGenerator: LockboxKeyGenerating
@@ -65,6 +58,20 @@ import os.log
         
         LockerRoomAppLifecycle.externalDiskDiscovery = self.lockerRoomExternalDiskDiscovery
         LockerRoomAppLifecycle.remoteService = self.lockerRoomRemoteService
+    }
+    
+    var eligibleExternalDisksByID: [UUID:LockerRoomExternalDisk] {
+        return lockerRoomExternalDiskDiscovery.disksByID.filter { externalDiskEntry in
+            let externalDiskID = externalDiskEntry.value.id
+            return (lockboxesByID[externalDiskID] == nil)
+        }
+    }
+    
+    var presentExternalLockboxDisksByID: [UUID:LockerRoomExternalDisk] {
+        return lockerRoomExternalDiskDiscovery.disksByID.filter { externalDiskEntry in
+            let externalDiskID = externalDiskEntry.value.id
+            return (lockboxesByID[externalDiskID] != nil)
+        }
     }
     
     func addUnencryptedLockbox(id: UUID, name: String, size: Int, isExternal: Bool) async -> UnencryptedLockbox? {
