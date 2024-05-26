@@ -75,7 +75,7 @@ import os.log
     }
     
     func addUnencryptedLockbox(id: UUID, name: String, size: Int, isExternal: Bool) async -> UnencryptedLockbox? {
-        return (try? await Task { // TODO: What an awkward way to convert a blocking synchronous routine into async/await semantics.
+        return (try? await Task { // TODO: What an awkward way to enclose a synchronous routine within async/await semantics.
             guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskController: lockerRoomDiskController, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
                 Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
                 return nil
