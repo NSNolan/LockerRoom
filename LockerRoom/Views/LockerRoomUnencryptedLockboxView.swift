@@ -251,17 +251,23 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                 return
             }
             
-            // TODO: Attach to external disk
-            guard !lockbox.isExternal else {
-                return
-            }
-            
             let name = lockbox.name
-            guard lockerRoomManager.attachToDiskImage(name: name) else {
-                Logger.lockerRoomUI.error("LockerRoom failed to attach lockbox \(name)")
-                error = .failedToAttachLockbox
-                viewStyle = .error
+            
+            if lockbox.isExternal {
+                guard lockerRoomManager.openVolume(name: name) else {
+                    Logger.lockerRoomUI.error("LockerRoom failed to open lockbox \(name)")
+                    error = .failedToOpenLockbox
+                    viewStyle = .error
+                    return
+                }
                 return
+            } else {
+                guard lockerRoomManager.attachToDiskImage(name: name) else {
+                    Logger.lockerRoomUI.error("LockerRoom failed to attach lockbox \(name)")
+                    error = .failedToAttachLockbox
+                    viewStyle = .error
+                    return
+                }
             }
         }
     }

@@ -16,6 +16,7 @@ enum LockerRoomError: Error {
     case failedToDecryptLockboxSymmetricKey
     case failedToEncryptLockbox
     case failedToFindSelectedLockbox
+    case failedToOpenLockbox
     case failedToRemoveLockbox
     case missingLockbox
     
@@ -37,6 +38,8 @@ enum LockerRoomError: Error {
             return "Failed to encrypt lockbox."
         case .failedToFindSelectedLockbox:
             return "Failed to find selected lockbox."
+        case .failedToOpenLockbox:
+            return "Failed to open lockbox."
         case .failedToRemoveLockbox:
             return "Failed to remove lockbox."
         case .missingLockbox:

@@ -1,5 +1,5 @@
 //
-//  LockerRoomDiskImageMock.swift
+//  LockerRoomDiskControllerMock.swift
 //  LockerRoomTests
 //
 //  Created by Nolan Astrein on 5/5/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LockerRoomDiskImageMock: LockerRoomDiskImaging {
+struct LockerRoomDiskControllerMock: LockerRoomDiskControlling {
     private let lockerRoomURLProvider: LockerRoomURLProviding
     private let fileManager = FileManager()
     
@@ -15,8 +15,11 @@ struct LockerRoomDiskImageMock: LockerRoomDiskImaging {
     
     var failToCreate = false
     var failToDestroy = false
+    var failToOpen = false
     var failToAttach = false
     var failToDetach = false
+    var failToMount = false
+    var failToUnmount = false
     
     init(lockerRoomURLProvider: LockerRoomURLProviding) {
         self.lockerRoomURLProvider = lockerRoomURLProvider
@@ -72,11 +75,23 @@ struct LockerRoomDiskImageMock: LockerRoomDiskImaging {
         }
     }
     
+    func open(name: String) -> Bool {
+        return !failToOpen
+    }
+    
     func attach(name: String) -> Bool {
         return !failToAttach
     }
     
     func detach(name: String) -> Bool {
         return !failToDetach
+    }
+    
+    func mount(name: String) -> Bool {
+        return !failToMount
+    }
+    
+    func unmount(name: String) -> Bool {
+        return !failToUnmount
     }
 }

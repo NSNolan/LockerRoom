@@ -33,10 +33,10 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
         
-        var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
-        diskImage.unencryptedContent = unencryptedContent
+        var diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
+        diskController.unencryptedContent = unencryptedContent
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults,  lockerRoomDiskImage: diskImage, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults,  lockerRoomDiskController: diskController, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
             return
         }
@@ -93,10 +93,10 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
         
-        var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
-        diskImage.unencryptedContent = unencryptedContent
+        var diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
+        diskController.unencryptedContent = unencryptedContent
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults, lockerRoomDiskImage: diskImage, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults, lockerRoomDiskController: diskController, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
             return
         }

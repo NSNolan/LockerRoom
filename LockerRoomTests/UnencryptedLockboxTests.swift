@@ -16,7 +16,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         let defaults = LockerRoomDefaultsMock()
-        let diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
+        let diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
         let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         guard let unencryptedLockbox = UnencryptedLockbox.create(
@@ -25,7 +25,7 @@ final class UnencryptedLockboxTests: XCTestCase {
             size: size,
             isExternal: isExternal,
             lockerRoomDefaults: defaults,
-            lockerRoomDiskImage: diskImage,
+            lockerRoomDiskController: diskController,
             lockerRoomRemoteService: remoteService,
             lockerRoomStore: store
         ) else {
@@ -82,7 +82,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         let defaults = LockerRoomDefaultsMock()
-        let diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
+        let diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
         let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         let unencryptedLockbox = UnencryptedLockbox.create(
@@ -91,7 +91,7 @@ final class UnencryptedLockboxTests: XCTestCase {
             size: size,
             isExternal: isExternal,
             lockerRoomDefaults: defaults,
-            lockerRoomDiskImage: diskImage,
+            lockerRoomDiskController: diskController,
             lockerRoomRemoteService: remoteService,
             lockerRoomStore: store
         )
@@ -99,7 +99,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         XCTAssertNil(unencryptedLockbox)
     }
     
-    func testCreateUnencryptedLockboxDiskImageFailure() {
+    func testCreateUnencryptedLockboxDiskControllerFailure() {
         let id = UUID()
         let size = 10
         let isExternal = false
@@ -109,8 +109,8 @@ final class UnencryptedLockboxTests: XCTestCase {
         let defaults = LockerRoomDefaultsMock()
         let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
-        var diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
-        diskImage.failToCreate = true
+        var diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
+        diskController.failToCreate = true
         
         let unencryptedLockbox = UnencryptedLockbox.create(
             id: id,
@@ -118,7 +118,7 @@ final class UnencryptedLockboxTests: XCTestCase {
             size: size,
             isExternal: isExternal,
             lockerRoomDefaults: defaults,
-            lockerRoomDiskImage: diskImage,
+            lockerRoomDiskController: diskController,
             lockerRoomRemoteService: remoteService,
             lockerRoomStore: store
         )
@@ -133,7 +133,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let defaults = LockerRoomDefaultsMock()
-        let diskImage = LockerRoomDiskImageMock(lockerRoomURLProvider: urlProvider)
+        let diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
         let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
@@ -145,7 +145,7 @@ final class UnencryptedLockboxTests: XCTestCase {
             size: size,
             isExternal: isExternal,
             lockerRoomDefaults: defaults,
-            lockerRoomDiskImage: diskImage,
+            lockerRoomDiskController: diskController,
             lockerRoomRemoteService: remoteService,
             lockerRoomStore: store
         )

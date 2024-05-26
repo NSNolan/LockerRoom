@@ -15,6 +15,8 @@ protocol LockerRoomDaemonInterface {
     func createDiskImage(name: String, size: Int, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
     func attachToDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
     func detachFromDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
+    func mountVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
+    func unmountVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
 }
 
 struct LockerRoomRemoteService {
@@ -182,6 +184,58 @@ extension LockerRoomRemoteService {
                 
             case .failure(let error):
                 Logger.service.error("Locker room remote service failed to detach from disk image \(name) with error \(error)")
+            }
+        }
+        return success
+    }
+    
+    func mountVolume(name: String, rootURL: URL) -> Bool {
+        guard isEnabled else {
+            return false
+        }
+        
+        Logger.service.log("Locker room remote service mounting volume \(name) rootURL \(rootURL)")
+        
+        var success = false
+        daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
+            switch proxyResult {
+            case .success(let proxy):
+                guard let daemon = proxy as? LockerRoomDaemonInterface else {
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
+                    return
+                }
+                daemon.mountVolume(name: name, rootURL: rootURL) { mountResult in
+                    success = mountResult
+                }
+                
+            case .failure(let error):
+                Logger.service.error("Locker room remote service failed to mount volume \(name) with error \(error)")
+            }
+        }
+        return success
+    }
+    
+    func unmountVolume(name: String, rootURL: URL) -> Bool {
+        guard isEnabled else {
+            return false
+        }
+        
+        Logger.service.log("Locker room remote service unmounting volume \(name) rootURL \(rootURL)")
+        
+        var success = false
+        daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
+            switch proxyResult {
+            case .success(let proxy):
+                guard let daemon = proxy as? LockerRoomDaemonInterface else {
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
+                    return
+                }
+                daemon.unmountVolume(name: name, rootURL: rootURL) { unmountResult in
+                    success = unmountResult
+                }
+                
+            case .failure(let error):
+                Logger.service.error("Locker room remote service failed to unmount volume \(name) with error \(error)")
             }
         }
         return success

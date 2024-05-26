@@ -39,7 +39,7 @@ struct UnencryptedLockbox {
         self.outputStream = outputStream
     }
     
-    static func create(id: UUID, name: String, size: Int, isExternal: Bool, lockerRoomDefaults: LockerRoomDefaulting, lockerRoomDiskImage: LockerRoomDiskImaging, lockerRoomRemoteService: LockerRoomRemoteService, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
+    static func create(id: UUID, name: String, size: Int, isExternal: Bool, lockerRoomDefaults: LockerRoomDefaulting, lockerRoomDiskController: LockerRoomDiskControlling, lockerRoomRemoteService: LockerRoomRemoteService, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
         guard size > 0 else {
             Logger.persistence.error("Unencrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil
@@ -52,7 +52,7 @@ struct UnencryptedLockbox {
                     return nil
                 }
             } else {
-                guard lockerRoomDiskImage.create(name: name, size: size) else {
+                guard lockerRoomDiskController.create(name: name, size: size) else {
                     Logger.persistence.error("Unencrypted lockbox failed to create disk image \(name)")
                     return nil
                 }

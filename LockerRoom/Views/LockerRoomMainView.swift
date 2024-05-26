@@ -145,7 +145,9 @@ private struct LockerRoomLockboxesView: View {
             if !lockbox.isEncrypted {
                 Button("Delete") {
                     let name = lockbox.name
-                    _ = lockerRoomManager.detachFromDiskImage(name: name)
+                    if !lockbox.isExternal {
+                        _ = lockerRoomManager.detachFromDiskImage(name: name)
+                    }
                     
                     guard lockerRoomManager.removeUnencryptedLockbox(name: name) else {
                         Logger.lockerRoomUI.error("LockerRoom failed to remove unencrypted lockbox \(name)")

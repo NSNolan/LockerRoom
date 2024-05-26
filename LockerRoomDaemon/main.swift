@@ -41,8 +41,8 @@ extension LockerRoomDaemon: NSXPCListenerDelegate {
 extension LockerRoomDaemon: LockerRoomDaemonInterface {
     func createDiskImage(name: String, size: Int,  rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
         let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
-        let lockerRoomDiskImage = LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
-        guard lockerRoomDiskImage.create(name: name, size: size) else {
+        let lockerRoomDiskController = LockerRoomDiskController(lockerRoomURLProvider: lockerRoomURLProvider)
+        guard lockerRoomDiskController.create(name: name, size: size) else {
             replyHandler(false)
             return
         }
@@ -74,8 +74,8 @@ extension LockerRoomDaemon: LockerRoomDaemonInterface {
     
     func attachToDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
         let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
-        let lockerRoomDiskImage = LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
-        guard lockerRoomDiskImage.attach(name: name) else {
+        let lockerRoomDiskController = LockerRoomDiskController(lockerRoomURLProvider: lockerRoomURLProvider)
+        guard lockerRoomDiskController.attach(name: name) else {
             replyHandler(false)
             return
         }
@@ -85,8 +85,30 @@ extension LockerRoomDaemon: LockerRoomDaemonInterface {
     
     func detachFromDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
         let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
-        let lockerRoomDiskImage = LockerRoomDiskImage(lockerRoomURLProvider: lockerRoomURLProvider)
-        guard lockerRoomDiskImage.detach(name: name) else {
+        let lockerRoomDiskController = LockerRoomDiskController(lockerRoomURLProvider: lockerRoomURLProvider)
+        guard lockerRoomDiskController.detach(name: name) else {
+            replyHandler(false)
+            return
+        }
+        
+        replyHandler(true)
+    }
+    
+    func mountVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
+        let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
+        let lockerRoomDiskController = LockerRoomDiskController(lockerRoomURLProvider: lockerRoomURLProvider)
+        guard lockerRoomDiskController.mount(name: name) else {
+            replyHandler(false)
+            return
+        }
+        
+        replyHandler(true)
+    }
+    
+    func unmountVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
+        let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
+        let lockerRoomDiskController = LockerRoomDiskController(lockerRoomURLProvider: lockerRoomURLProvider)
+        guard lockerRoomDiskController.unmount(name: name) else {
             replyHandler(false)
             return
         }

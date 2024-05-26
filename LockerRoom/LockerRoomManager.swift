@@ -26,7 +26,7 @@ import os.log
     private let lockboxKeyCryptor: LockboxKeyCrypting
     private let lockboxKeyGenerator: LockboxKeyGenerating
     private let lockerRoomDefaults: LockerRoomDefaulting
-    private let lockerRoomDiskImage: LockerRoomDiskImaging
+    private let lockerRoomDiskController: LockerRoomDiskControlling
     private let lockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering
     private let lockerRoomRemoteService: LockerRoomRemoteService
     private let lockerRoomStore: LockerRoomStoring
@@ -36,7 +36,7 @@ import os.log
         lockboxKeyCryptor: LockboxKeyCrypting = LockboxKeyCryptor(),
         lockboxKeyGenerator: LockboxKeyGenerating = LockboxKeyGenerator(),
         lockerRoomDefaults: LockerRoomDefaulting = LockerRoomDefaults(),
-        lockerRoomDiskImage: LockerRoomDiskImaging? = nil,
+        lockerRoomDiskController: LockerRoomDiskControlling? = nil,
         lockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering? = nil,
         lockerRoomRemoteService: LockerRoomRemoteService? = nil,
         lockerRoomStore: LockerRoomStoring? = nil,
@@ -46,7 +46,7 @@ import os.log
         self.lockboxKeyCryptor = lockboxKeyCryptor
         self.lockboxKeyGenerator = lockboxKeyGenerator
         self.lockerRoomDefaults = lockerRoomDefaults
-        self.lockerRoomDiskImage = lockerRoomDiskImage ?? LockerRoomDiskImage(
+        self.lockerRoomDiskController = lockerRoomDiskController ?? LockerRoomDiskController(
             lockerRoomURLProvider: lockerRoomURLProvider
         )
         self.lockerRoomExternalDiskDiscovery = lockerRoomExternalDiskDiscovery ?? LockerRoomExternalDiskDiscovery(
@@ -68,8 +68,8 @@ import os.log
     }
     
     func addUnencryptedLockbox(id: UUID, name: String, size: Int, isExternal: Bool) async -> UnencryptedLockbox? {
-        return (try? await Task {
-            guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskImage: lockerRoomDiskImage, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
+        return (try? await Task { // TODO: What an awkward way to convert a blocking synchronous routine into async/await semantics.
+            guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskController: lockerRoomDiskController, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
                 Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
                 return nil
             }
@@ -277,7 +277,7 @@ import os.log
                 return false
             }
         } else {
-            guard lockerRoomDiskImage.attach(name: name) else {
+            guard lockerRoomDiskController.attach(name: name) else {
                 Logger.manager.error("Locker room manager failed to attach lockbox \(name)")
                 return false
             }
@@ -293,8 +293,49 @@ import os.log
                 return false
             }
         } else {
-            guard lockerRoomDiskImage.detach(name: name) else {
+            guard lockerRoomDiskController.detach(name: name) else {
                 Logger.manager.error("Locker room manager failed to detach lockbox \(name)")
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    func openVolume(name: String) -> Bool {
+        guard lockerRoomDiskController.open(name: name) else {
+            Logger.manager.error("Locker room manager failed to open lockbox \(name)")
+            return false
+        }
+        
+        return true
+    }
+    
+    func mountVolume(name: String) -> Bool {
+        if lockerRoomDefaults.remoteServiceEnabled {
+            guard lockerRoomRemoteService.mountVolume(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
+                Logger.manager.error("Locker room manager failed to mount lockbox \(name)")
+                return false
+            }
+        } else {
+            guard lockerRoomDiskController.mount(name: name) else {
+                Logger.manager.error("Locker room manager failed to mount lockbox \(name)")
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    func unmountVolume(name: String) -> Bool {
+        if lockerRoomDefaults.remoteServiceEnabled {
+            guard lockerRoomRemoteService.unmountVolume(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
+                Logger.manager.error("Locker room manager failed to unmount lockbox \(name)")
+                return false
+            }
+        } else {
+            guard lockerRoomDiskController.unmount(name: name) else {
+                Logger.manager.error("Locker room manager failed to unmount lockbox \(name)")
                 return false
             }
         }

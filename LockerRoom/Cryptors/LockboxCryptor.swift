@@ -19,13 +19,13 @@ struct LockboxCryptor: LockboxCrypting {
     private static let chunkSize = 256 * 1024 // 256 KB
     
     func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) async -> Bool {
-        return (try? await Task {
+        return (try? await Task { // TODO: What an awkward way to convert a blocking synchronous routine into async/await semantics.
             return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: true)
         }.result.get()) ?? false
     }
     
     func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) async -> Bool {
-        return (try? await Task {
+        return (try? await Task { // TODO: What an awkward way to convert a blocking synchronous routine into async/await semantics.
             return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: false)
         }.result.get()) ?? false
     }
