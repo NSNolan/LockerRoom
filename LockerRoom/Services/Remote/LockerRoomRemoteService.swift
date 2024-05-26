@@ -11,13 +11,7 @@ import os.log
 import ServiceManagement
 
 @objc
-protocol LockerRoomDaemonInterface {
-    func createDiskImage(name: String, size: Int, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
-    func attachToDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
-    func detachFromDiskImage(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
-    func mountVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
-    func unmountVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
-}
+protocol LockerRoomDaemonInterface: LockerRoomRemoteDiskControlling {}
 
 struct LockerRoomRemoteService {
     static let daemonServiceName = "com.nsnolan.LockerRoomDaemon"
