@@ -126,7 +126,6 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
             arguments: [
                 "mountvol",
                 "-verbose",
-                "-whole",
                 devicePath
             ],
             name: name
@@ -140,7 +139,6 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
             arguments: [
                 "unmount",
                 "-verbose",
-                "-whole",
                 mountedVolumePath
             ],
             name: name
