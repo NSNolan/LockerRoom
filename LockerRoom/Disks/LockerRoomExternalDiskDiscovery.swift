@@ -29,7 +29,7 @@ protocol LockerRoomExternalDiskDiscovering {
     
     init(lockerRoomDefaults: LockerRoomDefaulting, lockerRoomURLProvider: LockerRoomURLProviding) {
         self.session = DASessionCreate(kCFAllocatorDefault)
-        self.sessionQueue = DispatchQueue(label: "com.nsnolan.LockerRoom.LockerRoomExternalDiskFinder", qos: .utility)
+        self.sessionQueue = DispatchQueue(label: "com.nsnolan.LockerRoom.LockerRoomExternalDiskDiscovery", qos: .utility)
         self.sessionQueue.suspend()
         self.lockerRoomDefaults = lockerRoomDefaults
         self.lockerRoomURLProvider = lockerRoomURLProvider
@@ -45,15 +45,14 @@ protocol LockerRoomExternalDiskDiscovering {
                 return
             }
             
-            let capturedSelf = Unmanaged<LockerRoomExternalDiskDiscovery>.fromOpaque(context).takeUnretainedValue()
-            
-            guard let externalDisk = disk.lockerRoomExternalDisk(lockerRoomURLProvider: capturedSelf.lockerRoomURLProvider) else {
+            guard let externalDisk = disk.lockerRoomExternalDisk else {
                 return
             }
             
+            let capturedSelf = Unmanaged<LockerRoomExternalDiskDiscovery>.fromOpaque(context).takeUnretainedValue()
             DispatchQueue.main.async {
                 capturedSelf.disksByID[externalDisk.id] = externalDisk
-                Logger.diskDiscovery.log("Locker room external disk discovery found external disk \(externalDisk.name) with id \(externalDisk.id) at path \(externalDisk.devicePath)")
+                Logger.diskDiscovery.log("Locker room external disk discovery found external disk \(externalDisk.name) with BSD name \(externalDisk.bsdName) id \(externalDisk.id)")
             }
         }
         
@@ -63,15 +62,14 @@ protocol LockerRoomExternalDiskDiscovering {
                 return
             }
             
-            let capturedSelf = Unmanaged<LockerRoomExternalDiskDiscovery>.fromOpaque(context).takeUnretainedValue()
-            
-            guard let externalDisk = disk.lockerRoomExternalDisk(lockerRoomURLProvider: capturedSelf.lockerRoomURLProvider) else {
+            guard let externalDisk = disk.lockerRoomExternalDisk else {
                 return
             }
             
+            let capturedSelf = Unmanaged<LockerRoomExternalDiskDiscovery>.fromOpaque(context).takeUnretainedValue()
             DispatchQueue.main.async {
                 capturedSelf.disksByID[externalDisk.id] = nil
-                Logger.diskDiscovery.log("Locker room external disk discovery lost external disk \(externalDisk.name) with id \(externalDisk.id) at path \(externalDisk.devicePath)")
+                Logger.diskDiscovery.log("Locker room external disk discovery lost external disk \(externalDisk.name) with BSD name \(externalDisk.bsdName) id \(externalDisk.id)")
             }
         }
         
@@ -118,7 +116,7 @@ protocol LockerRoomExternalDiskDiscovering {
 }
 
 extension DADisk {
-    func lockerRoomExternalDisk(lockerRoomURLProvider: LockerRoomURLProviding) -> LockerRoomExternalDisk? {
+    var lockerRoomExternalDisk: LockerRoomExternalDisk? {
         guard let description = DADiskCopyDescription(self) as NSDictionary? else {
             Logger.diskDiscovery.error("Locker room external disk discovery found disk with without description")
             return nil
@@ -154,9 +152,6 @@ extension DADisk {
             return nil
         }
         
-        let deviceURL = lockerRoomURLProvider.urlForAttachedDevice(name: bsdName)
-        let devicePath = deviceURL.path(percentEncoded: false)
-        
         guard let sizeInBytes = description[kDADiskDescriptionMediaSizeKey] as? Int else {
             Logger.diskDiscovery.error("Locker room external disk discovery found disk description without size \(description)")
             return nil
@@ -164,6 +159,6 @@ extension DADisk {
         
         let sizeInMegabytes = sizeInBytes / (1024 * 1024)
         
-        return LockerRoomExternalDisk(id: id, name: name, devicePath: devicePath, size: sizeInMegabytes)
+        return LockerRoomExternalDisk(id: id, name: name, bsdName: bsdName, size: sizeInMegabytes)
     }
 }

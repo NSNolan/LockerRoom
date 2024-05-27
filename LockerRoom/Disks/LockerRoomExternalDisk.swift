@@ -10,6 +10,6 @@ import Foundation
 struct LockerRoomExternalDisk: Identifiable, Equatable {
     let id: UUID
     let name: String
-    let devicePath: String
+    let bsdName: String
     let size: Int
 }

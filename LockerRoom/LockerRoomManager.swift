@@ -76,7 +76,7 @@ import os.log
     
     func addUnencryptedLockbox(id: UUID, name: String, size: Int, isExternal: Bool) async -> UnencryptedLockbox? {
         return (try? await Task { // TODO: What an awkward way to enclose a synchronous routine within async/await semantics.
-            guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskController: lockerRoomDiskController, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
+            guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskController: lockerRoomDiskController, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
                 Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
                 return nil
             }
@@ -153,9 +153,13 @@ import os.log
     }
     
     func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeysToUse: [LockerRoomEnrolledKey]) async -> Bool {
-        _ = detachFromDiskImage(name: lockbox.name) // Non-fatal; it may already be detached
+        if lockbox.isExternal {
+            _ = unmountVolume(name: lockbox.name) // Non-fatal; it may already be unmounted
+        } else {
+            _ = detachFromDiskImage(name: lockbox.name) // Non-fatal; it may already be detached
+        }
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomStore: lockerRoomStore) else {
             Logger.manager.log("Locker room manager failed to create unencrypted lockbox \(lockbox.name)")
             return false
         }
@@ -191,7 +195,7 @@ import os.log
             Logger.manager.error("Locker room manager failed to encrypt a symmetric key for \(name)")
             return false
         }
-        Logger.manager.log("Locker room manager encrypted a symmetric key for \(name)")
+        Logger.manager.log("Locker room manager encrypted symmetrics key for \(name)")
         
         guard await lockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             Logger.manager.error("Locker room manager failed to encrypt an unencrypted lockbox \(name)")
@@ -240,7 +244,7 @@ import os.log
     }
     
     func decrypt(lockbox: LockerRoomLockbox, symmetricKeyData: Data) async -> Bool {
-        guard let encryptedLockbox = EncryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore) else {
+        guard let encryptedLockbox = EncryptedLockbox.create(from: lockbox, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomStore: lockerRoomStore) else {
             Logger.manager.log("Locker room manager failed to created encrypted lockbox \(lockbox.name)")
             return false
         }
