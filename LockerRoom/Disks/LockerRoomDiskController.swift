@@ -81,17 +81,6 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
         }
     }
     
-    func open(name: String) -> Bool {
-        let mountedVolumePath = lockerRoomURLProvider.urlForMountedVolume(name: name).path
-        return execute(
-            launchPath: LockerRoomDiskController.openLaunchPath,
-            arguments: [
-                mountedVolumePath
-            ],
-            name: name
-        )
-    }
-    
     func attach(name: String) -> Bool {
         let lockboxUnencryptedContentPath = lockerRoomURLProvider.urlForLockboxUnencryptedContent(name: name).path
         return execute(
@@ -113,6 +102,17 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
             arguments: [
                 "detach",
                 "-verbose",
+                mountedVolumePath
+            ],
+            name: name
+        )
+    }
+    
+    func open(name: String) -> Bool {
+        let mountedVolumePath = lockerRoomURLProvider.urlForMountedVolume(name: name).path
+        return execute(
+            launchPath: LockerRoomDiskController.openLaunchPath,
+            arguments: [
                 mountedVolumePath
             ],
             name: name
@@ -158,12 +158,12 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
             
             let status = process.terminationStatus
             if status != 0 {
-                Logger.diskController.warning("Disk controller operation for \(name) with arguments \(arguments) failed with status \(status)")
+                Logger.diskController.warning("Disk controller operation failed for \(name) with launch path \(launchPath) arguments \(arguments) status \(status)")
                 return false
             }
             return true
         } catch {
-            Logger.diskController.error("Disk controller operation for \(name) with arguments \(arguments) failed with error \(error)")
+            Logger.diskController.error("Disk controller operation failed to run for \(name) with launch path \(launchPath) arguments \(arguments) error \(error)")
             return false
         }
     }
