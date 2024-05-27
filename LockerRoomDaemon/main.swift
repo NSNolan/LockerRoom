@@ -94,6 +94,17 @@ extension LockerRoomDaemon: LockerRoomDaemonInterface {
         replyHandler(true)
     }
     
+    func openVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
+        let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
+        let lockerRoomDiskController = LockerRoomDiskController(lockerRoomURLProvider: lockerRoomURLProvider)
+        guard lockerRoomDiskController.open(name: name) else {
+            replyHandler(false)
+            return
+        }
+        
+        replyHandler(true)
+    }
+    
     func mountVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
         let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
         let lockerRoomDiskController = LockerRoomDiskController(lockerRoomURLProvider: lockerRoomURLProvider)

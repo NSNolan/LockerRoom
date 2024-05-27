@@ -183,6 +183,32 @@ extension LockerRoomRemoteService {
         return success
     }
     
+    func openVolume(name: String, rootURL: URL) -> Bool {
+        guard isEnabled else {
+            return false
+        }
+        
+        Logger.service.log("Locker room remote service opening volume \(name) rootURL \(rootURL)")
+        
+        var success = false
+        daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
+            switch proxyResult {
+            case .success(let proxy):
+                guard let daemon = proxy as? LockerRoomDaemonInterface else {
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
+                    return
+                }
+                daemon.openVolume(name: name, rootURL: rootURL) { mountResult in
+                    success = mountResult
+                }
+                
+            case .failure(let error):
+                Logger.service.error("Locker room remote service failed to open volume \(name) with error \(error)")
+            }
+        }
+        return success
+    }
+    
     func mountVolume(name: String, rootURL: URL) -> Bool {
         guard isEnabled else {
             return false

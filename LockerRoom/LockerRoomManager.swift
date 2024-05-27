@@ -310,9 +310,16 @@ import os.log
     }
     
     func openVolume(name: String) -> Bool {
-        guard lockerRoomDiskController.open(name: name) else {
-            Logger.manager.error("Locker room manager failed to open lockbox \(name)")
-            return false
+        if lockerRoomDefaults.remoteServiceEnabled {
+            guard lockerRoomRemoteService.openVolume(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
+                Logger.manager.error("Locker room manager failed to open lockbox \(name)")
+                return false
+            }
+        } else {
+            guard lockerRoomDiskController.open(name: name) else {
+                Logger.manager.error("Locker room manager failed to open lockbox \(name)")
+                return false
+            }
         }
         
         return true
