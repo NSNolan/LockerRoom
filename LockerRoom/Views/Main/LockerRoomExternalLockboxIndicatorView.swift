@@ -10,8 +10,6 @@ import SwiftUI
 struct LockerRoomExternalLockboxIndicatorView: View {
     @Bindable var lockerRoomManager: LockerRoomManager
     
-    @State private var trackIsPresent = false
-    
     let lockbox: LockerRoomLockbox
     
     var isPresent: Bool {
@@ -31,8 +29,5 @@ struct LockerRoomExternalLockboxIndicatorView: View {
             .foregroundColor(.white)
             .symbolEffect(.pulse, options: .repeat(3), value: lockerRoomManager.presentExternalLockboxDisksByID[lockbox.id])
             .symbolVariant(.fill)
-            .onChange(of: lockerRoomManager.presentExternalLockboxDisksByID) {
-                trackIsPresent = isPresent // `trackIsPresent` will trigger a symbol effect when it changes.
-            }
     }
 }
