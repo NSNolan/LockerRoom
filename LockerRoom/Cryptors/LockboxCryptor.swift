@@ -11,23 +11,19 @@ import CryptoKit
 import os.log
 
 protocol LockboxCrypting {
-    func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) async -> Bool
-    func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) async -> Bool
+    func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Bool
+    func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) -> Bool
 }
 
 struct LockboxCryptor: LockboxCrypting {
     private static let chunkSize = 256 * 1024 // 256 KB
     
-    func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) async -> Bool {
-        return (try? await Task { // TODO: What an awkward way to enclose a synchronous routine within async/await semantics.
+    func encrypt(lockbox: UnencryptedLockbox, symmetricKeyData: Data) -> Bool {
             return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: true)
-        }.result.get()) ?? false
     }
     
-    func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) async -> Bool {
-        return (try? await Task { // TODO: What an awkward way to enclose a synchronous routine within async/await semantics.
+    func decrypt(lockbox: EncryptedLockbox, symmetricKeyData: Data) -> Bool {
             return processLockbox(inputStream: lockbox.inputStream, outputStream: lockbox.outputStream, symmetricKeyData: symmetricKeyData, encrypt: false)
-        }.result.get()) ?? false
     }
     
     private func processLockbox(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data, encrypt: Bool) -> Bool {

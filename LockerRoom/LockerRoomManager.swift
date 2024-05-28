@@ -75,15 +75,13 @@ import os.log
     }
     
     func addUnencryptedLockbox(id: UUID, name: String, size: Int, isExternal: Bool) async -> UnencryptedLockbox? {
-        return (try? await Task { // TODO: What an awkward way to enclose a synchronous routine within async/await semantics.
-            guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskController: lockerRoomDiskController, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
-                Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
-                return nil
-            }
-            
-            lockboxesByID = self.lockerRoomStore.lockboxesByID
-            return unencryptedLockbox
-        }.result.get()) ?? nil
+        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskController: lockerRoomDiskController, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
+            Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
+            return nil
+        }
+        
+        lockboxesByID = self.lockerRoomStore.lockboxesByID
+        return unencryptedLockbox
     }
     
     func removeUnencryptedLockbox(name: String) -> Bool {
@@ -197,7 +195,7 @@ import os.log
         }
         Logger.manager.log("Locker room manager encrypted symmetrics key for \(name)")
         
-        guard await lockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard lockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             Logger.manager.error("Locker room manager failed to encrypt an unencrypted lockbox \(name)")
             return false
         }
@@ -254,7 +252,7 @@ import os.log
         let size = encryptedLockbox.metadata.size
         let isExternal = encryptedLockbox.metadata.isExternal
         
-        guard await lockboxCryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+        guard lockboxCryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
             Logger.manager.error("Locker room manager failed to decrypt an encrypted lockbox \(name)")
             return false
         }
