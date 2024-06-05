@@ -108,14 +108,14 @@ struct EncryptedLockbox {
         let inputPath = inputURL.path(percentEncoded: false)
         
         guard let inputStream = InputStream(fileAtPath: inputPath) else {
-            Logger.persistence.error("Encrypted lockbox failed to create input stream at path \(name)")
+            Logger.persistence.error("Encrypted lockbox failed to create input stream for \(name) at path \(inputPath)")
             return nil
         }
         
         let outputURL: URL
         if isExternal {
             guard let externalDisk = lockerRoomExternalDiskDiscovery.disksByID[id] else {
-                Logger.persistence.error("Encrypted lockbox failed to create input stream for external disk \(name) with id \(id)")
+                Logger.persistence.error("Encrypted lockbox failed to create output stream for external disk \(name) with id \(id)")
                 return nil
             }
             outputURL = lockerRoomStore.lockerRoomURLProvider.urlForAttachedDevice(name: externalDisk.bsdName)
@@ -125,7 +125,7 @@ struct EncryptedLockbox {
         let outputPath = outputURL.path(percentEncoded: false)
         
         guard let outputStream = OutputStream(toFileAtPath: outputPath, append: false) else {
-            Logger.persistence.error("Encrypted lockbox failed to create output stream at path \(name)")
+            Logger.persistence.error("Encrypted lockbox failed to create output stream for \(name) to path \(outputPath)")
             return nil
         }
         

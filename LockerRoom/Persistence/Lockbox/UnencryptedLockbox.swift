@@ -125,7 +125,7 @@ struct UnencryptedLockbox {
         let inputPath = inputURL.path(percentEncoded: false)
         
         guard let inputStream = InputStream(fileAtPath: inputPath) else {
-            Logger.persistence.error("Unencrypted lockbox failed to create input stream at path \(name)")
+            Logger.persistence.error("Unencrypted lockbox failed to create input stream for \(name) at path \(inputPath)")
             return nil
         }
         
@@ -133,7 +133,7 @@ struct UnencryptedLockbox {
         let outputPath = outputURL.path(percentEncoded: false)
         
         guard let outputStream = OutputStream(toFileAtPath: outputPath, append: false) else {
-            Logger.persistence.error("Unencrypted lockbox failed to create output stream at path \(name)")
+            Logger.persistence.error("Unencrypted lockbox failed to create output stream  for \(name) to path \(outputPath)")
             return nil
         }
         
