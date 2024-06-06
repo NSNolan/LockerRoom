@@ -35,4 +35,9 @@ import Foundation
             }
         }
     }
+    
+    var invalid: Bool {
+        let sizeInMegabytes = size.megabytes
+        return (name.isEmpty || sizeInMegabytes <= 0 || sizeInMegabytes > Self.maxSizeInMegabytes)
+    }
 }

@@ -95,12 +95,11 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
         HStack {
             Spacer()
             
-            let id = UUID()
-            let name = unencryptedLockboxConfiguration.name
-            let sizeInMegabytes = unencryptedLockboxConfiguration.size.megabytes
-            let createDisabled = (name.isEmpty || sizeInMegabytes <= 0 || sizeInMegabytes > LockerRoomUnencryptedLockboxConfiguration.maxSizeInMegabytes)
-            
             Button("Create") {
+                let id = UUID()
+                let name = unencryptedLockboxConfiguration.name
+                let sizeInMegabytes = unencryptedLockboxConfiguration.size.megabytes
+                
                 lockboxToBeNamed = name
                 viewStyle = .creating
                 
@@ -117,7 +116,7 @@ private struct LockerRoomUnencryptedLockboxCreateView: View {
                     viewStyle = .encrypt
                 }
             }
-            .disabled(createDisabled)
+            .disabled(unencryptedLockboxConfiguration.invalid)
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.defaultAction)
             .tint(.blue)
