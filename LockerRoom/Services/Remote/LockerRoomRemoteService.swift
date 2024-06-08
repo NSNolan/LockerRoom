@@ -11,7 +11,7 @@ import os.log
 import ServiceManagement
 
 @objc
-protocol LockerRoomDaemonInterface: LockerRoomRemoteDiskControlling {}
+protocol LockerRoomDaemonInterface: LockerRoomRemoteDiskControlling, LockerRoomRemoteStreamCrypting {}
 
 struct LockerRoomRemoteService {
     static let daemonServiceName = "com.nsnolan.LockerRoomDaemon"
@@ -256,6 +256,60 @@ extension LockerRoomRemoteService {
                 
             case .failure(let error):
                 Logger.service.error("Locker room remote service failed to unmount volume \(name) with error \(error)")
+            }
+        }
+        return success
+    }
+}
+
+extension LockerRoomRemoteService {
+    func encrypt(inputPath: String, outputPath: String, symmetricKeyData: Data) -> Bool {
+        guard isEnabled else {
+            return false
+        }
+        
+        Logger.service.log("Locker room remote service encrypting stream at \(inputPath)")
+        
+        var success = false
+        daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
+            switch proxyResult {
+            case .success(let proxy):
+                guard let daemon = proxy as? LockerRoomDaemonInterface else {
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
+                    return
+                }
+                daemon.encrypt(inputPath: inputPath, outputPath: outputPath, symmetricKeyData: symmetricKeyData) { encryptResult in
+                    success = encryptResult
+                }
+                
+            case .failure(let error):
+                Logger.service.error("Locker room remote service failed to encrypt stream with error \(error)")
+            }
+        }
+        return success
+    }
+    
+    func decrypt(inputPath: String, outputPath: String, symmetricKeyData: Data) -> Bool {
+        guard isEnabled else {
+            return false
+        }
+        
+        Logger.service.log("Locker room remote service decrypting stream")
+        
+        var success = false
+        daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
+            switch proxyResult {
+            case .success(let proxy):
+                guard let daemon = proxy as? LockerRoomDaemonInterface else {
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
+                    return
+                }
+                daemon.decrypt(inputPath: inputPath, outputPath: outputPath, symmetricKeyData: symmetricKeyData) { decryptResult in
+                    success = decryptResult
+                }
+                
+            case .failure(let error):
+                Logger.service.error("Locker room remote service failed to decrypt stream with error \(error)")
             }
         }
         return success

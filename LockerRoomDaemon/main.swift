@@ -38,7 +38,7 @@ extension LockerRoomDaemon: NSXPCListenerDelegate {
     }
 }
 
-extension LockerRoomDaemon: LockerRoomDaemonInterface {
+extension LockerRoomDaemon: LockerRoomRemoteDiskControlling {
     func createDiskImage(name: String, size: Int,  rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
         let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
         let lockerRoomDiskController = LockerRoomDiskController(lockerRoomURLProvider: lockerRoomURLProvider)
@@ -184,5 +184,45 @@ extension LockerRoomDaemon: LockerRoomDaemonInterface {
             Logger.service.error("Locker room daemon failed to get contents of directory at path \(path) with error \(error)")
             return false
         }
+    }
+}
+
+extension LockerRoomDaemon: LockerRoomRemoteStreamCrypting {
+    func encrypt(inputPath: String, outputPath: String, symmetricKeyData: Data, _ replyHandler: @escaping (Bool) -> Void) {
+        let streamCryptor = LockboxStreamCryptor()
+        
+        guard let inputStream = InputStream(fileAtPath: inputPath) else {
+            Logger.service.error("Locker room daemon failed to initialize input stream at path \(inputPath)")
+            replyHandler(false)
+            return
+        }
+        
+        guard let outputStream = OutputStream(toFileAtPath: outputPath, append: false) else {
+            Logger.service.error("Locker room daemon failed to initialize output stream to path \(inputPath)")
+            replyHandler(false)
+            return
+        }
+        
+        let result = streamCryptor.encrypt(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData)
+        replyHandler(result)
+    }
+    
+    func decrypt(inputPath: String, outputPath: String, symmetricKeyData: Data, _ replyHandler: @escaping (Bool) -> Void) {
+        let streamCryptor = LockboxStreamCryptor()
+        
+        guard let inputStream = InputStream(fileAtPath: inputPath) else {
+            Logger.service.error("Locker room daemon failed to initialize input stream at path \(inputPath)")
+            replyHandler(false)
+            return
+        }
+        
+        guard let outputStream = OutputStream(toFileAtPath: outputPath, append: false) else {
+            Logger.service.error("Locker room daemon failed to initialize output stream to path \(inputPath)")
+            replyHandler(false)
+            return
+        }
+        
+        let result = streamCryptor.decrypt(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData)
+        replyHandler(result)
     }
 }
