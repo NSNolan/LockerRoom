@@ -38,7 +38,7 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
             do {
                 try fileManager.createDirectory(atPath: lockboxPath, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                Logger.diskController.error("Disk controller operation for \(name) failed to create lockbox directory at path \(lockboxPath) with error \(error)")
+                Logger.diskController.error("Locker room disk controller operation for \(name) failed to create lockbox directory at path \(lockboxPath) with error \(error)")
                 return false
             }
         }
@@ -60,7 +60,7 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
     
     func destory(name: String) -> Bool {
         guard !name.isEmpty else {
-            Logger.diskController.error("Disk controller failed to remove disk with empty name")
+            Logger.diskController.error("Locker room disk controller failed to remove disk with empty name")
             return false
         }
         
@@ -68,7 +68,7 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
         let diskContentPath = diskContentURL.path(percentEncoded: false)
         
         guard fileManager.fileExists(atPath: diskContentPath) else {
-            Logger.diskController.error("Disk controller failed to remove disk content \(name) at non-existing path \(diskContentPath)")
+            Logger.diskController.error("Locker room disk controller failed to remove disk content \(name) at non-existing path \(diskContentPath)")
             return false
         }
         
@@ -76,13 +76,14 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
             try fileManager.removeItem(at: diskContentURL)
             return true
         } catch {
-            Logger.diskController.error("Disk controller failed to remove disk content \(name) at path \(diskContentPath)")
+            Logger.diskController.error("Locker room disk controller failed to remove disk content \(name) at path \(diskContentPath)")
             return false
         }
     }
     
     func attach(name: String) -> Bool {
-        let lockboxUnencryptedContentPath = lockerRoomURLProvider.urlForLockboxUnencryptedContent(name: name).path
+        let lockboxUnencryptedContentURL = lockerRoomURLProvider.urlForLockboxUnencryptedContent(name: name)
+        let lockboxUnencryptedContentPath = lockboxUnencryptedContentURL.path(percentEncoded: false)
         return execute(
             launchPath: LockerRoomDiskController.hdiutilLaunchPath,
             arguments: [
@@ -96,7 +97,8 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
     }
     
     func detach(name: String) -> Bool {
-        let mountedVolumePath = lockerRoomURLProvider.urlForMountedVolume(name: name).path
+        let mountedVolumeURL = lockerRoomURLProvider.urlForMountedVolume(name: name)
+        let mountedVolumePath = mountedVolumeURL.path(percentEncoded: false)
         return execute(
             launchPath: LockerRoomDiskController.hdiutilLaunchPath,
             arguments: [
@@ -109,7 +111,8 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
     }
     
     func open(name: String) -> Bool {
-        let mountedVolumePath = lockerRoomURLProvider.urlForMountedVolume(name: name).path
+        let mountedVolumeURL = lockerRoomURLProvider.urlForMountedVolume(name: name)
+        let mountedVolumePath = mountedVolumeURL.path(percentEncoded: false)
         return execute(
             launchPath: LockerRoomDiskController.openLaunchPath,
             arguments: [
@@ -120,11 +123,12 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
     }
     
     func mount(name: String) -> Bool {
-        let devicePath = lockerRoomURLProvider.urlForAttachedDevice(name: name).path
+        let deviceURL = lockerRoomURLProvider.urlForAttachedDevice(name: name)
+        let devicePath = deviceURL.path(percentEncoded: false)
         return execute(
             launchPath: LockerRoomDiskController.hdiutilLaunchPath,
             arguments: [
-                "mountvol",
+                "mount",
                 "-verbose",
                 devicePath
             ],
@@ -133,7 +137,8 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
     }
     
     func unmount(name: String) -> Bool {
-        let mountedVolumePath = lockerRoomURLProvider.urlForMountedVolume(name: name).path
+        let mountedVolumeURL = lockerRoomURLProvider.urlForMountedVolume(name: name)
+        let mountedVolumePath = mountedVolumeURL.path(percentEncoded: false)
         return execute(
             launchPath: LockerRoomDiskController.hdiutilLaunchPath,
             arguments: [
@@ -150,18 +155,20 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
         process.launchPath = launchPath
         process.arguments = arguments
         
+        Logger.diskController.debug("Locker room disk controller executing operation \(launchPath) with arguments \(arguments)")
+        
         do {
             try process.run()
             process.waitUntilExit()
             
             let status = process.terminationStatus
             if status != 0 {
-                Logger.diskController.warning("Disk controller operation failed for \(name) with launch path \(launchPath) arguments \(arguments) status \(status)")
+                Logger.diskController.warning("Locker room disk controller operation failed for \(name) with launch path \(launchPath) arguments \(arguments) status \(status)")
                 return false
             }
             return true
         } catch {
-            Logger.diskController.error("Disk controller operation failed to run for \(name) with launch path \(launchPath) arguments \(arguments) error \(error)")
+            Logger.diskController.error("Locker room disk controller operation failed to run for \(name) with launch path \(launchPath) arguments \(arguments) error \(error)")
             return false
         }
     }
