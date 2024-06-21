@@ -49,14 +49,11 @@ struct LockboxStreamCryptor: LockboxStreamCrypting {
         
         while inputStream.hasBytesAvailable {
             var buffer = [UInt8](repeating: 0, count: Self.chunkSize)
-            
             let bytesRead = read(inputStream: inputStream, buffer: &buffer)
-            guard bytesRead >= 0 else {
-                return nil
-            }
-            
-            guard bytesRead > 0 else {
+            if bytesRead == 0 {
                 break
+            } else if bytesRead < 0 {
+                return nil
             }
             
             let plaintextChunk = Data(buffer[..<bytesRead])
@@ -110,13 +107,10 @@ struct LockboxStreamCryptor: LockboxStreamCrypting {
             let bufferSize = ciphertextSizeData.withUnsafeBytes { $0.load(as: Int.self) }
             var buffer = [UInt8](repeating: 0, count: bufferSize)
             let bytesRead = read(inputStream: inputStream, buffer: &buffer)
-            
-            guard bytesRead >= 0 else {
-                return false
-            }
-            
-            guard bytesRead > 0 else {
+            if bytesRead == 0 {
                 break
+            } else if bytesRead < 0 {
+                return false
             }
             
             let ciphertextChunk = Data(buffer[..<bytesRead])
@@ -211,13 +205,10 @@ struct LockboxStreamCryptor: LockboxStreamCrypting {
             } else {
                 var chunkSizeBuffer = [UInt8](repeating: 0, count: Self.chunkSizeBufferSize)
                 let chunkSizeBytesRead = read(inputStream: inputStream, buffer: &chunkSizeBuffer)
-                
-                guard chunkSizeBytesRead >= 0 else {
-                    return false
-                }
-                
-                guard chunkSizeBytesRead > 0 else {
+                if chunkSizeBytesRead == 0 {
                     break
+                } else if chunkSizeBytesRead < 0 {
+                    return false
                 }
                 
                 guard chunkSizeBytesRead == Self.chunkSizeBufferSize else {
@@ -231,13 +222,10 @@ struct LockboxStreamCryptor: LockboxStreamCrypting {
             
             var buffer = [UInt8](repeating: 0, count: bufferSize)
             let bytesRead = read(inputStream: inputStream, buffer: &buffer)
-            
-            guard bytesRead >= 0 else {
-                return false
-            }
-            
-            guard bytesRead > 0 else {
+            if bytesRead == 0 {
                 break
+            } else if bytesRead < 0 {
+                return false
             }
             
             let chunk = Data(buffer[..<bytesRead])
@@ -276,15 +264,18 @@ struct LockboxStreamCryptor: LockboxStreamCrypting {
         
         do {
             let symmetricKey = SymmetricKey(data: symmetricKeyData)
-            guard let combinedCipherComponents = try AES.GCM.seal(plaintext, using: symmetricKey).combined else {
+            let sealedBox = try AES.GCM.seal(plaintext, using: symmetricKey)
+            
+            guard let combinedCipherComponents = sealedBox.combined else {
                 Logger.cryptor.error("Lockbox stream cryptor failed to combine cipher components")
                 return nil
                 
             }
+            
             Logger.cryptor.debug("Lockbox stream cryptor encrypted plaintext \(plaintext) to combined cipher components \(combinedCipherComponents)")
             return combinedCipherComponents
         } catch {
-            Logger.cryptor.error("Lockbox stream cryptor failed to encrypt plaintext \(plaintext) with error \(error)")
+            Logger.cryptor.error("Lockbox stream cryptor failed to seal plaintext \(plaintext) with error \(error)")
             return nil
         }
     }
@@ -326,7 +317,7 @@ struct LockboxStreamCryptor: LockboxStreamCrypting {
             let ciphertext = sealedBox.ciphertext
             let nonceData = sealedBox.nonce.withUnsafeBytes { Data($0) }
             
-            Logger.cryptor.debug("Lockbox stream cryptor encrypted plaintext \(plaintext) to ciphertext \(ciphertext) with auth tag \(authTag) nonce data \(nonceData)")
+            Logger.cryptor.debug("Lockbox stream cryptor encrypted plaintext \(plaintext) to ciphertext \(ciphertext) extracting auth tag \(authTag) nonce data \(nonceData)")
             return (authTag, ciphertext, nonceData)
         } catch {
             Logger.cryptor.error("Lockbox stream cryptor failed to seal plaintext \(plaintext) with error \(error)")
