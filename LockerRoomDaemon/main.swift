@@ -225,4 +225,42 @@ extension LockerRoomDaemon: LockerRoomRemoteStreamCrypting {
         let result = streamCryptor.decrypt(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData)
         replyHandler(result)
     }
+    
+    func encryptExtractingComponents(inputPath: String, outputPath: String, symmetricKeyData: Data, _ replyHandler: @escaping (LockboxCryptorComponents?) -> Void) {
+        let streamCryptor = LockboxStreamCryptor()
+        
+        guard let inputStream = InputStream(fileAtPath: inputPath) else {
+            Logger.service.error("Locker room daemon failed to initialize input stream at path \(inputPath)")
+            replyHandler(nil)
+            return
+        }
+        
+        guard let outputStream = OutputStream(toFileAtPath: outputPath, append: false) else {
+            Logger.service.error("Locker room daemon failed to initialize output stream to path \(inputPath)")
+            replyHandler(nil)
+            return
+        }
+        
+        let result = streamCryptor.encryptExtractingComponents(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData)
+        replyHandler(result)
+    }
+    
+    func decryptWithComponents(inputPath: String, outputPath: String, symmetricKeyData: Data, components: LockboxCryptorComponents, _ replyHandler: @escaping (Bool) -> Void) {
+        let streamCryptor = LockboxStreamCryptor()
+        
+        guard let inputStream = InputStream(fileAtPath: inputPath) else {
+            Logger.service.error("Locker room daemon failed to initialize input stream at path \(inputPath)")
+            replyHandler(false)
+            return
+        }
+        
+        guard let outputStream = OutputStream(toFileAtPath: outputPath, append: false) else {
+            Logger.service.error("Locker room daemon failed to initialize output stream to path \(inputPath)")
+            replyHandler(false)
+            return
+        }
+        
+        let result = streamCryptor.decryptWithComponents(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData, components: components)
+        replyHandler(result)
+    }
 }

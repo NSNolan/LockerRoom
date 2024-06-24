@@ -314,4 +314,56 @@ extension LockerRoomRemoteService {
         }
         return success
     }
+    
+    func encryptExtractingComponents(inputPath: String, outputPath: String, symmetricKeyData: Data) -> LockboxCryptorComponents? {
+        guard isEnabled else {
+            return nil
+        }
+        
+        Logger.service.log("Locker room remote service encrypting stream at \(inputPath) extracting components")
+        
+        var components: LockboxCryptorComponents?
+        daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
+            switch proxyResult {
+            case .success(let proxy):
+                guard let daemon = proxy as? LockerRoomDaemonInterface else {
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
+                    return
+                }
+                daemon.encryptExtractingComponents(inputPath: inputPath, outputPath: outputPath, symmetricKeyData: symmetricKeyData) { encryptResult in
+                    components = encryptResult
+                }
+                
+            case .failure(let error):
+                Logger.service.error("Locker room remote service failed to encrypt stream extracting components with error \(error)")
+            }
+        }
+        return components
+    }
+    
+    func decryptWithComponents(inputPath: String, outputPath: String, symmetricKeyData: Data, components: LockboxCryptorComponents) -> Bool {
+        guard isEnabled else {
+            return false
+        }
+        
+        Logger.service.log("Locker room remote service decrypting stream with components")
+        
+        var success = false
+        daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
+            switch proxyResult {
+            case .success(let proxy):
+                guard let daemon = proxy as? LockerRoomDaemonInterface else {
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
+                    return
+                }
+                daemon.decryptWithComponents(inputPath: inputPath, outputPath: outputPath, symmetricKeyData: symmetricKeyData, components: components) { decryptResult in
+                    success = decryptResult
+                }
+                
+            case .failure(let error):
+                Logger.service.error("Locker room remote service failed to decrypt stream with components with error \(error)")
+            }
+        }
+        return success
+    }
 }
