@@ -35,7 +35,7 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
     
     private static let lockboxesPathComponent = "Lockboxes"
     private static let keysPathComponent = "Keys"
-    private static let devicePathComponenet = "/dev/"
+    private static let devicePathComponent = "/dev"
     private static let volumesPathComponent = "/Volumes/"
     
     private let fileManager = FileManager.default
@@ -92,7 +92,7 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
     }
     
     func urlForAttachedDevice(name: String) -> URL {
-        return URL(filePath: LockerRoomURLProvider.devicePathComponenet).appending(component: name)
+        return URL(filePath: LockerRoomURLProvider.devicePathComponent).appending(component: name)
     }
     
     func urlForMountedVolume(name: String) -> URL {
