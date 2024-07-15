@@ -30,6 +30,9 @@ final class LockerRoomLockboxTests: XCTestCase {
         let isEncrypted = true
         let isExternal = false
         
+        let encryptionComponentsKey = "EncryptionComponent"
+        let encryptionComponentsValue = withUnsafeBytes(of: 123) { Data($0) }
+        
         let lockboxKeyName = "LockboxKey"
         let lockboxKeySerialNumber: UInt32 = 4321
         let lockboxKeySlot = LockboxKey.Slot.digitalSignature
@@ -52,6 +55,10 @@ final class LockerRoomLockboxTests: XCTestCase {
             lockboxKeySerialNumber: encryptedSymmetricKey
         ]
         
+        let encryptionComponents = [[
+            encryptionComponentsKey: encryptionComponentsValue
+        ]]
+        
         let encryptionLockboxKeys = [
             LockboxKey(
                 name: lockboxKeyName,
@@ -66,7 +73,16 @@ final class LockerRoomLockboxTests: XCTestCase {
         ]
         let encryptionKeyNames = encryptionLockboxKeys.map { $0.name }
         
-        let encryptedLockboxMetadata = EncryptedLockbox.Metadata(id: id, name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        let encryptedLockboxMetadata = EncryptedLockbox.Metadata(
+            id: id,
+            name: name,
+            size: size,
+            isEncrypted: isEncrypted,
+            isExternal: isExternal,
+            encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
+            encryptionComponents: encryptionComponents,
+            encryptionLockboxKeys: encryptionLockboxKeys
+        )
         let lockerRoomLockbox = encryptedLockboxMetadata.lockerRoomLockbox
         
         XCTAssertEqual(lockerRoomLockbox.id, id)

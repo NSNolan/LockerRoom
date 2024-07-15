@@ -43,8 +43,7 @@ import os.log
             lockerRoomURLProvider: lockerRoomURLProvider
         )
         self.lockerRoomExternalDiskDiscovery = lockerRoomExternalDiskDiscovery ?? LockerRoomExternalDiskDiscovery(
-            lockerRoomDefaults: lockerRoomDefaults,
-            lockerRoomURLProvider: lockerRoomURLProvider
+            lockerRoomDefaults: lockerRoomDefaults
         )
         self.lockerRoomRemoteService = lockerRoomRemoteService ?? LockerRoomRemoteService(
             lockerRoomDefaults: lockerRoomDefaults
@@ -61,14 +60,14 @@ import os.log
     }
     
     var eligibleExternalDisksByID: [UUID:LockerRoomExternalDisk] {
-        return lockerRoomExternalDiskDiscovery.disksByID.filter { externalDiskEntry in
+        return lockerRoomExternalDiskDiscovery.externalDisksByID.filter { externalDiskEntry in
             let externalDiskID = externalDiskEntry.value.id
             return (lockboxesByID[externalDiskID] == nil)
         }
     }
     
     var presentExternalLockboxDisksByID: [UUID:LockerRoomExternalDisk] {
-        return lockerRoomExternalDiskDiscovery.disksByID.filter { externalDiskEntry in
+        return lockerRoomExternalDiskDiscovery.externalDisksByID.filter { externalDiskEntry in
             let externalDiskID = externalDiskEntry.value.id
             return (lockboxesByID[externalDiskID] != nil)
         }
@@ -151,12 +150,6 @@ import os.log
     }
     
     func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeysToUse: [LockerRoomEnrolledKey]) async -> Bool {
-        if lockbox.isExternal {
-            _ = unmountVolume(name: lockbox.name) // Non-fatal; it may already be unmounted
-        } else {
-            _ = detachFromDiskImage(name: lockbox.name) // Non-fatal; it may already be detached
-        }
-        
         guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomStore: lockerRoomStore) else {
             Logger.manager.log("Locker room manager failed to create unencrypted lockbox \(lockbox.name)")
             return false
@@ -178,7 +171,7 @@ import os.log
             let keyNamesToUse = Set(enrolledKeysToUse.map { $0.name })
             lockboxKeysToUse = lockerRoomStore.lockboxKeys.filter { keyNamesToUse.contains($0.name) }
         }
-        Logger.manager.log("Locker room manager encrypting using lockbox keys \(lockboxKeysToUse.map { $0.name })")
+        Logger.manager.log("Locker room manager encrypting using lockbox keys \(lockboxKeysToUse.map { $0.name }) for \(name)")
         
         for lockboxKey in lockboxKeysToUse {
             guard let encryptedSymmetricKeyData = lockboxKeyCryptor.encrypt(symmetricKeyData: symmetricKeyData, lockboxKey: lockboxKey) else {
@@ -189,30 +182,76 @@ import os.log
             encryptionLockboxKeys.append(lockboxKey)
         }
         
-        guard !encryptedSymmetricKeysBySerialNumber.isEmpty else {
+        let encryptedSymmetricKeysCount = encryptedSymmetricKeysBySerialNumber.count
+        guard encryptedSymmetricKeysCount > 0 else {
             Logger.manager.error("Locker room manager failed to encrypt a symmetric key for \(name)")
             return false
         }
-        Logger.manager.log("Locker room manager encrypted symmetrics key for \(name)")
+        Logger.manager.log("Locker room manager encrypted symmetric key using \(encryptedSymmetricKeysCount) lockbox keys for \(name)")
         
-        guard lockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
-            Logger.manager.error("Locker room manager failed to encrypt an unencrypted lockbox \(name)")
-            return false
+        var encryptionComponents: LockboxCryptorComponents? = nil
+        
+        if isExternal {
+            guard lockerRoomDefaults.externalDisksEnabled else {
+                Logger.manager.error("Locker room manager will not encrypt an unencrypted external lockbox \(name) with external disk disabled")
+                return false
+            }
+            
+            guard lockerRoomDefaults.remoteServiceEnabled else {
+                Logger.manager.error("Locker room manager cannot encrypt an unencrypted external lockbox \(name) with remote service disabled")
+                return false
+            }
+            
+            guard let externalDisk = presentExternalLockboxDisksByID[id] else {
+                Logger.manager.error("Locker room manager failed to find external disk \(name) with id \(id)")
+                return false
+            }
+            let bsdName = externalDisk.bsdName
+            
+            _ = unmountVolume(name: name) // Non-fatal; it may already be unmounted
+            
+            let deviceURL = lockerRoomStore.lockerRoomURLProvider.urlForAttachedDevice(name: bsdName)
+            let devicePath = deviceURL.path(percentEncoded: false)
+            
+            encryptionComponents = lockerRoomRemoteService.encryptExtractingComponents(inputPath: devicePath, outputPath: devicePath, symmetricKeyData: symmetricKeyData)
+            guard encryptionComponents != nil else {
+                Logger.manager.error("Locker room manager failed to encrypt an unencrypted external lockbox \(name) with BSD name \(bsdName)")
+                return false
+            }
+        } else {
+            _ = detachFromDiskImage(name: lockbox.name) // Non-fatal; it may already be detached
+            
+            guard lockboxCryptor.encrypt(lockbox: unencryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+                Logger.manager.error("Locker room manager failed to encrypt an unencrypted lockbox \(name)")
+                return false
+            }
         }
         Logger.manager.log("Locker room manager encrypted an unencrypted lockbox \(name)")
         
-        let encryptedLockboxMetdata = EncryptedLockbox.Metadata(id: id, name: name, size: size, isEncrypted: true, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionLockboxKeys: encryptionLockboxKeys)
+        let encryptedLockboxMetdata = EncryptedLockbox.Metadata(
+            id: id,
+            name: name,
+            size: size,
+            isEncrypted: true,
+            isExternal: isExternal,
+            encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
+            encryptionComponents: encryptionComponents,
+            encryptionLockboxKeys: encryptionLockboxKeys
+        )
+        
         guard lockerRoomStore.writeEncryptedLockboxMetadata(encryptedLockboxMetdata) else {
             Logger.manager.error("Locker room manager failed to write encrypted lockbox metadata \(encryptedLockboxMetdata)")
             return false
         }
         Logger.manager.log("Locker room manager wrote encrypted lockbox metadata \(encryptedLockboxMetdata)")
         
-        guard lockerRoomStore.removeUnencryptedContent(name: name) else {
-            Logger.manager.error("Locker room manager failed to removed unencrypted lockbox content \(name)")
-            return false
+        if !isExternal {
+            guard lockerRoomStore.removeUnencryptedContent(name: name) else {
+                Logger.manager.error("Locker room manager failed to removed unencrypted lockbox content \(name)")
+                return false
+            }
+            Logger.manager.log("Locker room manager removed unencrypted lockbox content \(name)")
         }
-        Logger.manager.log("Locker room manager removed unencrypted lockbox content \(name)")
         
         lockboxesByID = lockerRoomStore.lockboxesByID
         return true
@@ -251,28 +290,86 @@ import os.log
         let name = encryptedLockbox.metadata.name
         let size = encryptedLockbox.metadata.size
         let isExternal = encryptedLockbox.metadata.isExternal
+        let encryptionComponents = encryptedLockbox.metadata.encryptionComponents
         
-        guard lockboxCryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
-            Logger.manager.error("Locker room manager failed to decrypt an encrypted lockbox \(name)")
-            return false
+        if isExternal {
+            guard lockerRoomDefaults.externalDisksEnabled else {
+                Logger.manager.error("Locker room manager will not decrypt an encrypted external lockbox \(name) with external disk disabled")
+                return false
+            }
+            
+            guard lockerRoomDefaults.remoteServiceEnabled else {
+                Logger.manager.error("Locker room manager cannot decrypt an encrypted external lockbox \(name) with remote service disabled")
+                return false
+            }
+            
+            guard let externalDisk = presentExternalLockboxDisksByID[id] else {
+                Logger.manager.error("Locker room manager failed to find external disk \(name) with id \(id)")
+                return false
+            }
+            let bsdName = externalDisk.bsdName
+            
+            let deviceURL = lockerRoomStore.lockerRoomURLProvider.urlForAttachedDevice(name: bsdName)
+            let devicePath = deviceURL.path(percentEncoded: false)
+            
+            guard let encryptionComponents else {
+                Logger.manager.error("Locker room manager is missing lockbox components for encrypted external lockbox \(name)")
+                return false
+            }
+            
+            guard lockerRoomRemoteService.decryptWithComponents(inputPath: devicePath, outputPath: devicePath, symmetricKeyData: symmetricKeyData, components: encryptionComponents) else {
+                Logger.manager.error("Locker room manager failed to decrypt an encrypted external lockbox \(name) with BSD name \(bsdName)")
+                return false
+            }
+        } else {
+            guard lockboxCryptor.decrypt(lockbox: encryptedLockbox, symmetricKeyData: symmetricKeyData) else {
+                Logger.manager.error("Locker room manager failed to decrypt an encrypted lockbox \(name)")
+                return false
+            }
         }
         Logger.manager.log("Locker room manager decrypted an encrypted lockbox \(name)")
         
-        let unencryptedLockboxMetdata = UnencryptedLockbox.Metadata(id: id, name: name, size: size, isEncrypted: false, isExternal: isExternal)
+        let unencryptedLockboxMetdata = UnencryptedLockbox.Metadata(
+            id: id,
+            name: name,
+            size: size,
+            isEncrypted: false,
+            isExternal: isExternal
+        )
+        
         guard lockerRoomStore.writeUnencryptedLockboxMetadata(unencryptedLockboxMetdata) else {
             Logger.manager.error("Locker room manager failed to write unencrypted lockbox metadata \(unencryptedLockboxMetdata)")
             return false
         }
         Logger.manager.log("Locker room manager wrote unencrypted lockbox metadata \(unencryptedLockboxMetdata)")
         
-        guard lockerRoomStore.removeEncryptedContent(name: name) else {
-            Logger.manager.error("Locker room manager failed to removed encrypted lockbox content \(name)")
-            return false
-        }
-        Logger.manager.log("Locker room manager removed encrypted lockbox content \(name)")
-        
-        guard attachToDiskImage(name: name) else {
-            return false
+        if isExternal {
+            guard let externalDisk = presentExternalLockboxDisksByID[id] else {
+                Logger.manager.error("Locker room manager failed to find external disk \(name) with id \(id)")
+                return false
+            }
+            let bsdName = externalDisk.bsdName
+            
+            guard mountVolume(name: bsdName) else {
+                Logger.manager.error("Locker room manager failed to mount an unencrypted external lockbox \(name) with BSD name \(bsdName)")
+                return false
+            }
+            
+            guard openVolume(name: name) else {
+                Logger.manager.error("Locker room manager failed to open an unencrypted external lockbox \(name)")
+                return false
+            }
+        } else {
+            guard lockerRoomStore.removeEncryptedContent(name: name) else {
+                Logger.manager.error("Locker room manager failed to removed encrypted lockbox content \(name)")
+                return false
+            }
+            Logger.manager.log("Locker room manager removed encrypted lockbox content \(name)")
+            
+            guard attachToDiskImage(name: name) else {
+                Logger.manager.error("Locker room manager failed to attach to unencrypted lockbox \(name)")
+                return false
+            }
         }
         
         lockboxesByID = lockerRoomStore.lockboxesByID
@@ -371,5 +468,16 @@ extension LockerRoomStoring {
     var enrolledKeysByID: [UUID:LockerRoomEnrolledKey] {
         let enrolledKeys = lockboxKeys.map{ $0.lockerRoomEnrolledKey }
         return enrolledKeys.reduce(into: [UUID:LockerRoomEnrolledKey]()) { $0[$1.id] = $1 }
+    }
+}
+
+extension LockerRoomExternalDiskDiscovering {
+    var externalDisksByID: [UUID:LockerRoomExternalDisk] {
+        externalMediasByDeviceUnit.reduce(into: [UUID:LockerRoomExternalDisk]()) { result, lockerRoomDiskMediaEntry in
+            guard let externalDisk = lockerRoomDiskMediaEntry.value.lockerRoomExternalDisk else {
+                return
+            }
+            result[externalDisk.id] = externalDisk
+        }
     }
 }

@@ -114,7 +114,7 @@ struct UnencryptedLockbox {
     private static func streams(id: UUID, name: String, isExternal: Bool, lockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering, lockerRoomStore: LockerRoomStoring) -> (input: InputStream, output: OutputStream)? {
         let inputURL: URL
         if isExternal {
-            guard let externalDisk = lockerRoomExternalDiskDiscovery.disksByID[id] else {
+            guard let externalDisk = lockerRoomExternalDiskDiscovery.externalDisksByID[id] else {
                 Logger.persistence.error("Unencrypted lockbox failed to create input stream for external disk \(name) with id \(id)")
                 return nil
             }

@@ -13,6 +13,9 @@ final class EncryptedLockboxTests: XCTestCase {
         let size = 10
         let isExternal = false
         
+        let encryptionComponentsKey = "EncryptionComponent"
+        let encryptionComponentsValue = withUnsafeBytes(of: 123) { Data($0) }
+        
         let lockboxKeyName = "LockboxKey"
         let lockboxKeySerialNumber: UInt32 = 4321
         let lockboxKeySlot = LockboxKey.Slot.digitalSignature
@@ -34,6 +37,10 @@ final class EncryptedLockboxTests: XCTestCase {
         let encryptedSymmetricKeysBySerialNumber = [
             lockboxKeySerialNumber: encryptedSymmetricKey
         ]
+        
+        let encryptionComponents = [[
+            encryptionComponentsKey: encryptionComponentsValue
+        ]]
         
         let encryptionLockboxKeys = [
             LockboxKey(
@@ -58,6 +65,7 @@ final class EncryptedLockboxTests: XCTestCase {
             size: size,
             isExternal: isExternal,
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
+            encryptionComponents: encryptionComponents,
             encryptionLockboxKeys: encryptionLockboxKeys,
             lockerRoomExternalDiskDiscovery: externalDiskDiscovery,
             lockerRoomStore: store
@@ -71,6 +79,7 @@ final class EncryptedLockboxTests: XCTestCase {
         XCTAssertEqual(encryptedLockbox.metadata.size, size)
         XCTAssertEqual(encryptedLockbox.metadata.isExternal, isExternal)
         XCTAssertEqual(encryptedLockbox.metadata.encryptedSymmetricKeysBySerialNumber, encryptedSymmetricKeysBySerialNumber)
+        XCTAssertEqual(encryptedLockbox.metadata.encryptionComponents, encryptionComponents)
         XCTAssertEqual(encryptedLockbox.metadata.encryptionLockboxKeys, encryptionLockboxKeys)
         XCTAssertTrue(encryptedLockbox.metadata.isEncrypted)
     }
@@ -80,6 +89,9 @@ final class EncryptedLockboxTests: XCTestCase {
         let size = 10
         let isEncrypted = true
         let isExternal = false
+        
+        let encryptionComponentsKey = "EncryptionComponent"
+        let encryptionComponentsValue = withUnsafeBytes(of: 123) { Data($0) }
         
         let lockboxKeyName = "LockboxKey"
         let lockboxKeySerialNumber: UInt32 = 4321
@@ -102,6 +114,10 @@ final class EncryptedLockboxTests: XCTestCase {
         let encryptedSymmetricKeysBySerialNumber = [
             lockboxKeySerialNumber: encryptedSymmetricKey
         ]
+        
+        let encryptionComponents = [[
+            encryptionComponentsKey: encryptionComponentsValue
+        ]]
         
         let encryptionLockboxKeys = [
             LockboxKey(
@@ -126,6 +142,7 @@ final class EncryptedLockboxTests: XCTestCase {
             isEncrypted: isEncrypted,
             isExternal: isExternal,
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
+            encryptionComponents: encryptionComponents,
             encryptionLockboxKeys: encryptionLockboxKeys
         )
         
@@ -141,6 +158,7 @@ final class EncryptedLockboxTests: XCTestCase {
         XCTAssertEqual(encryptedLockbox.metadata.size, size)
         XCTAssertEqual(encryptedLockbox.metadata.isExternal, isExternal)
         XCTAssertEqual(encryptedLockbox.metadata.encryptedSymmetricKeysBySerialNumber, encryptedSymmetricKeysBySerialNumber)
+        XCTAssertEqual(encryptedLockbox.metadata.encryptionComponents, encryptionComponents)
         XCTAssertEqual(encryptedLockbox.metadata.encryptionLockboxKeys, encryptionLockboxKeys)
         XCTAssertTrue(encryptedLockbox.metadata.isEncrypted)
     }
@@ -170,6 +188,7 @@ final class EncryptedLockboxTests: XCTestCase {
             size: size,
             isExternal: isExternal,
             encryptedSymmetricKeysBySerialNumber: [UInt32:Data](),
+            encryptionComponents: LockboxCryptorComponents(),
             encryptionLockboxKeys: [LockboxKey](),
             lockerRoomExternalDiskDiscovery: externalDiskDiscovery,
             lockerRoomStore: store
@@ -194,6 +213,7 @@ final class EncryptedLockboxTests: XCTestCase {
             size: size,
             isExternal: isExternal,
             encryptedSymmetricKeysBySerialNumber: [UInt32:Data](),
+            encryptionComponents: LockboxCryptorComponents(),
             encryptionLockboxKeys: [LockboxKey](),
             lockerRoomExternalDiskDiscovery: externalDiskDiscovery,
             lockerRoomStore: store

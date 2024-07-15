@@ -8,7 +8,7 @@
 import Foundation
 
 struct LockerRoomExternalDiskDiscoveryMock: LockerRoomExternalDiskDiscovering {
-    var disksByID = [UUID:LockerRoomExternalDisk]()
+    var externalMediasByDeviceUnit = [Int:LockerRoomExternalMedia]()
     
     var failToActivate = false
     var failToInvalidate = false

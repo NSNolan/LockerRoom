@@ -46,7 +46,7 @@ struct LockerRoomUnencryptedLockboxCreateOptionsView: View {
             ForEach(eligibleExternalDisks) { externalDisk in
                 let id = externalDisk.id
                 let name = externalDisk.name
-                let size = externalDisk.size
+                let size = externalDisk.sizeInMegabytes
                 
                 Button(action: {
                     Task {
