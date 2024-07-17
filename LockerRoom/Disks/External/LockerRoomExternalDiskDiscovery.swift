@@ -10,7 +10,7 @@ import Foundation
 import os.log
 
 protocol LockerRoomExternalDiskDiscovering {
-    var externalMediasByDeviceUnit: [Int:LockerRoomExternalMedia] { get }
+    var externalDiskDevicesByDeviceUnit: [Int:LockerRoomExternalDiskDevice] { get }
     
     func activate() -> Bool
     func invalidate() -> Bool
@@ -23,7 +23,7 @@ protocol LockerRoomExternalDiskDiscovering {
     
     private var isSessionActive = false
     
-    var externalMediasByDeviceUnit = [Int:LockerRoomExternalMedia]()
+    var externalDiskDevicesByDeviceUnit = [Int:LockerRoomExternalDiskDevice]()
     
     init(lockerRoomDefaults: LockerRoomDefaulting) {
         self.lockerRoomDefaults = lockerRoomDefaults
@@ -50,20 +50,20 @@ protocol LockerRoomExternalDiskDiscovering {
             let capturedSelf = Unmanaged<LockerRoomExternalDiskDiscovery>.fromOpaque(context).takeUnretainedValue()
             
             DispatchQueue.main.async {
-                var externalMediasByDeviceUnit = capturedSelf.externalMediasByDeviceUnit
+                var externalDiskDevicesByDeviceUnit = capturedSelf.externalDiskDevicesByDeviceUnit
                 let deviceUnit = diskPartition.deviceUnit
                 let mediaUUID = diskPartition.mediaUUID
                 
-                if var externalMedia = externalMediasByDeviceUnit[deviceUnit] {
-                    externalMedia.diskPartitionsByID[mediaUUID] = diskPartition
-                    externalMediasByDeviceUnit[deviceUnit] = externalMedia
+                if var externalDiskDevice = externalDiskDevicesByDeviceUnit[deviceUnit] {
+                    externalDiskDevice.diskPartitionsByID[mediaUUID] = diskPartition
+                    externalDiskDevicesByDeviceUnit[deviceUnit] = externalDiskDevice
                 } else {
-                    var externalMedia = LockerRoomExternalMedia()
-                    externalMedia.diskPartitionsByID[mediaUUID] = diskPartition
-                    externalMediasByDeviceUnit[deviceUnit] = externalMedia
+                    var externalDiskDevice = LockerRoomExternalDiskDevice()
+                    externalDiskDevice.diskPartitionsByID[mediaUUID] = diskPartition
+                    externalDiskDevicesByDeviceUnit[deviceUnit] = externalDiskDevice
                 }
                 
-                capturedSelf.externalMediasByDeviceUnit = externalMediasByDeviceUnit
+                capturedSelf.externalDiskDevicesByDeviceUnit = externalDiskDevicesByDeviceUnit
                 
                 Logger.diskDiscovery.log("Locker room external disk discovery found external disk partition \(diskPartition.mediaName) with BSD name \(diskPartition.bsdName) device unit \(deviceUnit) id \(mediaUUID)")
             }
@@ -82,14 +82,14 @@ protocol LockerRoomExternalDiskDiscovering {
             let capturedSelf = Unmanaged<LockerRoomExternalDiskDiscovery>.fromOpaque(context).takeUnretainedValue()
             
             DispatchQueue.main.async {
-                var externalMediasByDeviceUnit = capturedSelf.externalMediasByDeviceUnit
+                var externalDiskDevicesByDeviceUnit = capturedSelf.externalDiskDevicesByDeviceUnit
                 let deviceUnit = diskPartition.deviceUnit
                 let mediaUUID = diskPartition.mediaUUID
                 
-                if var externalMedia = externalMediasByDeviceUnit[deviceUnit] {
-                    externalMedia.diskPartitionsByID[mediaUUID] = nil
-                    externalMediasByDeviceUnit[deviceUnit] = externalMedia
-                    capturedSelf.externalMediasByDeviceUnit = externalMediasByDeviceUnit
+                if var externalDiskDevice = externalDiskDevicesByDeviceUnit[deviceUnit] {
+                    externalDiskDevice.diskPartitionsByID[mediaUUID] = nil
+                    externalDiskDevicesByDeviceUnit[deviceUnit] = externalDiskDevice
+                    capturedSelf.externalDiskDevicesByDeviceUnit = externalDiskDevicesByDeviceUnit
                     
                     Logger.diskDiscovery.log("Locker room external disk discovery lost external disk partition \(diskPartition.mediaName) with BSD name \(diskPartition.bsdName) device unit \(deviceUnit) id \(mediaUUID)")
                 }
@@ -127,7 +127,7 @@ protocol LockerRoomExternalDiskDiscovering {
         
         sessionQueue.suspend()
         isSessionActive = false
-        externalMediasByDeviceUnit.removeAll()
+        externalDiskDevicesByDeviceUnit.removeAll()
         Logger.service.log("Locker room external disk discovery invalidated")
         
         return true

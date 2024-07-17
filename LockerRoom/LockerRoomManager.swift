@@ -491,8 +491,8 @@ extension LockerRoomStoring {
 
 extension LockerRoomExternalDiskDiscovering {
     var externalDisksByID: [UUID:LockerRoomExternalDisk] {
-        externalMediasByDeviceUnit.reduce(into: [UUID:LockerRoomExternalDisk]()) { result, lockerRoomDiskMediaEntry in
-            guard let externalDisk = lockerRoomDiskMediaEntry.value.lockerRoomExternalDisk else {
+        externalDiskDevicesByDeviceUnit.reduce(into: [UUID:LockerRoomExternalDisk]()) { result, externalDiskDeviceEntry in
+            guard let externalDisk = externalDiskDeviceEntry.value.lockerRoomExternalDisk else {
                 return
             }
             result[externalDisk.id] = externalDisk

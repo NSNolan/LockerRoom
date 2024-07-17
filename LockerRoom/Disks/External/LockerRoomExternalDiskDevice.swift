@@ -1,5 +1,5 @@
 //
-//  LockerRoomExternalMedia.swift
+//  LockerRoomExternalDiskDevice.swift
 //  LockerRoom
 //
 //  Created by Nolan Astrein on 7/1/24.
@@ -30,7 +30,7 @@ import Foundation
 //
 // The following code identifies the APFS Phyiscal Store by finding the first non-media whole, non-mountable disk partition.
 
-struct LockerRoomExternalMedia {
+struct LockerRoomExternalDiskDevice {
     var diskPartitionsByID = [UUID:LockerRoomExternalDiskPartition]()
     
     private var apfsPhysicalStorePartition: LockerRoomExternalDiskPartition? {

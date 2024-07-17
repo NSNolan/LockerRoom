@@ -17,13 +17,13 @@ struct LockerRoomExternalDisk: Identifiable, Equatable {
     let volumes: [String]
 }
 
-extension LockerRoomExternalMedia {
+extension LockerRoomExternalDiskDevice {
     var lockerRoomExternalDisk: LockerRoomExternalDisk? {
         guard let bsdName,
               let name,
               let sizeInMegabytes,
               let uuid else {
-            Logger.diskDiscovery.error("Locker room external media cannot convert to external disk with BSD name \(bsdName) name \(name) size \(String(describing: sizeInMegabytes)) id \(String(describing: uuid))")
+            Logger.lockerRoomUI.error("Locker room external disk device cannot convert to external disk with BSD name \(bsdName) name \(name) size \(String(describing: sizeInMegabytes)) id \(String(describing: uuid))")
             return nil
         }
         
