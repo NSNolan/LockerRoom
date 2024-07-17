@@ -150,6 +150,8 @@ import os.log
     }
     
     func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeysToUse: [LockerRoomEnrolledKey]) async -> Bool {
+        let startTime = CFAbsoluteTimeGetCurrent()
+        
         guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomStore: lockerRoomStore) else {
             Logger.manager.log("Locker room manager failed to create unencrypted lockbox \(lockbox.name)")
             return false
@@ -226,7 +228,8 @@ import os.log
                 return false
             }
         }
-        Logger.manager.log("Locker room manager encrypted an unencrypted lockbox \(name)")
+        
+        logStatistics(startTime: startTime, totalBytes: size, encrypt: true)
         
         let encryptedLockboxMetdata = EncryptedLockbox.Metadata(
             id: id,
@@ -281,6 +284,8 @@ import os.log
     }
     
     func decrypt(lockbox: LockerRoomLockbox, symmetricKeyData: Data) async -> Bool {
+        let startTime = CFAbsoluteTimeGetCurrent()
+        
         guard let encryptedLockbox = EncryptedLockbox.create(from: lockbox, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomStore: lockerRoomStore) else {
             Logger.manager.log("Locker room manager failed to created encrypted lockbox \(lockbox.name)")
             return false
@@ -327,7 +332,8 @@ import os.log
                 return false
             }
         }
-        Logger.manager.log("Locker room manager decrypted an encrypted lockbox \(name)")
+        
+        logStatistics(startTime: startTime, totalBytes: size, encrypt: false)
         
         let unencryptedLockboxMetdata = UnencryptedLockbox.Metadata(
             id: id,
@@ -454,6 +460,18 @@ import os.log
         }
         
         return true
+    }
+    
+    private func logStatistics(startTime: CFAbsoluteTime, totalBytes: Int, encrypt: Bool) {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute, .second]
+        formatter.unitsStyle = .brief
+        formatter.zeroFormattingBehavior = .pad
+        
+        let durationInSeconds = Int(CFAbsoluteTimeGetCurrent() - startTime)
+        if let durationString = formatter.string(from: TimeInterval(durationInSeconds)) {
+            Logger.manager.log("Locker room manager \(encrypt ? "encrypted" : "decrypted") \(totalBytes) megabytes in \(durationString)")
+        }
     }
 }
 
