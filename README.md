@@ -36,34 +36,16 @@ And double-clicking an encrypted lockbox will prompt the user to decrypt it:
 
 Encryption does not require an external hardware device to be present because only previously enrolled keys are used. Decryption does require an external hardware device to be present because the private key stored on the external hardware device is needed for decryption. After an encrypted lockbox is selected for decryption, Locker Room will wait for an external hardware device to become present. If the lockbox was encrypted using an enrolled key corresponding to the presented external hardware device then the decryption process will complete.
 
-### Technical Details
-
-A lockbox is logically a disk image. While a lockbox is unencrypted the disk image can be attached and a volume can be mounted as a filesystem. While a lockbox is encrypted, the disk image cannot be used.
-
-An enrolled key is logically a public key and serial number that maps to an external hardware device containing the corresponding private key. The type of public-private key pair is determined by the configuration details used when the key is enrolled.
-
-#### Encryption
-
-When a lockbox is encrypted, a 256-bit symmetric cryptographic key is generated. This symmetric key is used to encrypt the lockbox with the AES GCM algorithm. The lockbox content is streamed into memory in 256KB chunks and each chunk is independently encrypted with a nonce and authentication tag. The subsequent cipher text, nonce, authentication tag and total length of the prior three components are encoded into the output stream of the encrypted lockbox. 
-
-The symmetric cryptographic key used to encrypt the lockbox is also encrypted by all of the enrolled keys using the algorithm specified during key enrollment. These encrpyted symmetrics keys are stored on disk along side the encrypted lockbox. If multiple keys are enrolled then multiple copies of the symmetric key are encrypted and stored on disk. But there is only ever one copy of the encrypted lockbox.
-
-#### Decryption
-
-When a lockbox is decrypted, the serial number of the presented external hardware device is used to map back to the corresponding encrypted symmetric key stored on disk. The private key stored on the external hardware device is then used to decrypt the matching encrypted symmetric key using the algorithm specified during key enrollment.
-
-The now decrypted symmetric key is used to decrypt the encrypted lockbox with the AES GCM algorithm. The encrypted lockbox content is streamed into memory in chuncks, where the chunck size is read directly from the input stream and each chunk is independently decrypted with a nonce and authentication tag. After decryption, all symmetric cryptographic keys are thrown away and never used for future encryption.
-
 ### Experimental Details
 
-#### Out-of-Process Disk Image Operations
+#### Out-of-Process Disk Operations
 
-Creating, attaching and detaching a disk image using `hdiutil` from an app's main process is prevented when running in an [App Sandbox](https://developer.apple.com/documentation/security/app_sandbox). Locker Room can be configured to perform disk images operations outside of the app's main process with the following command:
+Creating, attaching, detaching, mounting and unmounting a disk image using `hdiutil` from an app's main process is prevented when running in an [App Sandbox](https://developer.apple.com/documentation/security/app_sandbox). Locker Room can be configured to perform disk images operations outside of the app's main process with the following command:
 ```
 $ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom RemoteServiceEnabled -bool true
 ```
 
-This command will instruct Locker Room to register a launch daemon to spawn on-demand when disk image operations are requested. The launch daemon will only be registered while Locker Room is running. The launch daemon's registration state can be observed with the following command:
+This command will instruct Locker Room to register a launch daemon to spawn on-demand when disk operations are requested. The launch daemon will only be registered while Locker Room is running. The launch daemon's registration state can be observed with the following command:
  ```
  $ launchctl print system/com.nsnolan.LockerRoomDaemon
  ```
@@ -84,33 +66,64 @@ $ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom ExperimentalPIVSlo
 
 Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU commands](https://docs.yubico.com/yesdk/users-manual/yubikey-reference/apdu.html) directly to the external hardware device. This bypasses the limitations of the YubiKey SDK and encodes the unsupported slot into the command's raw data.
 
-#### External Disk Discovery
+#### External Disk Discovery and Encryption
 
-Locker Room can be configured to discover external disks to be used for Lockbox creation with the followng command:
+An external hard drive with a single APFS Container, containing at least one APFS Volume, can be used as a lockbox. Locker Room can be configured to discover, encrypt and decrypt external disks with the followng command:
 ```
 $ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom ExternalDisksEnabled -bool true
 ```
+
+While the **Lockboxes** view is selected and an external disk is connected, the plus button in the bottom-right corner will allow the user to create a new lockbox or a lockbox from a connected external disk.
+![](Images/Locker-Room-Add-External-Lockbox.png)
+
+A lockbox created from an external disk will indicate whether or not the corresponding external disk is currently present. When the corresponding external disk is present the icon is tinted green:
+![](Images/Locker-Room-External-Lockbox-Present.png)
+
+And when the external disk is not present the icon is tinded red:
+![](Images/Locker-Room-External-Lockbox-Missing.png)
+
+A lockbox created from an external disk can only be encrypted or decrypted while it is present.
+
+Out-of-Process disk operations must be enabled using the User Defaults `RemoteServiceEnabled` to encrypt and decrypt an external disk. Accessing the external disk's APFS physical store for whole disk encryption requires root privileges.
+
+### Technical Details
+
+A lockbox is logically a disk image. While a lockbox is unencrypted the disk image can be attached and a volume can be mounted as a filesystem. While a lockbox is encrypted, the disk image cannot be used.
+
+An enrolled key is logically a public key and serial number that maps to an external hardware device containing the corresponding private key. The type of public-private key pair is determined by the configuration details used when the key is enrolled.
+
+#### Encryption
+
+When a lockbox is encrypted, a 256-bit symmetric cryptographic key is generated. This symmetric key is used to encrypt the lockbox with the AES GCM algorithm. The lockbox content is streamed into memory in 256KB chunks and each chunk is independently encrypted with a nonce and authentication tag. The subsequent cipher text, nonce, authentication tag and total length of the prior three components are encoded into the output stream of the encrypted lockbox. 
+
+The symmetric cryptographic key used to encrypt the lockbox is also encrypted by all of the enrolled keys using the algorithm specified during key enrollment. These encrpyted symmetrics keys are stored on disk along side the encrypted lockbox. If multiple keys are enrolled then multiple copies of the symmetric key are encrypted and stored on disk. But there is only ever one copy of the encrypted lockbox.
+
+#### Decryption
+
+When a lockbox is decrypted, the serial number of the presented external hardware device is used to map back to the corresponding encrypted symmetric key stored on disk. The private key stored on the external hardware device is then used to decrypt the matching encrypted symmetric key using the algorithm specified during key enrollment.
+
+The now decrypted symmetric key is used to decrypt the encrypted lockbox with the AES GCM algorithm. The encrypted lockbox content is streamed into memory in chuncks, where the chunck size is read directly from the input stream and each chunk is independently decrypted with a nonce and authentication tag. After decryption, all symmetric cryptographic keys are thrown away and never used for future encryption.
 
 ### Known Issues
 
 - Enrolling a key will overwrite an existing private key in the specified slot on the external hardware device.
 - There is no way to enter a pin if the pin policy of the enrolled key is set to anything besides `Never`.
-- Locker Room does not run in a sandbox because creating a disk image with `hdiutil` will fail.
+- Encryption and decryption of a lockbox created from an external disk are not fault tolerant.
+- Locker Room app does not run in a sandbox.
 - Locker Room app and launch daemon are not codesigned developer certificate and provisioning profile.
 - Locker Room launch daemon has debugging entitlement `com.apple.security.get-task-allow`.
-- There is no version check of the YubiKey before the YubiKey SDK is used. This may lead to unsupported commands being sent to an incompatible external hardware device.
-- Encrypted lockboxes cannot be deleted within Locker Room. But can be removed using the filesystem.
-- Enrolled keys cannot be deleted within Locker Room. But can be removed using the filesystem.
-- An enrolled key's PIV management key should not be stored on disk.
+- There is no version check of the YubiKey before the YubiKey SDK is used.
+- Encrypted lockboxes cannot be deleted within Locker Room but can be removed from the filesystem.
+- Enrolled keys cannot be deleted within Locker Room but can be removed from the filesystem.
+- An enrolled key's PIV management key should not be serialized to disk.
 
 ### Future Enhancements
 
 - More unit tests coverage.
 - Allow enrolled key deletion within Locker Room but only after there are no more encrypted lockbox it can decrypt. Keys can be removed using the filesystem and there is currently no way to remove the corresponding private key on the external hardware device. Yubico [changelogs](https://github.com/Yubico/yubico-piv-tool/blob/master/debian/changelog) suggests that YubiKey firmware 5.7.0 will add support for deleting keys.
 - Add localization strings for the UI.
-- Encrypt and decrypt an external volume.
 - Create a logging profile for private daemon log messages.
-- Generate keys using elliptic curve cryptography. This is blocked by YubiKey's current support for RSA cipher text decryption only.
+- Generate public-private key pair using elliptic curve cryptography. This is blocked by YubiKey's current support for RSA cipher text decryption only.
 
 ### Contact
 
