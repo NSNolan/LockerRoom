@@ -55,7 +55,7 @@ However, macOS also prevents a launch daemon with an ad-hoc code signature from 
 $ csrutil disable
 ```
 
-Out-of-process disk image operations are an incremental step towards running Locker Room inside of an App Sandbox. Locker Room will not enable App Sandboxing until the launch daemon is codesigned with a developer identity, provisioning profile and can be run without disabling System Integrity Protection. 
+Out-of-process disk operations are an incremental step towards running Locker Room inside of an App Sandbox. Locker Room will not enable App Sandboxing until the launch daemon is codesigned with a developer identity, provisioning profile and can be run without disabling System Integrity Protection. 
 
 #### Retired PIV Slots
 
@@ -79,12 +79,12 @@ While the **Lockboxes** view is selected and an external disk is connected, the 
 A lockbox created from an external disk will indicate whether or not the corresponding external disk is currently present. When the corresponding external disk is present the icon is tinted green:
 ![](Images/Locker-Room-External-Lockbox-Present.png)
 
-And when the external disk is not present the icon is tinded red:
+And when not present the icon is tinted red:
 ![](Images/Locker-Room-External-Lockbox-Missing.png)
 
-A lockbox created from an external disk can only be encrypted or decrypted while it is present.
+A lockbox created from an external disk can only be encrypted and decrypted while it is present.
 
-Out-of-Process disk operations must be enabled using the User Defaults `RemoteServiceEnabled` to encrypt and decrypt an external disk. Accessing the external disk's APFS physical store for whole disk encryption requires root privileges.
+Out-of-Process disk operations must also be enabled using the User Defaults `RemoteServiceEnabled` to encrypt and decrypt an external disk. Accessing the external disk's APFS Container physical store for whole disk encryption requires root privileges.
 
 ### Technical Details
 
@@ -98,11 +98,15 @@ When a lockbox is encrypted, a 256-bit symmetric cryptographic key is generated.
 
 The symmetric cryptographic key used to encrypt the lockbox is also encrypted by all of the enrolled keys using the algorithm specified during key enrollment. These encrpyted symmetrics keys are stored on disk along side the encrypted lockbox. If multiple keys are enrolled then multiple copies of the symmetric key are encrypted and stored on disk. But there is only ever one copy of the encrypted lockbox.
 
+When a lockbox is created from an external disk, the symmetric key generation and encryption remains the same. But instead of the data encryption routine reading from a local file containing a disk image, it reads directly from the external disk and encrypts each chunk of data in-place. External lockboxes only supports a disk device with a single APFS Container containing at least one mountable APFS Volume. The encryption routine accesses the external disk's APFS Container physical store via the filehandle that is exposed at `/dev/` while the disk is connected. The GUID Partition Table for the device is kept in plaintext so that the system can recognize the disk and associate it with the lockbox representation within the app. Since the entire external disk device is encrypted (aside from the GUID Partition Table) there is no free space to store a nonce, authentication tag and total length values for each encrypted chunk on the external disk itself. The encryption components are extracted by the encryption routine and serialized to the Locker Room app's storage for future decryption.
+
 #### Decryption
 
 When a lockbox is decrypted, the serial number of the presented external hardware device is used to map back to the corresponding encrypted symmetric key stored on disk. The private key stored on the external hardware device is then used to decrypt the matching encrypted symmetric key using the algorithm specified during key enrollment.
 
 The now decrypted symmetric key is used to decrypt the encrypted lockbox with the AES GCM algorithm. The encrypted lockbox content is streamed into memory in chuncks, where the chunck size is read directly from the input stream and each chunk is independently decrypted with a nonce and authentication tag. After decryption, all symmetric cryptographic keys are thrown away and never used for future encryption.
+
+When a lockbox is created from an external disk, the symmetric key decryption remains the same. But instead of the data decryption routine reading from a local file containing an encrypted disk image, it reads directly from the external disk and decrypts each chunk of data in-place. External lockboxes only support a disk device with a single APFS Container containing at least one mountable APFS Volume. The decryption routine accesses the external disk's APFS Container physical store via the filehandle that is exposed at `/dev/` while the disk is connected. Since the GUID Partition Table is kept in plaintext, the encrypted disk is recognized by the system and associated with the lockbox representation within the app. The decryption routine for external lockboxes requires the stored nonce, authentication tag and total length values for each encrypted chunk to be provide from the Locker Room app's storage.
 
 ### Known Issues
 
