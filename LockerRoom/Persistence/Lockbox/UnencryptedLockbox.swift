@@ -9,7 +9,7 @@ import Foundation
 
 import os.log
 
-struct UnencryptedLockbox {
+struct UnencryptedLockbox: LockboxStreaming {
     
     struct Metadata: LockboxMetadata {
         let id: UUID
@@ -39,7 +39,7 @@ struct UnencryptedLockbox {
         self.outputStream = outputStream
     }
     
-    static func create(id: UUID, name: String, size: Int, isExternal: Bool, lockerRoomDefaults: LockerRoomDefaulting, lockerRoomDiskController: LockerRoomDiskControlling, lockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering, lockerRoomRemoteService: LockerRoomRemoteService, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
+    static func create(id: UUID, name: String, size: Int, isExternal: Bool, lockerRoomDefaults: LockerRoomDefaulting, lockerRoomDiskController: LockerRoomDiskControlling, lockerRoomRemoteService: LockerRoomRemoteService, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
         guard size > 0 else {
             Logger.persistence.error("Unencrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil
@@ -59,7 +59,7 @@ struct UnencryptedLockbox {
             }
         }
         
-        guard let streams = streams(id: id, name: name, isExternal: isExternal, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomStore: lockerRoomStore) else {
+        guard let streams = streams(id: id, name: name, isEncrypted: false, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
             Logger.persistence.error("Unencrypted lockbox failed to create input/output streams for \(name)")
             return nil
         }
@@ -76,7 +76,7 @@ struct UnencryptedLockbox {
         return lockbox
     }
     
-    static func create(from lockbox: LockerRoomLockbox, lockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
+    static func create(from lockbox: LockerRoomLockbox, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
         let name = lockbox.name
         let isEncrypted = lockbox.isEncrypted
         
@@ -94,7 +94,7 @@ struct UnencryptedLockbox {
         let size = metadata.size
         let isExternal = metadata.isExternal
         
-        guard let streams = streams(id: id, name: name, isExternal: isExternal, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomStore: lockerRoomStore) else {
+        guard let streams = streams(id: id, name: name, isEncrypted: isEncrypted, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
             Logger.persistence.error("Unencrypted lockbox failed to create input and output streams for \(name)")
             return nil
         }
@@ -109,34 +109,5 @@ struct UnencryptedLockbox {
         }
         
         return true
-    }
-    
-    private static func streams(id: UUID, name: String, isExternal: Bool, lockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering, lockerRoomStore: LockerRoomStoring) -> (input: InputStream, output: OutputStream)? {
-        let inputURL: URL
-        if isExternal {
-            guard let externalDisk = lockerRoomExternalDiskDiscovery.externalDisksByID[id] else {
-                Logger.persistence.error("Unencrypted lockbox failed to create input stream for external disk \(name) with id \(id)")
-                return nil
-            }
-            inputURL = lockerRoomStore.lockerRoomURLProvider.urlForAttachedDevice(name: externalDisk.bsdName)
-        } else {
-            inputURL = lockerRoomStore.lockerRoomURLProvider.urlForLockboxUnencryptedContent(name: name)
-        }
-        let inputPath = inputURL.path(percentEncoded: false)
-        
-        guard let inputStream = InputStream(fileAtPath: inputPath) else {
-            Logger.persistence.error("Unencrypted lockbox failed to create input stream for \(name) at path \(inputPath)")
-            return nil
-        }
-        
-        let outputURL = lockerRoomStore.lockerRoomURLProvider.urlForLockboxEncryptedContent(name: name)
-        let outputPath = outputURL.path(percentEncoded: false)
-        
-        guard let outputStream = OutputStream(toFileAtPath: outputPath, append: false) else {
-            Logger.persistence.error("Unencrypted lockbox failed to create output stream  for \(name) to path \(outputPath)")
-            return nil
-        }
-        
-        return (inputStream, outputStream)
     }
 }

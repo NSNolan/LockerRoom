@@ -55,7 +55,6 @@ final class EncryptedLockboxTests: XCTestCase {
             )
         ]
         
-        let externalDiskDiscovery = LockerRoomExternalDiskDiscoveryMock()
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         
@@ -67,7 +66,6 @@ final class EncryptedLockboxTests: XCTestCase {
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
             encryptionComponents: encryptionComponents,
             encryptionLockboxKeys: encryptionLockboxKeys,
-            lockerRoomExternalDiskDiscovery: externalDiskDiscovery,
             lockerRoomStore: store
         ) else {
             XCTFail("Failed to create encrypted lockbox")
@@ -132,7 +130,6 @@ final class EncryptedLockboxTests: XCTestCase {
             )
         ]
         
-        let externalDiskDiscovery = LockerRoomExternalDiskDiscoveryMock()
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         store.encryptedLockboxMetadata = EncryptedLockbox.Metadata(
@@ -148,7 +145,7 @@ final class EncryptedLockboxTests: XCTestCase {
         
         let lockerRoomLockbox = LockerRoomLockbox(id: id, name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptionKeyNames: [String]())
         
-        guard let encryptedLockbox = EncryptedLockbox.create(from: lockerRoomLockbox, lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomStore: store) else {
+        guard let encryptedLockbox = EncryptedLockbox.create(from: lockerRoomLockbox, lockerRoomStore: store) else {
             XCTFail("Failed to create encrypted lockbox")
             return
         }
@@ -178,7 +175,6 @@ final class EncryptedLockboxTests: XCTestCase {
         let size = 0
         let isExternal = false
         
-        let externalDiskDiscovery = LockerRoomExternalDiskDiscoveryMock()
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         
@@ -190,7 +186,6 @@ final class EncryptedLockboxTests: XCTestCase {
             encryptedSymmetricKeysBySerialNumber: [UInt32:Data](),
             encryptionComponents: LockboxCryptorComponents(),
             encryptionLockboxKeys: [LockboxKey](),
-            lockerRoomExternalDiskDiscovery: externalDiskDiscovery,
             lockerRoomStore: store
         )
         
@@ -202,7 +197,6 @@ final class EncryptedLockboxTests: XCTestCase {
         let size = 10
         let isExternal = false
         
-        let externalDiskDiscovery = LockerRoomExternalDiskDiscoveryMock()
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         store.failToWriteEncryptedLockboxMetadata = true
@@ -215,7 +209,6 @@ final class EncryptedLockboxTests: XCTestCase {
             encryptedSymmetricKeysBySerialNumber: [UInt32:Data](),
             encryptionComponents: LockboxCryptorComponents(),
             encryptionLockboxKeys: [LockboxKey](),
-            lockerRoomExternalDiskDiscovery: externalDiskDiscovery,
             lockerRoomStore: store
         )
         
@@ -230,11 +223,10 @@ final class EncryptedLockboxTests: XCTestCase {
         
         let lockerRoomLockbox = LockerRoomLockbox(id: id, name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptionKeyNames: [String]())
         
-        let externalDiskDiscovery = LockerRoomExternalDiskDiscoveryMock()
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         
-        let encryptedLockbox = EncryptedLockbox.create(from: lockerRoomLockbox, lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomStore: store)
+        let encryptedLockbox = EncryptedLockbox.create(from: lockerRoomLockbox, lockerRoomStore: store)
         
         XCTAssertNil(encryptedLockbox)
     }
@@ -247,12 +239,11 @@ final class EncryptedLockboxTests: XCTestCase {
         
         let lockerRoomLockbox = LockerRoomLockbox(id: id, name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptionKeyNames: [String]())
         
-        let externalDiskDiscovery = LockerRoomExternalDiskDiscoveryMock()
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
         store.failToReadEncryptedLockboxMetadata = true
         
-        let encryptedLockbox = EncryptedLockbox.create(from: lockerRoomLockbox, lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomStore: store)
+        let encryptedLockbox = EncryptedLockbox.create(from: lockerRoomLockbox, lockerRoomStore: store)
         
         XCTAssertNil(encryptedLockbox)
     }

@@ -17,7 +17,6 @@ final class LockboxCryptorTests: XCTestCase {
         let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
         let defaults = LockerRoomDefaultsMock()
-        let externalDiskDiscovery = LockerRoomExternalDiskDiscoveryMock()
         let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         let keyGenerator = LockboxKeyGenerator()
@@ -37,7 +36,7 @@ final class LockboxCryptorTests: XCTestCase {
         var diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
         diskController.unencryptedContent = unencryptedContent
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults,  lockerRoomDiskController: diskController, lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults,  lockerRoomDiskController: diskController, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
             return
         }
@@ -47,7 +46,7 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
         
-        guard let encryptedLockbox = EncryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionComponents: LockboxCryptorComponents(), encryptionLockboxKeys: [LockboxKey](), lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomStore: store) else {
+        guard let encryptedLockbox = EncryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionComponents: LockboxCryptorComponents(), encryptionLockboxKeys: [LockboxKey](), lockerRoomStore: store) else {
             XCTFail("Failed to create encrypted lockbox")
             return
         }
@@ -79,7 +78,6 @@ final class LockboxCryptorTests: XCTestCase {
         let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
         let defaults = LockerRoomDefaultsMock()
-        let externalDiskDiscovery = LockerRoomExternalDiskDiscoveryMock()
         let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         let cryptor = LockboxCryptor()
@@ -98,7 +96,7 @@ final class LockboxCryptorTests: XCTestCase {
         var diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
         diskController.unencryptedContent = unencryptedContent
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults, lockerRoomDiskController: diskController, lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults, lockerRoomDiskController: diskController, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
             return
         }
@@ -108,7 +106,7 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
         
-        guard let encryptedLockbox = EncryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionComponents: LockboxCryptorComponents(), encryptionLockboxKeys: [LockboxKey](), lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomStore: store) else {
+        guard let encryptedLockbox = EncryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionComponents: LockboxCryptorComponents(), encryptionLockboxKeys: [LockboxKey](), lockerRoomStore: store) else {
             XCTFail("Failed to create encrypted lockbox")
             return
         }
@@ -140,7 +138,6 @@ final class LockboxCryptorTests: XCTestCase {
         let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
         let defaults = LockerRoomDefaultsMock()
-        let externalDiskDiscovery = LockerRoomExternalDiskDiscoveryMock()
         let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         let keyGenerator = LockboxKeyGenerator()
@@ -160,7 +157,7 @@ final class LockboxCryptorTests: XCTestCase {
         var diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
         diskController.unencryptedContent = unencryptedContent
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults,  lockerRoomDiskController: diskController, lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults,  lockerRoomDiskController: diskController, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
             return
         }
@@ -170,7 +167,7 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
         
-        guard let encryptedLockbox = EncryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionComponents: components, encryptionLockboxKeys: [LockboxKey](), lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomStore: store) else {
+        guard let encryptedLockbox = EncryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionComponents: components, encryptionLockboxKeys: [LockboxKey](), lockerRoomStore: store) else {
             XCTFail("Failed to create encrypted lockbox")
             return
         }
@@ -202,7 +199,6 @@ final class LockboxCryptorTests: XCTestCase {
         let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
         let defaults = LockerRoomDefaultsMock()
-        let externalDiskDiscovery = LockerRoomExternalDiskDiscoveryMock()
         let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
         let keyGenerator = LockboxKeyGenerator()
@@ -222,7 +218,7 @@ final class LockboxCryptorTests: XCTestCase {
         var diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
         diskController.unencryptedContent = unencryptedContent
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults,  lockerRoomDiskController: diskController, lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: unencryptedContent.count, isExternal: isExternal, lockerRoomDefaults: defaults,  lockerRoomDiskController: diskController, lockerRoomRemoteService: remoteService, lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
             return
         }
@@ -232,7 +228,7 @@ final class LockboxCryptorTests: XCTestCase {
             return
         }
         
-        guard let encryptedLockbox = EncryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionComponents: components, encryptionLockboxKeys: [LockboxKey](), lockerRoomExternalDiskDiscovery: externalDiskDiscovery, lockerRoomStore: store) else {
+        guard let encryptedLockbox = EncryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: [UInt32:Data](), encryptionComponents: components, encryptionLockboxKeys: [LockboxKey](), lockerRoomStore: store) else {
             XCTFail("Failed to create encrypted lockbox")
             return
         }

@@ -74,7 +74,7 @@ import os.log
     }
     
     func addUnencryptedLockbox(id: UUID, name: String, size: Int, isExternal: Bool) async -> UnencryptedLockbox? {
-        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskController: lockerRoomDiskController, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskController: lockerRoomDiskController, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
             Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
             return nil
         }
@@ -152,7 +152,7 @@ import os.log
     func encrypt(lockbox: LockerRoomLockbox, usingEnrolledKeys enrolledKeysToUse: [LockerRoomEnrolledKey]) async -> Bool {
         let startTime = CFAbsoluteTimeGetCurrent()
         
-        guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomStore: lockerRoomStore) else {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore) else {
             Logger.manager.log("Locker room manager failed to create unencrypted lockbox \(lockbox.name)")
             return false
         }
@@ -286,7 +286,7 @@ import os.log
     func decrypt(lockbox: LockerRoomLockbox, symmetricKeyData: Data) async -> Bool {
         let startTime = CFAbsoluteTimeGetCurrent()
         
-        guard let encryptedLockbox = EncryptedLockbox.create(from: lockbox, lockerRoomExternalDiskDiscovery: lockerRoomExternalDiskDiscovery, lockerRoomStore: lockerRoomStore) else {
+        guard let encryptedLockbox = EncryptedLockbox.create(from: lockbox, lockerRoomStore: lockerRoomStore) else {
             Logger.manager.log("Locker room manager failed to created encrypted lockbox \(lockbox.name)")
             return false
         }
