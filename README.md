@@ -66,9 +66,9 @@ $ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom ExperimentalPIVSlo
 
 Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU commands](https://docs.yubico.com/yesdk/users-manual/yubikey-reference/apdu.html) directly to the external hardware device. This bypasses the limitations of the YubiKey SDK and encodes the unsupported slot into the command's raw data.
 
-#### External Disk Discovery and Encryption
+#### External Disk Discovery
 
-An external hard drive with a single APFS Container, containing at least one APFS Volume, can be used as a lockbox. Locker Room can be configured to discover, encrypt and decrypt external disks with the followng command:
+An external disk device with a single APFS Container, containing at least one APFS Volume, can be used as a lockbox. Locker Room can be configured to discover, encrypt and decrypt external disks with the followng command:
 ```
 $ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom ExternalDisksEnabled -bool true
 ```
