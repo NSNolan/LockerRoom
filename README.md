@@ -64,6 +64,8 @@ $ csrutil disable
 
 Out-of-process disk operations are an incremental step towards running Locker Room inside of an App Sandbox. Locker Room will not enable App Sandboxing until the launch daemon is codesigned with a developer identity, provisioning profile and can be run without disabling System Integrity Protection. 
 
+Logs that are emitted from the launch daemon process will redact all dynamic variables. To enable private logging install the profile [EnablePrivateLogging.mobileconfig](Debug/EnablePrivateLogging.mobileconfig) on your host machine.
+
 #### Retired PIV Slots
 
 The YubiKey SDK allows for using the following PIV slots: PIV Authentication (9a), Digital Signature (9c), Key Management (9d), Card Authentication (9e) and Attestation (f9). These slots have canonical usages and do not typically store a raw RSA or ECC private key for encryption and decryption. Even though there is no direct support via the YubiKey SDK, there does exists 20 retired key management slots (82-95) capable of storing a raw private key. So that a user does not have to reserve or misuse one of the supported PIV slots for a raw private key, Locker Room can be configured to allow a user to enroll a key using one of these unsupported PIV slots with the following command:
