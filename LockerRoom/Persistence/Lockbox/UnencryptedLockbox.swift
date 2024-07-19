@@ -59,7 +59,7 @@ struct UnencryptedLockbox: LockboxStreaming {
             }
         }
         
-        guard let streams = streams(id: id, name: name, isEncrypted: false, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
+        guard let streams = streams(name: name, isEncrypted: false, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
             Logger.persistence.error("Unencrypted lockbox failed to create input/output streams for \(name)")
             return nil
         }
@@ -94,7 +94,7 @@ struct UnencryptedLockbox: LockboxStreaming {
         let size = metadata.size
         let isExternal = metadata.isExternal
         
-        guard let streams = streams(id: id, name: name, isEncrypted: isEncrypted, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
+        guard let streams = streams(name: name, isEncrypted: isEncrypted, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
             Logger.persistence.error("Unencrypted lockbox failed to create input and output streams for \(name)")
             return nil
         }

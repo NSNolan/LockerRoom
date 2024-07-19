@@ -10,11 +10,11 @@ import Foundation
 import os.log
 
 protocol LockboxStreaming {
-    static func streams(id: UUID, name: String, isEncrypted: Bool, isExternal: Bool, lockerRoomStore: LockerRoomStoring) -> (input: InputStream, output: OutputStream)?
+    static func streams(name: String, isEncrypted: Bool, isExternal: Bool, lockerRoomStore: LockerRoomStoring) -> (input: InputStream, output: OutputStream)?
 }
 
 extension LockboxStreaming {
-    static func streams(id: UUID, name: String, isEncrypted: Bool, isExternal: Bool, lockerRoomStore: LockerRoomStoring) -> (input: InputStream, output: OutputStream)? {
+    static func streams(name: String, isEncrypted: Bool, isExternal: Bool, lockerRoomStore: LockerRoomStoring) -> (input: InputStream, output: OutputStream)? {
         if isExternal { // External lockbox streams must be configured by the Launch Daemon.
             return (InputStream(), OutputStream())
         }

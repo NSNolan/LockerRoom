@@ -51,7 +51,7 @@ struct EncryptedLockbox: LockboxStreaming {
             return nil
         }
         
-        guard let streams = streams(id: id, name: name, isEncrypted: true, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
+        guard let streams = streams(name: name, isEncrypted: true, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
             Logger.persistence.error("Encrypted lockbox failed to create input/output streams for \(name)")
             return nil
         }
@@ -89,7 +89,7 @@ struct EncryptedLockbox: LockboxStreaming {
         let encryptionComponents = metadata.encryptionComponents
         let encryptionLockboxKeys = metadata.encryptionLockboxKeys
         
-        guard let streams = streams(id: id, name: name, isEncrypted: isEncrypted, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
+        guard let streams = streams(name: name, isEncrypted: isEncrypted, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
             Logger.persistence.error("Encrypted lockbox failed to create input and output streams for lockbox \(name)")
             return nil
         }
