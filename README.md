@@ -2,7 +2,7 @@
 
 ### Abstract
 
-Locker Room is a macOS application to create, encrypt and decrypt local disk images using a public-private key pair generated on an external hardware device. Locker Room is used to secure digital assets with physical hardware. YubiKey is currently the only supported external hardware device.
+Locker Room is a macOS application to create, encrypt and decrypt personal lockboxes using a cryptographic key pair generated on an external hardware device. Locker Room is used to secure digital assets with physical hardware. YubiKey is currently the only supported external hardware device.
 
 ### How To Use
 
@@ -34,7 +34,7 @@ Selecting "Show Key Selection" will allow the user to specify which keys to use 
 And double-clicking an encrypted lockbox will prompt the user to decrypt it:
 ![](Images/Locker-Room-Decrypt-Lockbox.png) 
 
-Encryption does not require an external hardware device to be present because only previously enrolled keys are used. Decryption does require an external hardware device to be present because the private key stored on the external hardware device is needed for decryption. After an encrypted lockbox is selected for decryption, Locker Room will wait for an external hardware device to become present. If the lockbox was encrypted using an enrolled key corresponding to the presented external hardware device then the decryption process will complete.
+Encryption does not require an external hardware device to be present because only previously enrolled keys are used. Decryption always requires an external hardware device to be present because the private key stored on the external hardware device is needed for decryption. After an encrypted lockbox is selected for decryption, Locker Room will wait for an external hardware device to become present. If the lockbox was encrypted using an enrolled key corresponding to the presented external hardware device then the decryption process will complete.
 
 ### Experimental Details
 
@@ -68,7 +68,7 @@ Enrolling a key with an unsupported PIV slot is achieved by sending [ADPU comman
 
 #### External Disk Discovery
 
-An external disk device with a single APFS Container, containing at least one APFS Volume, can be used as a lockbox. Locker Room can be configured to discover, encrypt and decrypt external disks with the followng command:
+An external disk device with a single APFS Container, containing one or more APFS Volumes, can be used as a lockbox. Locker Room can be configured to discover, encrypt and decrypt external disks with the followng command:
 ```
 $ defaults write ~/Library/Preferences/com.nsnolan.LockerRoom ExternalDisksEnabled -bool true
 ```
@@ -88,11 +88,11 @@ Out-of-Process disk operations must also be enabled using the User Defaults `Rem
 
 ### Technical Details
 
-A lockbox is logically a disk image. While a lockbox is unencrypted the disk image can be attached and a volume can be mounted as a filesystem. While a lockbox is encrypted, the disk image cannot be accessed.
+A lockbox is logically a disk image. While a lockbox is unencrypted the disk image can be attached and the contained volume can be mounted. While a lockbox is encrypted, the disk image cannot be accessed.
 
 An enrolled key is logically a public key and serial number that maps to an external hardware device containing the corresponding private key. The type of public-private key pair is determined by the configuration details used when the key is enrolled.
 
-An external lockbox is logically a connected disk device with at least one mountable APFS Volume. While an external lockbox is unencrypted the associated disk device's volumes can be mounted as a filesystem. While the external lockbox is encrypted, the associated disk device's volumes cannot be accessed. External lockboxes only supports a disk device with a single APFS Container containing at least one mountable APFS Volume. Locker Room accesses the external disk's APFS Container physical store via the filehandle that is exposed at `/dev/` while the disk device is connected.
+An external lockbox is logically a connected disk device with one or more mountable APFS Volumes. While an external lockbox is unencrypted and present the associated disk device's volumes can be mounted. While the external lockbox is encrypted, the associated disk device's volumes cannot be accessed. External lockboxes only supports a disk device with a single APFS Container containing one or more mountable APFS Volumes. Locker Room accesses the external disk's APFS Container physical store via the filehandle that is exposed at `/dev/` while the disk device is connected.
 
 #### Encryption
 
