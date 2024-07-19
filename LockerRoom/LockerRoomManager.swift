@@ -25,7 +25,7 @@ import os.log
     private let lockerRoomStore: LockerRoomStoring
     
     private init(
-        lockboxCryptor: LockboxCrypting = LockboxCryptor(),
+        lockboxCryptor: LockboxCrypting? = nil,
         lockboxKeyCryptor: LockboxKeyCrypting = LockboxKeyCryptor(),
         lockboxKeyGenerator: LockboxKeyGenerating = LockboxKeyGenerator(),
         lockerRoomDefaults: LockerRoomDefaulting = LockerRoomDefaults(),
@@ -35,7 +35,9 @@ import os.log
         lockerRoomStore: LockerRoomStoring? = nil,
         lockerRoomURLProvider: LockerRoomURLProviding = LockerRoomURLProvider()
     ) {
-        self.lockboxCryptor = lockboxCryptor
+        self.lockboxCryptor = lockboxCryptor ?? LockboxCryptor(
+            lockerRoomDefaults: lockerRoomDefaults
+        )
         self.lockboxKeyCryptor = lockboxKeyCryptor
         self.lockboxKeyGenerator = lockboxKeyGenerator
         self.lockerRoomDefaults = lockerRoomDefaults

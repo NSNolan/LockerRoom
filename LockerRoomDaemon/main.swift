@@ -188,7 +188,7 @@ extension LockerRoomDaemon: LockerRoomRemoteDiskControlling {
 }
 
 extension LockerRoomDaemon: LockerRoomRemoteStreamCrypting {
-    func encrypt(inputPath: String, outputPath: String, symmetricKeyData: Data, _ replyHandler: @escaping (Bool) -> Void) {
+    func encrypt(inputPath: String, outputPath: String, chunkSizeInBytes: Int, symmetricKeyData: Data, _ replyHandler: @escaping (Bool) -> Void) {
         let streamCryptor = LockboxStreamCryptor()
         
         guard let inputStream = InputStream(fileAtPath: inputPath) else {
@@ -203,7 +203,12 @@ extension LockerRoomDaemon: LockerRoomRemoteStreamCrypting {
             return
         }
         
-        let result = streamCryptor.encrypt(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData)
+        let result = streamCryptor.encrypt(
+            inputStream: inputStream,
+            outputStream: outputStream,
+            chunkSizeInBytes: chunkSizeInBytes,
+            symmetricKeyData: symmetricKeyData
+        )
         replyHandler(result)
     }
     
@@ -222,11 +227,14 @@ extension LockerRoomDaemon: LockerRoomRemoteStreamCrypting {
             return
         }
         
-        let result = streamCryptor.decrypt(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData)
+        let result = streamCryptor.decrypt(
+            inputStream: inputStream, outputStream: outputStream,
+            symmetricKeyData: symmetricKeyData
+        )
         replyHandler(result)
     }
     
-    func encryptExtractingComponents(inputPath: String, outputPath: String, symmetricKeyData: Data, _ replyHandler: @escaping (LockboxCryptorComponents?) -> Void) {
+    func encryptExtractingComponents(inputPath: String, outputPath: String, chunkSizeInBytes: Int, symmetricKeyData: Data, _ replyHandler: @escaping (LockboxCryptorComponents?) -> Void) {
         let streamCryptor = LockboxStreamCryptor()
         
         guard let inputStream = InputStream(fileAtPath: inputPath) else {
@@ -241,7 +249,12 @@ extension LockerRoomDaemon: LockerRoomRemoteStreamCrypting {
             return
         }
         
-        let result = streamCryptor.encryptExtractingComponents(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData)
+        let result = streamCryptor.encryptExtractingComponents(
+            inputStream: inputStream,
+            outputStream: outputStream,
+            chunkSizeInBytes: chunkSizeInBytes,
+            symmetricKeyData: symmetricKeyData
+        )
         replyHandler(result)
     }
     
@@ -260,7 +273,12 @@ extension LockerRoomDaemon: LockerRoomRemoteStreamCrypting {
             return
         }
         
-        let result = streamCryptor.decryptWithComponents(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData, components: components)
+        let result = streamCryptor.decryptWithComponents(
+            inputStream: inputStream,
+            outputStream: outputStream,
+            symmetricKeyData: symmetricKeyData,
+            components: components
+        )
         replyHandler(result)
     }
 }

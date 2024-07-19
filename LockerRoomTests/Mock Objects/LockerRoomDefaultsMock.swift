@@ -8,6 +8,7 @@
 import Foundation
 
 struct LockerRoomDefaultsMock: LockerRoomDefaulting {
+    var cryptorChunkSizeInBytes: Int = 256 * 1024 // 256 KB
     var experimentalPIVSlotsEnabled = false
     var externalDisksEnabled = false
     var remoteServiceEnabled = false

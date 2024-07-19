@@ -38,6 +38,13 @@ Encryption does not require an external hardware device to be present because on
 
 ### Experimental Details
 
+#### Cryptor Chunk Size
+
+The lockbox encryption and decryption routines read data into memory in chunks. The default chunk size is 256 KB. Locker Room can be configured to use a chunk size up to 1 GB with the following command: 
+```
+defaults write ~/Library/Preferences/com.nsnolan.LockerRoom CryptorChunkSizeInBytes -int 1048576 // Sets chunk size to 1 MB.
+```
+
 #### Out-of-Process Disk Operations
 
 Creating, attaching, detaching, mounting and unmounting a disk image using `hdiutil` from an app's main process is prevented when running in an [App Sandbox](https://developer.apple.com/documentation/security/app_sandbox). Locker Room can be configured to perform disk images operations outside of the app's main process with the following command:

@@ -13,29 +13,40 @@ import os.log
 typealias LockboxCryptorComponents = [[String:Data]]
 
 protocol LockboxStreamCrypting {
-    func encrypt(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data) -> Bool
-    func decrypt(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data) -> Bool    
-    func encryptExtractingComponents(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data) -> LockboxCryptorComponents?
+    func encrypt(inputStream: InputStream, outputStream: OutputStream, chunkSizeInBytes: Int, symmetricKeyData: Data) -> Bool
+    func decrypt(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data) -> Bool
+    func encryptExtractingComponents(inputStream: InputStream, outputStream: OutputStream, chunkSizeInBytes: Int, symmetricKeyData: Data) -> LockboxCryptorComponents?
     func decryptWithComponents(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data, components: LockboxCryptorComponents) -> Bool
 }
 
 struct LockboxStreamCryptor: LockboxStreamCrypting {
-    private static let chunkSize = 256 * 1024 // 256 KB
     private static let chunkSizeBufferSize = 8
     
     private static let authTagKey = "AuthTag"
     private static let nonceDataKey = "NonceData"
     private static let ciphertextSizeDataKey = "CiphertextSizeData"
     
-    func encrypt(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data) -> Bool {
-        return processLockbox(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData, encrypt: true)
+    func encrypt(inputStream: InputStream, outputStream: OutputStream, chunkSizeInBytes: Int, symmetricKeyData: Data) -> Bool {
+        return processLockbox(
+            inputStream: inputStream,
+            outputStream: outputStream,
+            chunkSizeInBytes: chunkSizeInBytes,
+            symmetricKeyData: symmetricKeyData,
+            encrypt: true
+        )
     }
     
     func decrypt(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data) -> Bool {
-        return processLockbox(inputStream: inputStream, outputStream: outputStream, symmetricKeyData: symmetricKeyData, encrypt: false)
+        return processLockbox(
+            inputStream: inputStream,
+            outputStream: outputStream,
+            chunkSizeInBytes: 0,
+            symmetricKeyData: symmetricKeyData,
+            encrypt: false
+        )
     }
     
-    func encryptExtractingComponents(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data) -> LockboxCryptorComponents? {
+    func encryptExtractingComponents(inputStream: InputStream, outputStream: OutputStream, chunkSizeInBytes: Int, symmetricKeyData: Data) -> LockboxCryptorComponents? {
         defer {
             inputStream.close()
             outputStream.close()
@@ -48,7 +59,7 @@ struct LockboxStreamCryptor: LockboxStreamCrypting {
         var components = LockboxCryptorComponents()
         
         while inputStream.hasBytesAvailable {
-            var buffer = [UInt8](repeating: 0, count: Self.chunkSize)
+            var buffer = [UInt8](repeating: 0, count: chunkSizeInBytes)
             let bytesRead = read(inputStream: inputStream, buffer: &buffer)
             if bytesRead == 0 {
                 break
@@ -188,7 +199,7 @@ struct LockboxStreamCryptor: LockboxStreamCrypting {
         return success
     }
     
-    private func processLockbox(inputStream: InputStream, outputStream: OutputStream, symmetricKeyData: Data, encrypt: Bool) -> Bool {
+    private func processLockbox(inputStream: InputStream, outputStream: OutputStream, chunkSizeInBytes: Int, symmetricKeyData: Data, encrypt: Bool) -> Bool {
         defer {
             inputStream.close()
             outputStream.close()
@@ -201,7 +212,7 @@ struct LockboxStreamCryptor: LockboxStreamCrypting {
         while inputStream.hasBytesAvailable {
             let bufferSize: Int
             if encrypt {
-                bufferSize = Self.chunkSize
+                bufferSize = chunkSizeInBytes
             } else {
                 var chunkSizeBuffer = [UInt8](repeating: 0, count: Self.chunkSizeBufferSize)
                 let chunkSizeBytesRead = read(inputStream: inputStream, buffer: &chunkSizeBuffer)

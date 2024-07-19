@@ -26,7 +26,7 @@ final class LockboxCryptorTests: XCTestCase {
         let decryptedContentURL = urlProvider.urlForLockboxUnencryptedContent(name: name)
         let decryptedContentPath = decryptedContentURL.path(percentEncoded: false)
         
-        let cryptor = LockboxCryptor()
+        let cryptor = LockboxCryptor(lockerRoomDefaults: defaults)
         
         guard let unencryptedContent = LockerRoomTestUtilities.createRandomData(size: size) else {
             XCTFail("Failed to create random unencrypted content")
@@ -80,7 +80,7 @@ final class LockboxCryptorTests: XCTestCase {
         let defaults = LockerRoomDefaultsMock()
         let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
         
-        let cryptor = LockboxCryptor()
+        let cryptor = LockboxCryptor(lockerRoomDefaults: defaults)
         let keyGenerator = LockboxKeyGenerator()
         let symmetricKeyData = keyGenerator.generateSymmetricKeyData()
         
@@ -147,7 +147,7 @@ final class LockboxCryptorTests: XCTestCase {
         let decryptedContentURL = urlProvider.urlForLockboxUnencryptedContent(name: name)
         let decryptedContentPath = decryptedContentURL.path(percentEncoded: false)
         
-        let cryptor = LockboxCryptor()
+        let cryptor = LockboxCryptor(lockerRoomDefaults: defaults)
         
         guard let unencryptedContent = LockerRoomTestUtilities.createRandomData(size: size) else {
             XCTFail("Failed to create random unencrypted content")
@@ -208,7 +208,7 @@ final class LockboxCryptorTests: XCTestCase {
         let decryptedContentURL = urlProvider.urlForLockboxUnencryptedContent(name: name)
         let decryptedContentPath = decryptedContentURL.path(percentEncoded: false)
         
-        let cryptor = LockboxCryptor()
+        let cryptor = LockboxCryptor(lockerRoomDefaults: defaults)
         
         guard let unencryptedContent = LockerRoomTestUtilities.createRandomData(size: size) else {
             XCTFail("Failed to create random unencrypted content")

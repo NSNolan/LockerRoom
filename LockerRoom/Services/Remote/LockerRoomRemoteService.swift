@@ -278,7 +278,12 @@ extension LockerRoomRemoteService {
                     Logger.service.fault("Locker room remote service failed to cast proxy object")
                     return
                 }
-                daemon.encrypt(inputPath: inputPath, outputPath: outputPath, symmetricKeyData: symmetricKeyData) { encryptResult in
+                daemon.encrypt(
+                    inputPath: inputPath,
+                    outputPath: outputPath,
+                    chunkSizeInBytes: lockerRoomDefaults.cryptorChunkSizeInBytes,
+                    symmetricKeyData: symmetricKeyData
+                ) { encryptResult in
                     success = encryptResult
                 }
                 
@@ -304,7 +309,11 @@ extension LockerRoomRemoteService {
                     Logger.service.fault("Locker room remote service failed to cast proxy object")
                     return
                 }
-                daemon.decrypt(inputPath: inputPath, outputPath: outputPath, symmetricKeyData: symmetricKeyData) { decryptResult in
+                daemon.decrypt(
+                    inputPath: inputPath,
+                    outputPath: outputPath,
+                    symmetricKeyData: symmetricKeyData
+                ) { decryptResult in
                     success = decryptResult
                 }
                 
@@ -330,7 +339,12 @@ extension LockerRoomRemoteService {
                     Logger.service.fault("Locker room remote service failed to cast proxy object")
                     return
                 }
-                daemon.encryptExtractingComponents(inputPath: inputPath, outputPath: outputPath, symmetricKeyData: symmetricKeyData) { encryptResult in
+                daemon.encryptExtractingComponents(
+                    inputPath: inputPath,
+                    outputPath: outputPath,
+                    chunkSizeInBytes: lockerRoomDefaults.cryptorChunkSizeInBytes,
+                    symmetricKeyData: symmetricKeyData
+                ) { encryptResult in
                     components = encryptResult
                 }
                 
@@ -356,7 +370,12 @@ extension LockerRoomRemoteService {
                     Logger.service.fault("Locker room remote service failed to cast proxy object")
                     return
                 }
-                daemon.decryptWithComponents(inputPath: inputPath, outputPath: outputPath, symmetricKeyData: symmetricKeyData, components: components) { decryptResult in
+                daemon.decryptWithComponents(
+                    inputPath: inputPath,
+                    outputPath: outputPath,
+                    symmetricKeyData: symmetricKeyData,
+                    components: components
+                ) { decryptResult in
                     success = decryptResult
                 }
                 
