@@ -64,7 +64,12 @@ $ csrutil disable
 
 Out-of-process disk operations are an incremental step towards running Locker Room inside of an App Sandbox. Locker Room will not enable App Sandboxing until the launch daemon is codesigned with a developer identity, provisioning profile and can be run without disabling System Integrity Protection. 
 
-Logs that are emitted from the launch daemon process will redact all dynamic variables. To enable private logging install the profile [EnablePrivateLogging.mobileconfig](Debug/EnablePrivateLogging.mobileconfig) on your host machine.
+Logs that are emitted from the launch daemon will redact all dynamic variables. To install a profile that enables private logging run the following commands:
+```
+$ curl -L https://raw.githubusercontent.com/NSNolan/LockerRoom/main/Debug/EnablePrivateLogging.mobileconfig -o ~/Downloads/EnablePrivateLogging.mobileconfig
+$ open ~/Downloads/EnablePrivateLogging.mobileconfig
+```
+*Be sure to finalize the profile installation in System Settings > Privacy & Security > Profiles.*
 
 #### Retired PIV Slots
 
