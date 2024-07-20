@@ -25,30 +25,26 @@ extension LockboxStreaming {
         let encryptedContentURL = lockerRoomStore.lockerRoomURLProvider.urlForLockboxEncryptedContent(name: name)
         let encryptedContentPath = encryptedContentURL.path(percentEncoded: false)
         
+        let inputPath: String
+        let outputPath: String
         if isEncrypted {
-            guard let inputStream = InputStream(fileAtPath: encryptedContentPath) else {
-                Logger.persistence.error("Encrypted lockbox failed to create input stream for \(name) at path \(encryptedContentPath)")
-                return nil
-            }
-            
-            guard let outputStream = OutputStream(toFileAtPath: unencryptedContentPath, append: false) else {
-                Logger.persistence.error("Encrypted lockbox failed to create output stream  for \(name) to path \(unencryptedContentPath)")
-                return nil
-            }
-            
-            return (inputStream, outputStream)
+            inputPath = encryptedContentPath
+            outputPath = unencryptedContentPath
         } else {
-            guard let inputStream = InputStream(fileAtPath: unencryptedContentPath) else {
-                Logger.persistence.error("Unencrypted lockbox failed to create input stream for \(name) at path \(unencryptedContentPath)")
-                return nil
-            }
-            
-            guard let outputStream = OutputStream(toFileAtPath: encryptedContentPath, append: false) else {
-                Logger.persistence.error("Unencrypted lockbox failed to create output stream  for \(name) to path \(encryptedContentPath)")
-                return nil
-            }
-            
-            return (inputStream, outputStream)
+            inputPath = unencryptedContentPath
+            outputPath = encryptedContentPath
         }
+        
+        guard let inputStream = InputStream(fileAtPath: inputPath) else {
+            Logger.persistence.error("Lockbox streaming failed to create input stream for \(name) at path \(inputPath)")
+            return nil
+        }
+        
+        guard let outputStream = OutputStream(toFileAtPath: outputPath, append: false) else {
+            Logger.persistence.error("Lockbox streaming failed to create output stream  for \(name) to path \(outputPath)")
+            return nil
+        }
+        
+        return (inputStream, outputStream)
     }
 }
