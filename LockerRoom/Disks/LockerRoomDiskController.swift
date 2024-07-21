@@ -123,7 +123,7 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
     }
     
     func mount(name: String) -> Bool {
-        let deviceURL = lockerRoomURLProvider.urlForAttachedDevice(name: name)
+        let deviceURL = lockerRoomURLProvider.urlForConnectedBlockDevice(name: name)
         let devicePath = deviceURL.path(percentEncoded: false)
         return execute(
             launchPath: LockerRoomDiskController.hdiutilLaunchPath,

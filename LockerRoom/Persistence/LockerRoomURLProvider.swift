@@ -23,7 +23,8 @@ protocol LockerRoomURLProviding {
     func urlForKey(name: String) -> URL
     func urlForKeyFile(name: String) -> URL
     
-    func urlForAttachedDevice(name: String) -> URL
+    func urlForConnectedBlockDevice(name: String) -> URL
+    func urlForConnectedCharacterDevice(name: String) -> URL
     func urlForMountedVolume(name: String) -> URL
 }
 
@@ -91,8 +92,13 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
         return urlForKey(name: name).appending(component: LockerRoomURLProvider.lockboxKeyFileName)
     }
     
-    func urlForAttachedDevice(name: String) -> URL {
+    func urlForConnectedBlockDevice(name: String) -> URL {
         return URL(filePath: LockerRoomURLProvider.devicePathComponent).appending(component: name)
+    }
+    
+    func urlForConnectedCharacterDevice(name: String) -> URL {
+        let rDiskName = "r" + name
+        return URL(filePath: LockerRoomURLProvider.devicePathComponent).appending(component: rDiskName)
     }
     
     func urlForMountedVolume(name: String) -> URL {

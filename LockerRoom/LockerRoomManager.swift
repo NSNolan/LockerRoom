@@ -214,7 +214,7 @@ import os.log
             
             _ = unmountVolume(name: name) // Non-fatal; it may already be unmounted
             
-            let deviceURL = lockerRoomStore.lockerRoomURLProvider.urlForAttachedDevice(name: bsdName)
+            let deviceURL = lockerRoomStore.lockerRoomURLProvider.urlForConnectedCharacterDevice(name: bsdName)
             let devicePath = deviceURL.path(percentEncoded: false)
             
             encryptionComponents = lockerRoomRemoteService.encryptExtractingComponents(inputPath: devicePath, outputPath: devicePath, symmetricKeyData: symmetricKeyData)
@@ -316,7 +316,7 @@ import os.log
             }
             let bsdName = externalDisk.bsdName
             
-            let deviceURL = lockerRoomStore.lockerRoomURLProvider.urlForAttachedDevice(name: bsdName)
+            let deviceURL = lockerRoomStore.lockerRoomURLProvider.urlForConnectedCharacterDevice(name: bsdName)
             let devicePath = deviceURL.path(percentEncoded: false)
             
             guard let encryptionComponents else {
