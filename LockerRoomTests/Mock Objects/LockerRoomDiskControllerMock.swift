@@ -20,6 +20,7 @@ struct LockerRoomDiskControllerMock: LockerRoomDiskControlling {
     var failToDetach = false
     var failToMount = false
     var failToUnmount = false
+    var failToVerify = false
     
     init(lockerRoomURLProvider: LockerRoomURLProviding) {
         self.lockerRoomURLProvider = lockerRoomURLProvider
@@ -93,5 +94,9 @@ struct LockerRoomDiskControllerMock: LockerRoomDiskControlling {
     
     func unmount(name: String) -> Bool {
         return !failToUnmount
+    }
+    
+    func verify(name: String) -> Bool {
+        return !failToVerify
     }
 }

@@ -17,9 +17,11 @@ protocol LockerRoomDiskControlling {
     func detach(name: String) -> Bool
     func mount(name: String) -> Bool
     func unmount(name: String) -> Bool
+    func verify(name: String) -> Bool
 }
 
 struct LockerRoomDiskController: LockerRoomDiskControlling {
+    static let diskutilLaunchPath = "/usr/sbin/diskutil"
     static let hdiutilLaunchPath = "/usr/bin/hdiutil"
     static let openLaunchPath = "/usr/bin/open"
     
@@ -128,7 +130,7 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
         return execute(
             launchPath: LockerRoomDiskController.hdiutilLaunchPath,
             arguments: [
-                "mount",
+                "mountvol",
                 "-verbose",
                 devicePath
             ],
@@ -143,8 +145,22 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
             launchPath: LockerRoomDiskController.hdiutilLaunchPath,
             arguments: [
                 "unmount",
+                "-force",
                 "-verbose",
                 mountedVolumePath
+            ],
+            name: name
+        )
+    }
+    
+    func verify(name: String) -> Bool {
+        let deviceURL = lockerRoomURLProvider.urlForConnectedBlockDevice(name: name)
+        let devicePath = deviceURL.path(percentEncoded: false)
+        return execute(
+            launchPath: LockerRoomDiskController.diskutilLaunchPath,
+            arguments: [
+                "verifyVolume",
+                devicePath
             ],
             name: name
         )

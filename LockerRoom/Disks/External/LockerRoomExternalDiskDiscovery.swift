@@ -14,6 +14,8 @@ protocol LockerRoomExternalDiskDiscovering {
     
     func activate() -> Bool
     func invalidate() -> Bool
+    
+    func waitForExternalDiskDeviceToAppear(id: UUID, volumeCount: Int, timeoutInSeconds: Int) async -> LockerRoomExternalDiskDevice?
 }
 
 @Observable class LockerRoomExternalDiskDiscovery: LockerRoomExternalDiskDiscovering {
@@ -131,5 +133,44 @@ protocol LockerRoomExternalDiskDiscovering {
         Logger.service.log("Locker room external disk discovery invalidated")
         
         return true
+    }
+
+    func waitForExternalDiskDeviceToAppear(id: UUID, volumeCount: Int, timeoutInSeconds: Int) async -> LockerRoomExternalDiskDevice? {
+        @Sendable func volumesExist() -> LockerRoomExternalDiskDevice? {
+            if let externalDiskDevice = self.externalDiskDevicesByDeviceUnit.values.first(where: { $0.uuid == id }),
+               externalDiskDevice.volumeNames.count >= volumeCount {
+                return externalDiskDevice
+            } else {
+                return nil
+            }
+        }
+       
+        if let externalDiskDevice = volumesExist() {
+            return externalDiskDevice
+        }
+        
+        var result: LockerRoomExternalDiskDevice?
+        await withTaskGroup(of: LockerRoomExternalDiskDevice?.self) { group in
+            group.addTask {
+                while true {
+                    if let externalDiskDevice = volumesExist() {
+                        return externalDiskDevice
+                    }
+                    await Task.yield()
+                }
+            }
+
+            group.addTask {
+                try? await Task.sleep(nanoseconds: UInt64(timeoutInSeconds) * NSEC_PER_SEC)
+                return nil
+            }
+            
+            for await taskResult in group {
+                result = taskResult
+                group.cancelAll()
+                break
+            }
+        }
+        return result
     }
 }

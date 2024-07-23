@@ -127,6 +127,17 @@ extension LockerRoomDaemon: LockerRoomRemoteDiskControlling {
         replyHandler(true)
     }
     
+    func verifyVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
+        let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
+        let lockerRoomDiskController = LockerRoomDiskController(lockerRoomURLProvider: lockerRoomURLProvider)
+        guard lockerRoomDiskController.verify(name: name) else {
+            replyHandler(false)
+            return
+        }
+        
+        replyHandler(true)
+    }
+    
     private var peerInfoForCurrentXPCConnection: (uid: uid_t, gid: gid_t)? {
         guard let currentConnection = NSXPCConnection.current() else {
             Logger.service.error("Locker room daemon failed to get current XPC connection")

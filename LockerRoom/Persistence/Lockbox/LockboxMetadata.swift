@@ -13,4 +13,5 @@ protocol LockboxMetadata: Codable, CustomStringConvertible {
     var size: Int { get }
     var isEncrypted: Bool { get }
     var isExternal: Bool { get }
+    var volumeCount: Int { get }
 }

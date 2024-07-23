@@ -15,4 +15,5 @@ protocol LockerRoomRemoteDiskControlling {
     func openVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
     func mountVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
     func unmountVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
+    func verifyVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void)
 }

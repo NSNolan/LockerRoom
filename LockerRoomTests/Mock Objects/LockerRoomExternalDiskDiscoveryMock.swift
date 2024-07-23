@@ -12,6 +12,7 @@ struct LockerRoomExternalDiskDiscoveryMock: LockerRoomExternalDiskDiscovering {
     
     var failToActivate = false
     var failToInvalidate = false
+    var failToWait = false
     
     func activate() -> Bool {
         return !failToActivate
@@ -19,5 +20,12 @@ struct LockerRoomExternalDiskDiscoveryMock: LockerRoomExternalDiskDiscovering {
     
     func invalidate() -> Bool {
         return !failToInvalidate
+    }
+    
+    func waitForExternalDiskDeviceToAppear(id: UUID, volumeCount: Int, timeoutInSeconds: Int) async -> LockerRoomExternalDiskDevice? {
+        if failToWait {
+            return nil
+        }
+        return externalDiskDevicesByDeviceUnit.values.first { $0.uuid == id }
     }
 }

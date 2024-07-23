@@ -12,6 +12,7 @@ final class EncryptedLockboxTests: XCTestCase {
         let id = UUID()
         let size = 10
         let isExternal = false
+        let volumeCount = 1
         
         let encryptionComponentsKey = "EncryptionComponent"
         let encryptionComponentsValue = withUnsafeBytes(of: 123) { Data($0) }
@@ -63,6 +64,7 @@ final class EncryptedLockboxTests: XCTestCase {
             name: name,
             size: size,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
             encryptionComponents: encryptionComponents,
             encryptionLockboxKeys: encryptionLockboxKeys,
@@ -76,6 +78,7 @@ final class EncryptedLockboxTests: XCTestCase {
         XCTAssertEqual(encryptedLockbox.metadata.name, name)
         XCTAssertEqual(encryptedLockbox.metadata.size, size)
         XCTAssertEqual(encryptedLockbox.metadata.isExternal, isExternal)
+        XCTAssertEqual(encryptedLockbox.metadata.volumeCount, volumeCount)
         XCTAssertEqual(encryptedLockbox.metadata.encryptedSymmetricKeysBySerialNumber, encryptedSymmetricKeysBySerialNumber)
         XCTAssertEqual(encryptedLockbox.metadata.encryptionComponents, encryptionComponents)
         XCTAssertEqual(encryptedLockbox.metadata.encryptionLockboxKeys, encryptionLockboxKeys)
@@ -87,6 +90,7 @@ final class EncryptedLockboxTests: XCTestCase {
         let size = 10
         let isEncrypted = true
         let isExternal = false
+        let volumeCount = 1
         
         let encryptionComponentsKey = "EncryptionComponent"
         let encryptionComponentsValue = withUnsafeBytes(of: 123) { Data($0) }
@@ -138,6 +142,7 @@ final class EncryptedLockboxTests: XCTestCase {
             size: size,
             isEncrypted: isEncrypted,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
             encryptionComponents: encryptionComponents,
             encryptionLockboxKeys: encryptionLockboxKeys
@@ -153,11 +158,12 @@ final class EncryptedLockboxTests: XCTestCase {
         XCTAssertEqual(encryptedLockbox.metadata.id, id)
         XCTAssertEqual(encryptedLockbox.metadata.name, name)
         XCTAssertEqual(encryptedLockbox.metadata.size, size)
+        XCTAssertEqual(encryptedLockbox.metadata.isEncrypted, isEncrypted)
         XCTAssertEqual(encryptedLockbox.metadata.isExternal, isExternal)
+        XCTAssertEqual(encryptedLockbox.metadata.volumeCount, volumeCount)
         XCTAssertEqual(encryptedLockbox.metadata.encryptedSymmetricKeysBySerialNumber, encryptedSymmetricKeysBySerialNumber)
         XCTAssertEqual(encryptedLockbox.metadata.encryptionComponents, encryptionComponents)
         XCTAssertEqual(encryptedLockbox.metadata.encryptionLockboxKeys, encryptionLockboxKeys)
-        XCTAssertTrue(encryptedLockbox.metadata.isEncrypted)
     }
     
     func testDestroyEncryptedLockbox() {
@@ -174,6 +180,7 @@ final class EncryptedLockboxTests: XCTestCase {
         let id = UUID()
         let size = 0
         let isExternal = false
+        let volumeCount = 1
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
@@ -183,6 +190,7 @@ final class EncryptedLockboxTests: XCTestCase {
             name: name,
             size: size,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             encryptedSymmetricKeysBySerialNumber: [UInt32:Data](),
             encryptionComponents: LockboxCryptorComponents(),
             encryptionLockboxKeys: [LockboxKey](),
@@ -196,6 +204,7 @@ final class EncryptedLockboxTests: XCTestCase {
         let id = UUID()
         let size = 10
         let isExternal = false
+        let volumeCount = 1
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
@@ -206,6 +215,7 @@ final class EncryptedLockboxTests: XCTestCase {
             name: name,
             size: size,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             encryptedSymmetricKeysBySerialNumber: [UInt32:Data](),
             encryptionComponents: LockboxCryptorComponents(),
             encryptionLockboxKeys: [LockboxKey](),

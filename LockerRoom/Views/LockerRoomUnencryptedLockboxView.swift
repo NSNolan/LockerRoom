@@ -250,16 +250,25 @@ private struct LockerRoomUnencryptedLockboxEncryptView: View {
                 return
             }
             
+            let id = lockbox.id
             let name = lockbox.name
             
             if lockbox.isExternal {
-                guard lockerRoomManager.openVolume(name: name) else {
-                    Logger.lockerRoomUI.error("LockerRoom failed to open lockbox \(name)")
+                guard let externalDisk = lockerRoomManager.presentExternalLockboxDisksByID[id] else {
+                    Logger.lockerRoomUI.error("LockeRoom failed to find external disk \(name) with id \(id)")
                     error = .failedToOpenLockbox
                     viewStyle = .error
                     return
                 }
-                return
+                
+                for volume in externalDisk.volumes {
+                    guard lockerRoomManager.openVolume(name: volume) else {
+                        Logger.lockerRoomUI.error("LockerRoom failed to open lockbox \(name)")
+                        error = .failedToOpenLockbox
+                        viewStyle = .error
+                        return
+                    }
+                }
             } else {
                 guard lockerRoomManager.attachToDiskImage(name: name) else {
                     Logger.lockerRoomUI.error("LockerRoom failed to attach lockbox \(name)")

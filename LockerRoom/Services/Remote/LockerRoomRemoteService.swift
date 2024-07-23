@@ -260,6 +260,32 @@ extension LockerRoomRemoteService {
         }
         return success
     }
+    
+    func verifyVolume(name: String, rootURL: URL) -> Bool {
+        guard isEnabled else {
+            return false
+        }
+        
+        Logger.service.log("Locker room remote service verifying volume \(name) rootURL \(rootURL)")
+        
+        var success = false
+        daemonConnection.synchronousRemoteObjectProxy(retryCount: 3) { proxyResult in
+            switch proxyResult {
+            case .success(let proxy):
+                guard let daemon = proxy as? LockerRoomDaemonInterface else {
+                    Logger.service.fault("Locker room remote service failed to cast proxy object")
+                    return
+                }
+                daemon.verifyVolume(name: name, rootURL: rootURL) { verifyResult in
+                    success = verifyResult
+                }
+                
+            case .failure(let error):
+                Logger.service.error("Locker room remote service failed to verify volume \(name) with error \(error)")
+            }
+        }
+        return success
+    }
 }
 
 extension LockerRoomRemoteService {

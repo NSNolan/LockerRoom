@@ -13,8 +13,16 @@ final class LockerRoomLockboxTests: XCTestCase {
         let size = 10
         let isEncrypted = false
         let isExternal = false
+        let volumeCount = 1
         
-        let unencryptedLockboxMetadata = UnencryptedLockbox.Metadata(id: id, name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal)
+        let unencryptedLockboxMetadata = UnencryptedLockbox.Metadata(
+            id: id,
+            name: name,
+            size: size,
+            isEncrypted: isEncrypted,
+            isExternal: isExternal,
+            volumeCount: volumeCount
+        )
         let lockerRoomLockbox = unencryptedLockboxMetadata.lockerRoomLockbox
         
         XCTAssertEqual(lockerRoomLockbox.id, id)
@@ -29,6 +37,7 @@ final class LockerRoomLockboxTests: XCTestCase {
         let size = 10
         let isEncrypted = true
         let isExternal = false
+        let volumeCount = 1
         
         let encryptionComponentsKey = "EncryptionComponent"
         let encryptionComponentsValue = withUnsafeBytes(of: 123) { Data($0) }
@@ -79,6 +88,7 @@ final class LockerRoomLockboxTests: XCTestCase {
             size: size,
             isEncrypted: isEncrypted,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
             encryptionComponents: encryptionComponents,
             encryptionLockboxKeys: encryptionLockboxKeys

@@ -47,10 +47,11 @@ struct LockerRoomUnencryptedLockboxCreateOptionsView: View {
                 let id = externalDisk.id
                 let name = externalDisk.name
                 let size = externalDisk.sizeInMegabytes
+                let volumeCount = externalDisk.volumes.count
                 
                 Button(action: {
                     Task {
-                        guard let newUnencryptedLockbox = await lockerRoomManager.addUnencryptedLockbox(id: id, name: name, size: size, isExternal: true) else {
+                        guard let newUnencryptedLockbox = await lockerRoomManager.addUnencryptedLockbox(id: id, name: name, size: size, isExternal: true, volumeCount: volumeCount) else {
                             Logger.lockerRoomUI.error("LockerRoom failed to create an external unencrypted lockbox \(name) with id \(id) of size \(size)MB")
                             error = .failedToCreateExternalLockbox
                             showView = false

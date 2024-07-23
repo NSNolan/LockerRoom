@@ -75,8 +75,18 @@ import os.log
         }
     }
     
-    func addUnencryptedLockbox(id: UUID, name: String, size: Int, isExternal: Bool) async -> UnencryptedLockbox? {
-        guard let unencryptedLockbox = UnencryptedLockbox.create(id: id, name: name, size: size, isExternal: isExternal, lockerRoomDefaults: lockerRoomDefaults, lockerRoomDiskController: lockerRoomDiskController, lockerRoomRemoteService: lockerRoomRemoteService, lockerRoomStore: lockerRoomStore) else {
+    func addUnencryptedLockbox(id: UUID, name: String, size: Int, isExternal: Bool, volumeCount: Int = 1) async -> UnencryptedLockbox? {
+        guard let unencryptedLockbox = UnencryptedLockbox.create(
+            id: id,
+            name: name,
+            size: size,
+            isExternal: isExternal,
+            volumeCount: volumeCount,
+            lockerRoomDefaults: lockerRoomDefaults,
+            lockerRoomDiskController: lockerRoomDiskController,
+            lockerRoomRemoteService: lockerRoomRemoteService,
+            lockerRoomStore: lockerRoomStore
+        ) else {
             Logger.manager.error("Locker room manager failed to add unencrypted lockbox \(name)")
             return nil
         }
@@ -163,6 +173,7 @@ import os.log
         let name = unencryptedLockbox.metadata.name
         let size = unencryptedLockbox.metadata.size
         let isExternal = unencryptedLockbox.metadata.isExternal
+        let volumeCount = unencryptedLockbox.metadata.volumeCount
         let symmetricKeyData = lockboxKeyGenerator.generateSymmetricKeyData()
         
         var encryptedSymmetricKeysBySerialNumber = [UInt32:Data]()
@@ -211,8 +222,17 @@ import os.log
                 return false
             }
             let bsdName = externalDisk.bsdName
+            let volumes = externalDisk.volumes
+            let currentVolumeCount = volumes.count
             
-            _ = unmountVolume(name: name) // Non-fatal; it may already be unmounted
+            guard volumeCount == currentVolumeCount else {
+                Logger.manager.error("Locker room manager detected change in external lockbox volume count with expected (\(volumes)) vs current (\(currentVolumeCount))")
+                return false
+            }
+            
+            for volume in volumes {
+                _ = unmountVolume(name: volume) // Non-fatal; it may already be unmounted
+            }
             
             let deviceURL = lockerRoomStore.lockerRoomURLProvider.urlForConnectedCharacterDevice(name: bsdName)
             let devicePath = deviceURL.path(percentEncoded: false)
@@ -239,6 +259,7 @@ import os.log
             size: size,
             isEncrypted: true,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
             encryptionComponents: encryptionComponents,
             encryptionLockboxKeys: encryptionLockboxKeys
@@ -297,6 +318,7 @@ import os.log
         let name = encryptedLockbox.metadata.name
         let size = encryptedLockbox.metadata.size
         let isExternal = encryptedLockbox.metadata.isExternal
+        let volumeCount = encryptedLockbox.metadata.volumeCount
         let encryptionComponents = encryptedLockbox.metadata.encryptionComponents
         
         if isExternal {
@@ -342,7 +364,8 @@ import os.log
             name: name,
             size: size,
             isEncrypted: false,
-            isExternal: isExternal
+            isExternal: isExternal,
+            volumeCount: volumeCount
         )
         
         guard lockerRoomStore.writeUnencryptedLockboxMetadata(unencryptedLockboxMetdata) else {
@@ -352,20 +375,30 @@ import os.log
         Logger.manager.log("Locker room manager wrote unencrypted lockbox metadata \(unencryptedLockboxMetdata)")
         
         if isExternal {
-            guard let externalDisk = presentExternalLockboxDisksByID[id] else {
-                Logger.manager.error("Locker room manager failed to find external disk \(name) with id \(id)")
+            guard let externalDiskDevice = await lockerRoomExternalDiskDiscovery.waitForExternalDiskDeviceToAppear(
+                id: id,
+                volumeCount: volumeCount,
+                timeoutInSeconds: 10
+            ) else {
+                Logger.manager.error("Locker room manager failed to find \(volumeCount) volumes for external disk \(name) with id \(id)")
                 return false
             }
+            
+            guard let externalDisk = externalDiskDevice.lockerRoomExternalDisk else {
+                return false
+            }
+            
             let bsdName = externalDisk.bsdName
-            
-            guard mountVolume(name: bsdName) else {
-                Logger.manager.error("Locker room manager failed to mount an unencrypted external lockbox \(name) with BSD name \(bsdName)")
+            guard verifyVolume(name: bsdName) else {
+                Logger.manager.error("Locker room manager failed to verify an unencrypted external lockbox \(name) with BSD name \(bsdName)")
                 return false
             }
             
-            guard openVolume(name: name) else {
-                Logger.manager.error("Locker room manager failed to open an unencrypted external lockbox \(name)")
-                return false
+            for volume in externalDisk.volumes {
+                guard openVolume(name: volume) else {
+                    Logger.manager.error("Locker room manager failed to open volume \(volume) for an unencrypted external lockbox \(name)")
+                    return false
+                }
             }
         } else {
             guard lockerRoomStore.removeEncryptedContent(name: name) else {
@@ -457,6 +490,22 @@ import os.log
         } else {
             guard lockerRoomDiskController.unmount(name: name) else {
                 Logger.manager.error("Locker room manager failed to unmount lockbox \(name)")
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    func verifyVolume(name: String) -> Bool {
+        if lockerRoomDefaults.remoteServiceEnabled {
+            guard lockerRoomRemoteService.verifyVolume(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
+                Logger.manager.error("Locker room manager failed to verify lockbox \(name)")
+                return false
+            }
+        } else {
+            guard lockerRoomDiskController.verify(name: name) else {
+                Logger.manager.error("Locker room manager failed to verify lockbox \(name)")
                 return false
             }
         }

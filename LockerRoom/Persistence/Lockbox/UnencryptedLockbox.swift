@@ -17,9 +17,10 @@ struct UnencryptedLockbox: LockboxStreaming {
         let size: Int
         let isEncrypted: Bool
         let isExternal: Bool
+        let volumeCount: Int
         
         var description: String {
-            return "[UnencryptedLockbox.Metadata] ID: \(id) Name: \(name), Size: \(size), IsEncrypted: \(isEncrypted), IsExternal: \(isExternal)"
+            return "[UnencryptedLockbox.Metadata] ID: \(id) Name: \(name), Size: \(size), IsEncrypted: \(isEncrypted), IsExternal: \(isExternal) VolumeCount: \(volumeCount)"
         }
     }
     
@@ -27,19 +28,20 @@ struct UnencryptedLockbox: LockboxStreaming {
     let inputStream: InputStream
     let outputStream: OutputStream
     
-    private init(id: UUID, name: String, size: Int, isExternal: Bool, inputStream: InputStream, outputStream: OutputStream) {
+    private init(id: UUID, name: String, size: Int, isExternal: Bool, volumeCount:Int, inputStream: InputStream, outputStream: OutputStream) {
         self.metadata = Metadata(
             id: id,
             name: name,
             size: size,
             isEncrypted: false,
-            isExternal: isExternal
+            isExternal: isExternal,
+            volumeCount: volumeCount
         )
         self.inputStream = inputStream
         self.outputStream = outputStream
     }
     
-    static func create(id: UUID, name: String, size: Int, isExternal: Bool, lockerRoomDefaults: LockerRoomDefaulting, lockerRoomDiskController: LockerRoomDiskControlling, lockerRoomRemoteService: LockerRoomRemoteService, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
+    static func create(id: UUID, name: String, size: Int, isExternal: Bool, volumeCount: Int, lockerRoomDefaults: LockerRoomDefaulting, lockerRoomDiskController: LockerRoomDiskControlling, lockerRoomRemoteService: LockerRoomRemoteService, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
         guard size > 0 else {
             Logger.persistence.error("Unencrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil
@@ -64,7 +66,15 @@ struct UnencryptedLockbox: LockboxStreaming {
             return nil
         }
         
-        let lockbox = UnencryptedLockbox(id: id, name: name, size: size, isExternal: isExternal, inputStream: streams.input, outputStream: streams.output)
+        let lockbox = UnencryptedLockbox(
+            id: id,
+            name: name,
+            size: size, 
+            isExternal: isExternal,
+            volumeCount: volumeCount,
+            inputStream: streams.input,
+            outputStream: streams.output
+        )
         
         guard lockerRoomStore.writeUnencryptedLockboxMetadata(lockbox.metadata) else {
             Logger.persistence.error("Unencrypted lockbox failed to write lockbox metadata for \(name)")
@@ -93,13 +103,22 @@ struct UnencryptedLockbox: LockboxStreaming {
         let id = metadata.id
         let size = metadata.size
         let isExternal = metadata.isExternal
+        let volumeCount = metadata.volumeCount
         
         guard let streams = streams(name: name, isEncrypted: isEncrypted, isExternal: isExternal, lockerRoomStore: lockerRoomStore) else {
             Logger.persistence.error("Unencrypted lockbox failed to create input and output streams for \(name)")
             return nil
         }
         
-        return UnencryptedLockbox(id: id, name: name, size: size, isExternal: isExternal, inputStream: streams.input, outputStream: streams.output)
+        return UnencryptedLockbox(
+            id: id,
+            name: name,
+            size: size,
+            isExternal: isExternal,
+            volumeCount: volumeCount,
+            inputStream: streams.input,
+            outputStream: streams.output
+        )
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {

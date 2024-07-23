@@ -7,7 +7,7 @@
 
 import Foundation
 
-// When an external disk device, containing a single mountable APFS volume, is connected to a Mac the following 4 disks partitions are detected by the system:
+// When an external disk device, containing a single mountable APFS volume, is connected to a Mac the following 4 disks partitions are detected by the host system:
 //
 // /dev/diskX (external, physical):
 //   #:                       TYPE NAME                    SIZE       IDENTIFIER
@@ -26,9 +26,9 @@ import Foundation
 // those volumes (i.e. diskYs2, diskYs3, etc).
 //
 // For the purposes of disk encryption, an external disk device's APFS Physical Store should be completely encrypted but the GUID partition table should be kept
-// in plaintext. This way any data within the AFPS Container will be encrypted but the physical disk can still be recognized by the system.
+// in plaintext. This way any data within the AFPS Container will be encrypted but the physical disk can still be recognized by the host system.
 //
-// The following code identifies the APFS Phyiscal Store by finding the first non-media whole, non-mountable disk partition.
+// The following code identifies the APFS Phyiscal Store by finding the first non-media whole, non-volume mountable disk partition.
 
 struct LockerRoomExternalDiskDevice {
     var diskPartitionsByID = [UUID:LockerRoomExternalDiskPartition]()
@@ -42,11 +42,22 @@ struct LockerRoomExternalDiskDevice {
     }
     
     var name: String? {
-        if let volumeName = volumeNames.first { // TODO: Don't use first volume name as the external disk name; there may be multiple
-            return volumeName
+        let volumes = volumeNames
+        switch volumes.count {
+        case 0:
+            // Volume names on encrypted external disks will not be available; fallback to the physical storage name
+            return apfsPhysicalStorePartition?.mediaName
+        case 1:
+            return volumes[0]
+        case 2:
+            return "\(volumes[0]) and \(volumes[1])"
+        default:
+            let allExceptLastVolume = volumes.dropLast().joined(separator: ", ")
+            guard let lastVolume = volumes.last else {
+                return allExceptLastVolume
+            }
+            return "\(allExceptLastVolume) and \(lastVolume)"
         }
-        
-        return apfsPhysicalStorePartition?.mediaName // Volume names on encrypted external disks will not be available; fallback to the media name of the physical storage
     }
     
     var sizeInMegabytes: Int? {
@@ -64,6 +75,6 @@ struct LockerRoomExternalDiskDevice {
             } else {
                 return nil
             }
-        }
+        }.sorted()
     }
 }

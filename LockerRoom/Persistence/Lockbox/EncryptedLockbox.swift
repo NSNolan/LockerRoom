@@ -17,12 +17,13 @@ struct EncryptedLockbox: LockboxStreaming {
         let size: Int
         let isEncrypted: Bool
         let isExternal: Bool
+        let volumeCount: Int
         let encryptedSymmetricKeysBySerialNumber: [UInt32:Data]
         let encryptionComponents: LockboxCryptorComponents?
         let encryptionLockboxKeys: [LockboxKey]
         
         var description: String {
-            return "[UnencryptedLockbox.Metadata] ID: \(id), Name: \(name), Size: \(size), IsEncrypted: \(isEncrypted), IsExternal: \(isExternal), EncryptedSymmetricKeysBySerialNumber: \(encryptedSymmetricKeysBySerialNumber), EncryptionComponents: \(encryptionComponents?.count ?? 0) EncryptionLockboxKeys: \(encryptionLockboxKeys)"
+            return "[UnencryptedLockbox.Metadata] ID: \(id), Name: \(name), Size: \(size), IsEncrypted: \(isEncrypted), IsExternal: \(isExternal),  VolumeCount: \(volumeCount), EncryptedSymmetricKeysBySerialNumber: \(encryptedSymmetricKeysBySerialNumber), EncryptionComponents: \(encryptionComponents?.count ?? 0) EncryptionLockboxKeys: \(encryptionLockboxKeys)"
         }
     }
     
@@ -30,13 +31,14 @@ struct EncryptedLockbox: LockboxStreaming {
     let inputStream: InputStream
     let outputStream: OutputStream
         
-    private init(id: UUID, name: String, size: Int, isExternal: Bool, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionComponents: LockboxCryptorComponents?, encryptionLockboxKeys: [LockboxKey], inputStream: InputStream, outputStream: OutputStream) {
+    private init(id: UUID, name: String, size: Int, isExternal: Bool, volumeCount: Int, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionComponents: LockboxCryptorComponents?, encryptionLockboxKeys: [LockboxKey], inputStream: InputStream, outputStream: OutputStream) {
         self.metadata = Metadata(
             id: id,
             name: name,
             size: size,
             isEncrypted: true,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
             encryptionComponents: encryptionComponents,
             encryptionLockboxKeys: encryptionLockboxKeys
@@ -45,7 +47,7 @@ struct EncryptedLockbox: LockboxStreaming {
         self.outputStream = outputStream
     }
     
-    static func create(id: UUID, name: String, size: Int, isExternal: Bool, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionComponents: LockboxCryptorComponents?, encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
+    static func create(id: UUID, name: String, size: Int, isExternal: Bool, volumeCount: Int, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionComponents: LockboxCryptorComponents?, encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
         guard size > 0 else {
             Logger.persistence.error("Encrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil
@@ -56,7 +58,18 @@ struct EncryptedLockbox: LockboxStreaming {
             return nil
         }
         
-        let lockbox = EncryptedLockbox(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionComponents: encryptionComponents, encryptionLockboxKeys: encryptionLockboxKeys, inputStream: streams.input, outputStream: streams.output)
+        let lockbox = EncryptedLockbox(
+            id: id,
+            name: name,
+            size: size,
+            isExternal: isExternal,
+            volumeCount: volumeCount,
+            encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
+            encryptionComponents: encryptionComponents,
+            encryptionLockboxKeys: encryptionLockboxKeys,
+            inputStream: streams.input,
+            outputStream: streams.output
+        )
         
         guard lockerRoomStore.writeEncryptedLockboxMetadata(lockbox.metadata) else {
             Logger.persistence.error("Encrypted lockbox failed to write lockbox metadata for \(name)")
@@ -85,6 +98,7 @@ struct EncryptedLockbox: LockboxStreaming {
         let id = metadata.id
         let size = metadata.size
         let isExternal = metadata.isExternal
+        let volumeCount = metadata.volumeCount
         let encryptedSymmetricKeysBySerialNumber = metadata.encryptedSymmetricKeysBySerialNumber
         let encryptionComponents = metadata.encryptionComponents
         let encryptionLockboxKeys = metadata.encryptionLockboxKeys
@@ -94,7 +108,18 @@ struct EncryptedLockbox: LockboxStreaming {
             return nil
         }
 
-        return EncryptedLockbox(id: id, name: name, size: size, isExternal: isExternal, encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber, encryptionComponents: encryptionComponents, encryptionLockboxKeys: encryptionLockboxKeys, inputStream: streams.input, outputStream: streams.output)
+        return EncryptedLockbox(
+            id: id,
+            name: name,
+            size: size,
+            isExternal: isExternal,
+            volumeCount: volumeCount,
+            encryptedSymmetricKeysBySerialNumber: encryptedSymmetricKeysBySerialNumber,
+            encryptionComponents: encryptionComponents,
+            encryptionLockboxKeys: encryptionLockboxKeys,
+            inputStream: streams.input,
+            outputStream: streams.output
+        )
     }
     
     static func destroy(name: String, lockerRoomStore: LockerRoomStoring) -> Bool {

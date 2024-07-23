@@ -12,6 +12,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         let id = UUID()
         let size = 10
         let isExternal = false
+        let volumeCount = 1
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
@@ -24,6 +25,7 @@ final class UnencryptedLockboxTests: XCTestCase {
             name: name,
             size: size,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             lockerRoomDefaults: defaults,
             lockerRoomDiskController: diskController,
             lockerRoomRemoteService: remoteService,
@@ -36,7 +38,8 @@ final class UnencryptedLockboxTests: XCTestCase {
         XCTAssertEqual(unencryptedLockbox.metadata.id, id)
         XCTAssertEqual(unencryptedLockbox.metadata.name, name)
         XCTAssertEqual(unencryptedLockbox.metadata.size, size)
-        XCTAssertEqual(unencryptedLockbox.metadata.isEncrypted, isExternal)
+        XCTAssertEqual(unencryptedLockbox.metadata.isExternal, isExternal)
+        XCTAssertEqual(unencryptedLockbox.metadata.volumeCount, volumeCount)
         XCTAssertFalse(unencryptedLockbox.metadata.isEncrypted)
     }
     
@@ -45,12 +48,20 @@ final class UnencryptedLockboxTests: XCTestCase {
         let size = 10
         let isEncrypted = false
         let isExternal = false
+        let volumeCount = 1
         
         let lockerRoomLockbox = LockerRoomLockbox(id: id, name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal, encryptionKeyNames: [String]())
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
-        store.unencryptedLockboxMetadata = UnencryptedLockbox.Metadata(id: id, name: name, size: size, isEncrypted: isEncrypted, isExternal: isExternal)
+        store.unencryptedLockboxMetadata = UnencryptedLockbox.Metadata(
+            id: id,
+            name: name,
+            size: size,
+            isEncrypted: isEncrypted,
+            isExternal: isExternal,
+            volumeCount: volumeCount
+        )
                 
         guard let unencryptedLockbox = UnencryptedLockbox.create(from: lockerRoomLockbox,  lockerRoomStore: store) else {
             XCTFail("Failed to create unencrypted lockbox")
@@ -61,7 +72,8 @@ final class UnencryptedLockboxTests: XCTestCase {
         XCTAssertEqual(unencryptedLockbox.metadata.name, name)
         XCTAssertEqual(unencryptedLockbox.metadata.size, size)
         XCTAssertEqual(unencryptedLockbox.metadata.isEncrypted, isExternal)
-        XCTAssertEqual(unencryptedLockbox.metadata.isEncrypted, isEncrypted)
+        XCTAssertEqual(unencryptedLockbox.metadata.isExternal, isExternal)
+        XCTAssertEqual(unencryptedLockbox.metadata.volumeCount, volumeCount)
     }
     
     func testDestroyUnencryptedLockbox() {
@@ -78,6 +90,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         let id = UUID()
         let size = 0
         let isExternal = false
+        let volumeCount = 1
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
@@ -90,6 +103,7 @@ final class UnencryptedLockboxTests: XCTestCase {
             name: name,
             size: size,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             lockerRoomDefaults: defaults,
             lockerRoomDiskController: diskController,
             lockerRoomRemoteService: remoteService,
@@ -103,6 +117,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         let id = UUID()
         let size = 10
         let isExternal = false
+        let volumeCount = 1
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
@@ -117,6 +132,7 @@ final class UnencryptedLockboxTests: XCTestCase {
             name: name,
             size: size,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             lockerRoomDefaults: defaults,
             lockerRoomDiskController: diskController,
             lockerRoomRemoteService: remoteService,
@@ -130,6 +146,7 @@ final class UnencryptedLockboxTests: XCTestCase {
         let id = UUID()
         let size = 10
         let isExternal = false
+        let volumeCount = 1
         
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let defaults = LockerRoomDefaultsMock()
@@ -144,6 +161,7 @@ final class UnencryptedLockboxTests: XCTestCase {
             name: name,
             size: size,
             isExternal: isExternal,
+            volumeCount: volumeCount,
             lockerRoomDefaults: defaults,
             lockerRoomDiskController: diskController,
             lockerRoomRemoteService: remoteService,
