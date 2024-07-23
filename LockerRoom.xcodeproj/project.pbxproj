@@ -286,7 +286,6 @@
 				BF1DD0922BB1C82C001FA81F /* Lockbox */,
 				BF0BCB562BB653A300F91471 /* Lockbox Key */,
 				BF1DD0902BB1C823001FA81F /* LockerRoomStore.swift */,
-				BF1DD0942BB1CAB9001FA81F /* LockerRoomURLProvider.swift */,
 			);
 			path = Persistence;
 			sourceTree = "<group>";
@@ -440,6 +439,7 @@
 				BFE494122BF6FB4B00F9CC7B /* LockerRoomDefaults.swift */,
 				BFAF916A2BF17EC60028B81C /* LockerRoomLogger.swift */,
 				BF0BCB622BBCB70900F91471 /* LockerRoomSecKeyPrimitives.swift */,
+				BF1DD0942BB1CAB9001FA81F /* LockerRoomURLProvider.swift */,
 				BF0BCB602BBCB65100F91471 /* LockerRoomYubiKeyPrimitives.swift */,
 				BF5FBFF42BD002360054ED10 /* LockerRoomYubiKeyExperimental.swift */,
 			);
