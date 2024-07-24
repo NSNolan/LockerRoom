@@ -11,68 +11,49 @@ final class LockerRoomDiskControllerTests: XCTestCase {
     func testDiskCreateDestroy() {
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let diskController = LockerRoomDiskController(lockerRoomURLProvider: urlProvider)
+        let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
         defer {
             XCTAssertTrue(diskController.destory(name: name), "Failed to destory disk")
+            XCTAssertTrue(store.removeLockbox(name: name), "Failed to remove lockbox")
         }
         
         let size = 10
         
-        guard diskController.create(name: name, size: size) else {
-            XCTFail("Failed to create disk image")
-            return
-        }
+        XCTAssertTrue(diskController.create(name: name, size: size), "Failed to create disk image")
     }
     
     func testDiskCreateAttachDetachDestroy() {
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let diskController = LockerRoomDiskController(lockerRoomURLProvider: urlProvider)
+        let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
         defer {
             XCTAssertTrue(diskController.destory(name: name), "Failed to destory disk")
+            XCTAssertTrue(store.removeLockbox(name: name), "Failed to remove lockbox")
         }
         
         let size = 10
         
-        guard diskController.create(name: name, size: size) else {
-            XCTFail("Failed to create disk image")
-            return
-        }
-        
-        guard diskController.attach(name: name) else {
-            XCTFail("Failed to attach disk")
-            return
-        }
-        
-        guard diskController.detach(name: name) else {
-            XCTFail("Failed to detach disk")
-            return
-        }
+        XCTAssertTrue(diskController.create(name: name, size: size), "Failed to create disk image")
+        XCTAssertTrue(diskController.attach(name: name), "Failed to attach disk")
+        XCTAssertTrue(diskController.detach(name: name), "Failed to detach disk")
     }
     
     func testDiskCreateAttachUnmountDestroy() {
         let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
         let diskController = LockerRoomDiskController(lockerRoomURLProvider: urlProvider)
+        let store = LockerRoomStore(lockerRoomURLProvider: urlProvider)
         
         defer {
             XCTAssertTrue(diskController.destory(name: name), "Failed to destory disk")
+            XCTAssertTrue(store.removeLockbox(name: name), "Failed to remove lockbox")
         }
         
         let size = 10
         
-        guard diskController.create(name: name, size: size) else {
-            XCTFail("Failed to create disk image")
-            return
-        }
-        
-        guard diskController.attach(name: name) else {
-            XCTFail("Failed to attach disk")
-            return
-        }
-        
-        guard diskController.unmount(name: name) else {
-            XCTFail("Failed to unmount disk")
-            return
-        }
+        XCTAssertTrue(diskController.create(name: name, size: size), "Failed to create disk image")
+        XCTAssertTrue(diskController.attach(name: name), "Failed to attach disk")
+        XCTAssertTrue(diskController.unmount(name: name), "Failed to unmount disk")
     }
 }
