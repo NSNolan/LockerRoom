@@ -42,6 +42,11 @@ struct UnencryptedLockbox: LockboxStreaming {
     }
     
     static func create(id: UUID, name: String, size: Int, isExternal: Bool, volumeCount: Int, lockerRoomDefaults: LockerRoomDefaulting, lockerRoomDiskController: LockerRoomDiskControlling, lockerRoomRemoteService: LockerRoomRemoteService, lockerRoomStore: LockerRoomStoring) -> UnencryptedLockbox? {
+        guard !lockerRoomStore.lockboxExists(name: name) else {
+            Logger.persistence.error("Unencrypted lockbox failed to create \(name) at existing path")
+            return nil
+        }
+        
         guard size > 0 else {
             Logger.persistence.error("Unencrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil

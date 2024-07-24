@@ -86,6 +86,35 @@ final class UnencryptedLockboxTests: XCTestCase {
         }
     }
     
+    func testCreateUnencryptedLockboxAlreadyExistsFailure() {
+        let id = UUID()
+        let size = 10
+        let isExternal = false
+        let volumeCount = 1
+        
+        let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
+        let defaults = LockerRoomDefaultsMock()
+        let diskController = LockerRoomDiskControllerMock(lockerRoomURLProvider: urlProvider)
+        let remoteService = LockerRoomRemoteService(lockerRoomDefaults: defaults)
+        
+        var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
+        store.lockboxExists = true
+        
+        let unencryptedLockbox = UnencryptedLockbox.create(
+            id: id,
+            name: name,
+            size: size,
+            isExternal: isExternal,
+            volumeCount: volumeCount,
+            lockerRoomDefaults: defaults,
+            lockerRoomDiskController: diskController,
+            lockerRoomRemoteService: remoteService,
+            lockerRoomStore: store
+        )
+        
+        XCTAssertNil(unencryptedLockbox)
+    }
+    
     func testCreateUnencryptedLockboxInvalidSizeFailure() {
         let id = UUID()
         let size = 0

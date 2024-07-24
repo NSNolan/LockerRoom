@@ -176,6 +176,31 @@ final class EncryptedLockboxTests: XCTestCase {
         }
     }
     
+    func testCreateEncryptedLockboxAlreadyExistsFailure() {
+        let id = UUID()
+        let size = 10
+        let isExternal = false
+        let volumeCount = 1
+        
+        let urlProvider = LockerRoomURLProvider(rootURL: .temporaryDirectory)
+        var store = LockerRoomStoreMock(lockerRoomURLProvider: urlProvider)
+        store.lockboxExists = true
+        
+        let encryptedLockbox = EncryptedLockbox.create(
+            id: id,
+            name: name,
+            size: size,
+            isExternal: isExternal,
+            volumeCount: volumeCount,
+            encryptedSymmetricKeysBySerialNumber: [UInt32:Data](),
+            encryptionComponents: LockboxCryptorComponents(),
+            encryptionLockboxKeys: [LockboxKey](),
+            lockerRoomStore: store
+        )
+        
+        XCTAssertNil(encryptedLockbox)
+    }
+    
     func testCreateEncryptedLockboxInvalidSizeFailure() {
         let id = UUID()
         let size = 0
