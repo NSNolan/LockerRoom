@@ -48,11 +48,6 @@ struct EncryptedLockbox: LockboxStreaming {
     }
     
     static func create(id: UUID, name: String, size: Int, isExternal: Bool, volumeCount: Int, encryptedSymmetricKeysBySerialNumber: [UInt32:Data], encryptionComponents: LockboxCryptorComponents?, encryptionLockboxKeys: [LockboxKey], lockerRoomStore: LockerRoomStoring) -> EncryptedLockbox? {
-        guard !lockerRoomStore.lockboxExists(name: name) else {
-            Logger.persistence.error("Encrypted lockbox failed to create \(name) at existing path")
-            return nil
-        }
-        
         guard size > 0 else {
             Logger.persistence.error("Encrypted lockbox failed to create emtpy sized lockbox \(name)")
             return nil
