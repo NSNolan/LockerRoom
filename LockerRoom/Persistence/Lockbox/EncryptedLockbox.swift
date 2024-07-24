@@ -71,7 +71,7 @@ struct EncryptedLockbox: LockboxStreaming {
             outputStream: streams.output
         )
         
-        guard lockerRoomStore.writeEncryptedLockboxMetadata(lockbox.metadata) else {
+        guard lockerRoomStore.writeEncryptedLockboxMetadata(lockbox.metadata, name: name) else {
             Logger.persistence.error("Encrypted lockbox failed to write lockbox metadata for \(name)")
             return nil
         }

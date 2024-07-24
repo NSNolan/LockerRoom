@@ -265,11 +265,17 @@ import os.log
             encryptionLockboxKeys: encryptionLockboxKeys
         )
         
-        guard lockerRoomStore.writeEncryptedLockboxMetadata(encryptedLockboxMetdata) else {
+        guard lockerRoomStore.writeEncryptedLockboxMetadata(encryptedLockboxMetdata, name: name) else {
             Logger.manager.error("Locker room manager failed to write encrypted lockbox metadata \(encryptedLockboxMetdata)")
             return false
         }
         Logger.manager.log("Locker room manager wrote encrypted lockbox metadata \(encryptedLockboxMetdata)")
+        
+        guard lockerRoomStore.writeUnencryptedLockboxMetadata(nil, name: name) else {
+            Logger.manager.error("Locker room manager failed to remove unencrypted lockbox metadata \(name)")
+            return false
+        }
+        Logger.manager.log("Locker room manager removed unencrypted lockbox metadata for \(name)")
         
         if !isExternal {
             guard lockerRoomStore.removeUnencryptedContent(name: name) else {
@@ -368,11 +374,17 @@ import os.log
             volumeCount: volumeCount
         )
         
-        guard lockerRoomStore.writeUnencryptedLockboxMetadata(unencryptedLockboxMetdata) else {
+        guard lockerRoomStore.writeUnencryptedLockboxMetadata(unencryptedLockboxMetdata, name: name) else {
             Logger.manager.error("Locker room manager failed to write unencrypted lockbox metadata \(unencryptedLockboxMetdata)")
             return false
         }
         Logger.manager.log("Locker room manager wrote unencrypted lockbox metadata \(unencryptedLockboxMetdata)")
+        
+        guard lockerRoomStore.writeEncryptedLockboxMetadata(nil, name: name) else {
+            Logger.manager.error("Locker room manager failed to remove encrypted lockbox metadata \(name)")
+            return false
+        }
+        Logger.manager.log("Locker room manager removed encrypted lockbox metadata for \(name)")
         
         if isExternal {
             guard let externalDiskDevice = await lockerRoomExternalDiskDiscovery.waitForExternalDiskDeviceToAppear(

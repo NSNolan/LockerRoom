@@ -38,7 +38,7 @@ struct LockerRoomStoreMock: LockerRoomStoring {
         return failToReadUnencryptedLockboxMetadata ? nil : unencryptedLockboxMetadata
     }
     
-    func writeUnencryptedLockboxMetadata(_ lockboxMetadata: UnencryptedLockbox.Metadata) -> Bool {
+    func writeUnencryptedLockboxMetadata(_ lockboxMetadata: UnencryptedLockbox.Metadata?, name: String) -> Bool {
         return !failToWriteUnencryptedLockboxMetadata
     }
     
@@ -46,7 +46,7 @@ struct LockerRoomStoreMock: LockerRoomStoring {
         return failToReadEncryptedLockboxMetadata ? nil : encryptedLockboxMetadata
     }
     
-    func writeEncryptedLockboxMetadata(_ lockboxMetadata: EncryptedLockbox.Metadata) -> Bool {
+    func writeEncryptedLockboxMetadata(_ lockboxMetadata: EncryptedLockbox.Metadata?, name: String) -> Bool {
         return !failToWriteEncryptedLockboxMetadata
     }
     

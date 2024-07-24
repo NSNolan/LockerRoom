@@ -16,7 +16,8 @@ protocol LockerRoomURLProviding {
     var urlForKeys: URL { get }
     
     func urlForLockbox(name: String) -> URL
-    func urlForLockboxMetadata(name: String) -> URL
+    func urlForLockboxUnencryptedMetadata(name: String) -> URL
+    func urlForLockboxEncryptedMetadata(name: String) -> URL
     func urlForLockboxUnencryptedContent(name: String) -> URL
     func urlForLockboxEncryptedContent(name: String) -> URL
     
@@ -29,7 +30,8 @@ protocol LockerRoomURLProviding {
 }
 
 struct LockerRoomURLProvider: LockerRoomURLProviding {
-    private static let metadataFileName = "Metadata.plist"
+    private static let unencryptedMetadataFileName = "UnencryptedMetadata.plist"
+    private static let encryptedMetadataFileName = "EncryptedMetadata.plist"
     private static let unencryptedContentFileName = "Content.dmg"
     private static let encryptedContentFileName = "Content.enc"
     private static let lockboxKeyFileName = "LockboxKey.plist"
@@ -72,8 +74,12 @@ struct LockerRoomURLProvider: LockerRoomURLProviding {
         return urlForLockboxes.appending(component: name)
     }
     
-    func urlForLockboxMetadata(name: String) -> URL {
-        return urlForLockbox(name: name).appending(component: LockerRoomURLProvider.metadataFileName)
+    func urlForLockboxUnencryptedMetadata(name: String) -> URL {
+        return urlForLockbox(name: name).appending(component: LockerRoomURLProvider.unencryptedMetadataFileName)
+    }
+    
+    func urlForLockboxEncryptedMetadata(name: String) -> URL {
+        return urlForLockbox(name: name).appending(component: LockerRoomURLProvider.encryptedMetadataFileName)
     }
     
     func urlForLockboxUnencryptedContent(name: String) -> URL {
