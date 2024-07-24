@@ -17,7 +17,7 @@ protocol LockerRoomDiskControlling {
     func detach(name: String) -> Bool
     func mount(name: String) -> Bool
     func unmount(name: String) -> Bool
-    func verify(name: String) -> Bool
+    func verify(name: String, usingMountedVolume: Bool) -> Bool
 }
 
 struct LockerRoomDiskController: LockerRoomDiskControlling {
@@ -153,14 +153,21 @@ struct LockerRoomDiskController: LockerRoomDiskControlling {
         )
     }
     
-    func verify(name: String) -> Bool {
-        let deviceURL = lockerRoomURLProvider.urlForConnectedBlockDevice(name: name)
-        let devicePath = deviceURL.path(percentEncoded: false)
+    func verify(name: String, usingMountedVolume: Bool) -> Bool {
+        let verifyPath: String
+        if usingMountedVolume {
+            let mountedVolumeURL = lockerRoomURLProvider.urlForMountedVolume(name: name)
+            verifyPath = mountedVolumeURL.path(percentEncoded: false)
+        } else {
+            let deviceURL = lockerRoomURLProvider.urlForConnectedBlockDevice(name: name)
+            verifyPath = deviceURL.path(percentEncoded: false)
+        }
+        
         return execute(
             launchPath: LockerRoomDiskController.diskutilLaunchPath,
             arguments: [
                 "verifyVolume",
-                devicePath
+                verifyPath
             ],
             name: name
         )

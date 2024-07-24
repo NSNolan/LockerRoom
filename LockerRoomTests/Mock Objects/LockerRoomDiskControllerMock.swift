@@ -96,7 +96,7 @@ struct LockerRoomDiskControllerMock: LockerRoomDiskControlling {
         return !failToUnmount
     }
     
-    func verify(name: String) -> Bool {
+    func verify(name: String, usingMountedVolume: Bool) -> Bool {
         return !failToVerify
     }
 }

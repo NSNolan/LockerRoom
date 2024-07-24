@@ -401,7 +401,7 @@ import os.log
             }
             
             let bsdName = externalDisk.bsdName
-            guard verifyVolume(name: bsdName) else {
+            guard !lockerRoomDefaults.diskVerificationEnabled || verifyVolume(name: bsdName, usingMountedVolume: false) else {
                 Logger.manager.error("Locker room manager failed to verify an unencrypted external lockbox \(name) with BSD name \(bsdName)")
                 return false
             }
@@ -413,16 +413,21 @@ import os.log
                 }
             }
         } else {
+            guard attachToDiskImage(name: name) else {
+                Logger.manager.error("Locker room manager failed to attach to unencrypted lockbox \(name)")
+                return false
+            }
+            
+            guard !lockerRoomDefaults.diskVerificationEnabled || verifyVolume(name: name, usingMountedVolume: true) else {
+                Logger.manager.error("Locker room manager failed to verify an unencrypted lockbox \(name)")
+                return false
+            }
+            
             guard lockerRoomStore.removeEncryptedContent(name: name) else {
                 Logger.manager.error("Locker room manager failed to removed encrypted lockbox content \(name)")
                 return false
             }
             Logger.manager.log("Locker room manager removed encrypted lockbox content \(name)")
-            
-            guard attachToDiskImage(name: name) else {
-                Logger.manager.error("Locker room manager failed to attach to unencrypted lockbox \(name)")
-                return false
-            }
         }
         
         lockboxesByID = lockerRoomStore.lockboxesByID
@@ -509,14 +514,14 @@ import os.log
         return true
     }
     
-    func verifyVolume(name: String) -> Bool {
+    func verifyVolume(name: String, usingMountedVolume: Bool) -> Bool {
         if lockerRoomDefaults.remoteServiceEnabled {
-            guard lockerRoomRemoteService.verifyVolume(name: name, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
+            guard lockerRoomRemoteService.verifyVolume(name: name, usingMountedVolume: usingMountedVolume, rootURL: lockerRoomStore.lockerRoomURLProvider.rootURL) else {
                 Logger.manager.error("Locker room manager failed to verify lockbox \(name)")
                 return false
             }
         } else {
-            guard lockerRoomDiskController.verify(name: name) else {
+            guard lockerRoomDiskController.verify(name: name, usingMountedVolume: usingMountedVolume) else {
                 Logger.manager.error("Locker room manager failed to verify lockbox \(name)")
                 return false
             }

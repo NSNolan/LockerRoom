@@ -9,6 +9,7 @@ import Foundation
 
 protocol LockerRoomDefaulting {
     var cryptorChunkSizeInBytes: Int { get set }
+    var diskVerificationEnabled: Bool { get set }
     var experimentalPIVSlotsEnabled: Bool { get set }
     var externalDisksEnabled: Bool { get set }
     var remoteServiceEnabled: Bool { get set }
@@ -16,6 +17,7 @@ protocol LockerRoomDefaulting {
 
 struct LockerRoomDefaults: LockerRoomDefaulting {
     private static let cryptorChunkSizeInBytesKey = "CryptorChunkSizeInBytes"
+    private static let diskVerificationEnabledKey = "DiskVerificationEnabledKey"
     private static let experimentalPIVSlotsEnabledKey = "ExperimentalPIVSlotsEnabled"
     private static let externalDisksEnabledKey = "ExternalDisksEnabled"
     private static let remoteServiceEnabledKey = "RemoteServiceEnabled"
@@ -35,6 +37,15 @@ struct LockerRoomDefaults: LockerRoomDefaulting {
         }
         set {
             defaults.set(newValue, forKey: LockerRoomDefaults.cryptorChunkSizeInBytesKey)
+        }
+    }
+    
+    var diskVerificationEnabled: Bool {
+        get {
+            return defaults.object(forKey: LockerRoomDefaults.diskVerificationEnabledKey) as? Bool ?? true
+        }
+        set {
+            defaults.setValue(newValue, forKey: LockerRoomDefaults.diskVerificationEnabledKey)
         }
     }
     

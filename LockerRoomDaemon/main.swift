@@ -127,10 +127,10 @@ extension LockerRoomDaemon: LockerRoomRemoteDiskControlling {
         replyHandler(true)
     }
     
-    func verifyVolume(name: String, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
+    func verifyVolume(name: String, usingMountedVolume: Bool, rootURL: URL, _ replyHandler: @escaping (Bool) -> Void) {
         let lockerRoomURLProvider = LockerRoomURLProvider(rootURL: rootURL)
         let lockerRoomDiskController = LockerRoomDiskController(lockerRoomURLProvider: lockerRoomURLProvider)
-        guard lockerRoomDiskController.verify(name: name) else {
+        guard lockerRoomDiskController.verify(name: name, usingMountedVolume: usingMountedVolume) else {
             replyHandler(false)
             return
         }
