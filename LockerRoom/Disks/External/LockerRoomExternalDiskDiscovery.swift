@@ -153,9 +153,14 @@ protocol LockerRoomExternalDiskDiscovering {
         await withTaskGroup(of: LockerRoomExternalDiskDevice?.self) { group in
             group.addTask {
                 while true {
+                    if Task.isCancelled {
+                        return nil
+                    }
+                    
                     if let externalDiskDevice = volumesExist() {
                         return externalDiskDevice
                     }
+                    
                     await Task.yield()
                 }
             }
@@ -165,10 +170,9 @@ protocol LockerRoomExternalDiskDiscovering {
                 return nil
             }
             
-            for await taskResult in group {
-                result = taskResult
+            if let firstResult = await group.next() {
+                result = firstResult
                 group.cancelAll()
-                break
             }
         }
         return result
