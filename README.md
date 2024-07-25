@@ -69,7 +69,7 @@ Logs that are emitted from the launch daemon will redact all dynamic variables. 
 $ curl -L https://raw.githubusercontent.com/NSNolan/LockerRoom/main/Debug/EnablePrivateLogging.mobileconfig -o ~/Downloads/EnablePrivateLogging.mobileconfig
 $ open ~/Downloads/EnablePrivateLogging.mobileconfig
 ```
-*Be sure to finalize the profile installation in System Settings > Privacy & Security > Profiles.*
+*Be sure to complete the profile installation in System Settings > Privacy & Security > Profiles.*
 
 #### Retired PIV Slots
 
