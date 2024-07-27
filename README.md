@@ -140,9 +140,9 @@ When a lockbox is created from an external disk, the symmetric key decryption re
 ### Future Enhancements
 
 - More unit tests coverage.
+- Lockbox cryptor components extracted during external disk encryption are large and should not be stored in the lockbox metadata.
 - Allow enrolled key deletion within Locker Room but only after there are no more encrypted lockbox it can decrypt. Keys can be removed using the filesystem and there is currently no way to remove the corresponding private key on the external hardware device. Yubico [changelogs](https://github.com/Yubico/yubico-piv-tool/blob/master/debian/changelog) suggests that YubiKey firmware 5.7.0 will add support for deleting keys.
 - Add localization strings for the UI.
-- Create a logging profile for private daemon log messages.
 - Generate public-private key pair using elliptic curve cryptography. This is blocked by YubiKey's current support for RSA cipher text decryption only.
 
 ### Contact
