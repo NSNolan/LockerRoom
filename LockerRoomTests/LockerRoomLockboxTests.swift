@@ -29,6 +29,7 @@ final class LockerRoomLockboxTests: XCTestCase {
         XCTAssertEqual(lockerRoomLockbox.name, name)
         XCTAssertEqual(lockerRoomLockbox.size, size)
         XCTAssertEqual(lockerRoomLockbox.isEncrypted, isEncrypted)
+        XCTAssertEqual(lockerRoomLockbox.isExternal, isExternal)
         XCTAssertEqual(lockerRoomLockbox.encryptionKeyNames, [String]())
     }
     
@@ -99,6 +100,7 @@ final class LockerRoomLockboxTests: XCTestCase {
         XCTAssertEqual(lockerRoomLockbox.name, name)
         XCTAssertEqual(lockerRoomLockbox.size, size)
         XCTAssertEqual(lockerRoomLockbox.isEncrypted, isEncrypted)
+        XCTAssertEqual(lockerRoomLockbox.isExternal, isExternal)
         XCTAssertEqual(lockerRoomLockbox.encryptionKeyNames, encryptionKeyNames)
     }
 }
